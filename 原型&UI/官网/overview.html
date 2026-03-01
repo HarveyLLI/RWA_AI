@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore RWA — Antalpha Prime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-primary: #1e40af;
+      --blue-dark: #0c4a6e;
+      --bg-primary: #0a0e1a;
+      --bg-card: rgba(30, 41, 59, 0.6);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.4);
+      --accent-soft: rgba(56, 189, 248, 0.1);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
+      --border: rgba(51, 65, 85, 0.6);
+      --success: #22c55e;
+      --gradient-brand: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary);
+      color: var(--text-primary); line-height: 1.6; min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10, 14, 26, 0.85); backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 700; font-size: 1.25rem; color: var(--text-primary); text-decoration: none; letter-spacing: -0.02em; }
+    .nav { display: flex; align-items: center; gap: 28px; }
+    .nav a { color: var(--text-secondary); text-decoration: none; font-size: 0.9375rem; font-weight: 500; transition: color 0.2s; }
+    .nav a:hover { color: var(--accent); }
+    .nav a.active { color: var(--accent); }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .lang-btn { padding: 7px 12px; border: none; background: transparent; color: var(--text-dim); font-size: 0.8125rem; font-weight: 500; cursor: pointer; }
+    .lang-btn.active { background: var(--blue-primary); color: #fff; }
+    .btn-demo {
+      background: var(--gradient-brand); color: #fff; border: none; padding: 10px 22px;
+      border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-demo:hover { opacity: 0.9; }
+
+    /* Hero */
+    .hero {
+      position: relative; padding: 120px 32px 140px; text-align: center; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60%; left: 50%; transform: translateX(-50%);
+      width: 140%; height: 160%;
+      background: radial-gradient(ellipse at 50% 30%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
+                  radial-gradient(ellipse at 30% 60%, rgba(129, 140, 248, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 50%, rgba(192, 132, 252, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), rgba(129, 140, 248, 0.3), transparent);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-soft); border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 8px 18px; border-radius: 999px; font-size: 0.8125rem; font-weight: 600;
+      color: var(--accent); margin-bottom: 28px; letter-spacing: 0.02em;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 3.75rem); font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1.1; margin-bottom: 24px;
+    }
+    .hero h1 .gradient-text {
+      background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      color: var(--text-secondary); font-size: 1.1875rem; line-height: 1.7; max-width: 640px; margin: 0 auto 40px;
+    }
+    .hero-stats { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; margin-bottom: 48px; }
+    .hero-stat { text-align: center; }
+    .hero-stat .val { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    .hero-stat .val.accent { color: var(--accent); }
+    .hero-stat .lbl { font-size: 0.8125rem; color: var(--text-dim); margin-top: 4px; }
+    .hero-cta { display: inline-flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      display: inline-block; padding: 16px 36px; background: var(--gradient-brand);
+      color: #fff; border-radius: 12px; font-size: 1rem; font-weight: 600; text-decoration: none;
+      box-shadow: 0 4px 24px var(--accent-glow); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--accent-glow); }
+    .btn-secondary {
+      display: inline-block; padding: 16px 36px; background: transparent;
+      border: 1px solid var(--border); color: var(--text-primary); border-radius: 12px;
+      font-size: 1rem; font-weight: 600; text-decoration: none; transition: border-color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); }
+
+    /* Section */
+    .section { max-width: 1200px; margin: 0 auto; padding: 96px 32px; }
+    .section-label {
+      font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--accent); margin-bottom: 12px; font-weight: 700; text-align: center;
+    }
+    .section-title {
+      font-size: 2.25rem; font-weight: 700; letter-spacing: -0.02em;
+      text-align: center; margin-bottom: 16px;
+    }
+    .section-desc {
+      color: var(--text-secondary); text-align: center; font-size: 1.0625rem;
+      max-width: 640px; margin: 0 auto 56px; line-height: 1.7;
+    }
+
+    /* Capability grid */
+    .cap-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    @media (max-width: 900px) { .cap-grid { grid-template-columns: 1fr; } }
+    .cap-card {
+      background: var(--bg-card); backdrop-filter: blur(12px);
+      border: 1px solid var(--border); border-radius: 16px; padding: 32px;
+      position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s;
+    }
+    .cap-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--gradient-brand); opacity: 0; transition: opacity 0.3s;
+    }
+    .cap-card:hover { border-color: rgba(56, 189, 248, 0.35); transform: translateY(-4px); }
+    .cap-card:hover::before { opacity: 1; }
+    .cap-icon {
+      width: 48px; height: 48px; border-radius: 12px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-soft); color: var(--accent);
+    }
+    .cap-card h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 12px; }
+    .cap-card p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.65; margin-bottom: 16px; }
+    .cap-card a {
+      color: var(--accent); font-weight: 500; text-decoration: none; font-size: 0.875rem;
+      display: inline-flex; align-items: center; gap: 4px; transition: gap 0.2s;
+    }
+    .cap-card a:hover { gap: 8px; }
+    .cap-card a svg { width: 14px; height: 14px; transition: transform 0.2s; }
+
+    /* Feature highlight */
+    .feature-band {
+      position: relative; padding: 96px 32px; overflow: hidden;
+    }
+    .feature-band::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.03) 50%, transparent 100%);
+      pointer-events: none;
+    }
+    .feature-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    @media (max-width: 900px) { .feature-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .feature-text .section-label { text-align: left; }
+    .feature-text h2 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; text-align: left; }
+    .feature-text p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 16px; }
+    .feature-list { list-style: none; margin-top: 24px; }
+    .feature-list li {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 0;
+      border-bottom: 1px solid var(--border); font-size: 0.9375rem; color: var(--text-secondary);
+    }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list .check { color: var(--success); flex-shrink: 0; margin-top: 2px; }
+    .feature-visual {
+      aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden;
+      background: linear-gradient(135deg, rgba(56,189,248,0.08) 0%, rgba(129,140,248,0.06) 50%, rgba(192,132,252,0.04) 100%);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .feature-visual::after {
+      content: ''; position: absolute; inset: -1px; border-radius: 20px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.2), transparent 40%, rgba(192,132,252,0.15));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; padding: 1px; pointer-events: none;
+    }
+    .visual-placeholder { color: var(--text-dim); font-size: 0.875rem; text-align: center; padding: 20px; }
+
+    /* Bottom CTA */
+    .cta-section {
+      text-align: center; padding: 96px 32px 120px; position: relative;
+    }
+    .cta-section::before {
+      content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-inner h2 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
+    .cta-inner p { color: var(--text-secondary); font-size: 1.0625rem; max-width: 520px; margin: 0 auto 36px; }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border); padding: 40px 32px 32px;
+      text-align: center; font-size: 0.8125rem; color: var(--text-dim);
+    }
+    .footer a { color: var(--text-secondary); text-decoration: none; margin: 0 14px; transition: color 0.2s; }
+    .footer a:hover { color: var(--accent); }
+    .footer .disclaimer { max-width: 640px; margin: 0 auto 16px; }
+
+    /* Animations */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate { animation: fadeUp 0.7s ease-out both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Antalpha Prime</a>
+      <nav class="nav">
+        <a href="index.html" data-i18n="navHome">Home</a>
+        <a href="overview.html" class="active" data-i18n="navExplore">Explore RWA</a>
+        <a href="products.html" data-i18n="navProducts">Earn Products</a>
+        <a href="docs.html" data-i18n="navDocs">API & MCP Docs</a>
+      </nav>
+      <div class="header-actions">
+        <div class="lang-toggle">
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" data-lang="zh">中文</button>
+        </div>
+        <button type="button" class="btn-demo" data-i18n="btnDemo">Request Demo</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge animate" data-i18n="heroBadge">Institutional-Grade RWA Infrastructure</div>
+      <h1 class="animate delay-1"><span data-i18n="heroTitle1">Bridging Real-World Assets</span><br><span class="gradient-text" data-i18n="heroTitle2">to On-Chain Intelligence</span></h1>
+      <p class="animate delay-2" data-i18n="heroDesc">Antalpha Prime delivers the institutional-grade technology stack that powers tokenized real-world asset origination, risk surveillance, and custody verification — purpose-built for both human portfolio managers and autonomous AI agents.</p>
+      <div class="hero-stats animate delay-3">
+        <div class="hero-stat"><div class="val accent">$700M+</div><div class="lbl" data-i18n="statAssets">Assets Under Management</div></div>
+        <div class="hero-stat"><div class="val">4</div><div class="lbl" data-i18n="statProducts">Structured Earn Products</div></div>
+        <div class="hero-stat"><div class="val accent">128</div><div class="lbl" data-i18n="statAgents">AI Agents Connected</div></div>
+      </div>
+      <div class="hero-cta animate delay-4">
+        <a href="index.html#how-it-works" class="btn-primary" data-i18n="ctaPrimary">Explore Architecture</a>
+        <a href="docs.html" class="btn-secondary" data-i18n="ctaSecondary">Developer Portal</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Capabilities -->
+  <section class="section">
+    <div class="section-label animate" data-i18n="capLabel">Core Capabilities</div>
+    <h2 class="section-title animate delay-1" data-i18n="capTitle">End-to-End RWA Infrastructure</h2>
+    <p class="section-desc animate delay-2" data-i18n="capDesc">From originator due diligence to on-chain settlement, every layer of the RWA lifecycle is instrumented with verifiable data, real-time risk oracles, and institutional-grade custody.</p>
+    <div class="cap-grid">
+      <div class="cap-card animate delay-1">
+        <div class="cap-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        </div>
+        <h3 data-i18n="cap1Title">Origination & Underwriting</h3>
+        <p data-i18n="cap1Desc">Rigorous originator vetting, creditworthiness assessment, and collateral valuation — every pool undergoes institutional-standard due diligence before capital deployment.</p>
+        <a href="index.html#how-it-works" data-i18n="cap1Link">View architecture <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="cap-card animate delay-2">
+        <div class="cap-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 data-i18n="cap2Title">Risk Oracle & Surveillance</h3>
+        <p data-i18n="cap2Desc">Near real-time collateral monitoring, loan-to-value tracking, and liquidation threshold alerts — delivered via on-chain oracles and REST API for continuous risk visibility.</p>
+        <a href="index.html#technology" data-i18n="cap2Link">Technology stack <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="cap-card animate delay-3">
+        <div class="cap-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4"/></svg>
+        </div>
+        <h3 data-i18n="cap3Title">Proof of Reserve & Custody</h3>
+        <p data-i18n="cap3Desc">Cryptographic attestation of cold-wallet holdings, third-party custodian verification, and on-chain proof-of-reserve — ensuring collateral integrity at every checkpoint.</p>
+        <a href="index.html#transparency" data-i18n="cap3Link">Transparency dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="cap-card animate delay-2">
+        <div class="cap-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3 data-i18n="cap4Title">Structured Earn Products</h3>
+        <p data-i18n="cap4Desc">BTC-collateralized lending, hashrate-backed financing, power cost facilities, and multi-asset pools — each with transparent yield, maturity, and risk parameterization.</p>
+        <a href="products.html" data-i18n="cap4Link">View products <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="cap-card animate delay-3">
+        <div class="cap-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3 data-i18n="cap5Title">Smart Contract Architecture</h3>
+        <p data-i18n="cap5Desc">Audited, modular contract suite: standardized pool construction, multi-currency settlement, automated NAV computation, and programmable liquidation logic.</p>
+        <a href="docs.html#contracts" data-i18n="cap5Link">Contract hub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="cap-card animate delay-4">
+        <div class="cap-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+        </div>
+        <h3 data-i18n="cap6Title">AI-Agent & MCP Gateway</h3>
+        <p data-i18n="cap6Desc">Model Context Protocol integration, RESTful API, and real-time data feeds — enabling autonomous agents to discover yield, monitor risk, and verify custody seamlessly.</p>
+        <a href="docs.html#mcp" data-i18n="cap6Link">MCP documentation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: AI-Native -->
+  <section class="feature-band">
+    <div class="feature-inner">
+      <div class="feature-grid">
+        <div class="feature-text">
+          <div class="section-label" data-i18n="aiLabel">AI-Native Architecture</div>
+          <h2 data-i18n="aiTitle">Purpose-Built for<br>Autonomous Finance</h2>
+          <p data-i18n="aiSubtitle">Antalpha Prime is one of the first RWA infrastructure providers with native MCP support — allowing AI agents to programmatically discover, assess, and monitor tokenized asset pools without human intermediation.</p>
+          <ul class="feature-list">
+            <li><span class="check">✓</span><span data-i18n="aiF1">MCP-native tool registration: pools, risk, custody, yield curves</span></li>
+            <li><span class="check">✓</span><span data-i18n="aiF2">RESTful API with institutional-grade auth and rate limiting</span></li>
+            <li><span class="check">✓</span><span data-i18n="aiF3">Agent-compatible data schemas for LTV, NAV, and collateral</span></li>
+            <li><span class="check">✓</span><span data-i18n="aiF4">On-chain event streaming for real-time position monitoring</span></li>
+          </ul>
+        </div>
+        <div class="feature-visual">
+          <div class="visual-placeholder" data-i18n="aiVisual">AI Agent ↔ MCP ↔ Risk Oracle ↔ Smart Contracts<br>Architecture diagram placeholder</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: Transparency -->
+  <section class="feature-band">
+    <div class="feature-inner">
+      <div class="feature-grid" style="direction:rtl;">
+        <div class="feature-text" style="direction:ltr;">
+          <div class="section-label" data-i18n="trLabel">Verifiable Transparency</div>
+          <h2 data-i18n="trTitle">Every Basis Point,<br>Auditable On-Chain</h2>
+          <p data-i18n="trSubtitle">From BTC collateral attestation to daily NAV snapshots, every data point that drives investor returns is cryptographically verifiable and queryable through our transparency dashboard and API.</p>
+          <ul class="feature-list">
+            <li><span class="check">✓</span><span data-i18n="trF1">Proof-of-Reserve with cold wallet attestation by Cobo & Fireblocks</span></li>
+            <li><span class="check">✓</span><span data-i18n="trF2">Daily NAV computation with on-chain audit trail</span></li>
+            <li><span class="check">✓</span><span data-i18n="trF3">Global LTV monitoring with configurable liquidation thresholds</span></li>
+            <li><span class="check">✓</span><span data-i18n="trF4">Third-party security audits and public GitHub repository</span></li>
+          </ul>
+        </div>
+        <div class="feature-visual" style="direction:ltr;">
+          <div class="visual-placeholder" data-i18n="trVisual">Transparency Dashboard<br>TVL · LTV · NAV · Custody Proof<br>Data visualization placeholder</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner animate">
+      <h2 data-i18n="ctaTitle">Ready to Build on<br><span class="gradient-text" data-i18n="ctaTitleGradient">Institutional-Grade RWA?</span></h2>
+      <p data-i18n="ctaDesc">Whether you are an asset manager, a DeFi protocol, or an AI agent developer — Antalpha Prime provides the infrastructure to tokenize, monitor, and distribute real-world assets at scale.</p>
+      <div class="hero-cta">
+        <a href="docs.html" class="btn-primary" data-i18n="ctaDocsBtn">Open Developer Portal</a>
+        <a href="index.html#transparency" class="btn-secondary" data-i18n="ctaDashBtn">Explore Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="disclaimer"><strong>RWA Disclaimer:</strong> <span data-i18n="footerDisclaimer">Antalpha Prime acts solely as a technology and data provider. It does not hold, manage, or operate user funds on Web3. Any on-chain fundraising is conducted by independent third parties using our infrastructure.</span></p>
+    <div><a href="#" data-i18n="footerPrivacy">Privacy Policy</a><a href="#" data-i18n="footerLegal">Legal Disclaimer</a></div>
+    <p style="margin-top:12px;" data-i18n="footerCopy">© 2021 – 2026 Antalpha Platform Holdings Company</p>
+  </footer>
+
+  <script>
+    (function() {
+      var L = {
+        en: {
+          navHome: 'Home', navExplore: 'Explore RWA', navProducts: 'Earn Products', navDocs: 'API & MCP Docs', btnDemo: 'Request Demo',
+          heroBadge: 'Institutional-Grade RWA Infrastructure',
+          heroTitle1: 'Bridging Real-World Assets', heroTitle2: 'to On-Chain Intelligence',
+          heroDesc: 'Antalpha Prime delivers the institutional-grade technology stack that powers tokenized real-world asset origination, risk surveillance, and custody verification — purpose-built for both human portfolio managers and autonomous AI agents.',
+          statAssets: 'Assets Under Management', statProducts: 'Structured Earn Products', statAgents: 'AI Agents Connected',
+          ctaPrimary: 'Explore Architecture', ctaSecondary: 'Developer Portal',
+          capLabel: 'Core Capabilities', capTitle: 'End-to-End RWA Infrastructure',
+          capDesc: 'From originator due diligence to on-chain settlement, every layer of the RWA lifecycle is instrumented with verifiable data, real-time risk oracles, and institutional-grade custody.',
+          cap1Title: 'Origination & Underwriting', cap1Desc: 'Rigorous originator vetting, creditworthiness assessment, and collateral valuation — every pool undergoes institutional-standard due diligence before capital deployment.', cap1Link: 'View architecture →',
+          cap2Title: 'Risk Oracle & Surveillance', cap2Desc: 'Near real-time collateral monitoring, loan-to-value tracking, and liquidation threshold alerts — delivered via on-chain oracles and REST API for continuous risk visibility.', cap2Link: 'Technology stack →',
+          cap3Title: 'Proof of Reserve & Custody', cap3Desc: 'Cryptographic attestation of cold-wallet holdings, third-party custodian verification, and on-chain proof-of-reserve — ensuring collateral integrity at every checkpoint.', cap3Link: 'Transparency dashboard →',
+          cap4Title: 'Structured Earn Products', cap4Desc: 'BTC-collateralized lending, hashrate-backed financing, power cost facilities, and multi-asset pools — each with transparent yield, maturity, and risk parameterization.', cap4Link: 'View products →',
+          cap5Title: 'Smart Contract Architecture', cap5Desc: 'Audited, modular contract suite: standardized pool construction, multi-currency settlement, automated NAV computation, and programmable liquidation logic.', cap5Link: 'Contract hub →',
+          cap6Title: 'AI-Agent & MCP Gateway', cap6Desc: 'Model Context Protocol integration, RESTful API, and real-time data feeds — enabling autonomous agents to discover yield, monitor risk, and verify custody seamlessly.', cap6Link: 'MCP documentation →',
+          aiLabel: 'AI-Native Architecture', aiTitle: 'Purpose-Built for Autonomous Finance',
+          aiSubtitle: 'Antalpha Prime is one of the first RWA infrastructure providers with native MCP support — allowing AI agents to programmatically discover, assess, and monitor tokenized asset pools without human intermediation.',
+          aiF1: 'MCP-native tool registration: pools, risk, custody, yield curves',
+          aiF2: 'RESTful API with institutional-grade auth and rate limiting',
+          aiF3: 'Agent-compatible data schemas for LTV, NAV, and collateral',
+          aiF4: 'On-chain event streaming for real-time position monitoring',
+          aiVisual: 'AI Agent ↔ MCP ↔ Risk Oracle ↔ Smart Contracts\nArchitecture diagram placeholder',
+          trLabel: 'Verifiable Transparency', trTitle: 'Every Basis Point, Auditable On-Chain',
+          trSubtitle: 'From BTC collateral attestation to daily NAV snapshots, every data point that drives investor returns is cryptographically verifiable and queryable through our transparency dashboard and API.',
+          trF1: 'Proof-of-Reserve with cold wallet attestation by Cobo & Fireblocks',
+          trF2: 'Daily NAV computation with on-chain audit trail',
+          trF3: 'Global LTV monitoring with configurable liquidation thresholds',
+          trF4: 'Third-party security audits and public GitHub repository',
+          trVisual: 'Transparency Dashboard\nTVL · LTV · NAV · Custody Proof\nData visualization placeholder',
+          ctaTitle: 'Ready to Build on', ctaTitleGradient: 'Institutional-Grade RWA?',
+          ctaDesc: 'Whether you are an asset manager, a DeFi protocol, or an AI agent developer — Antalpha Prime provides the infrastructure to tokenize, monitor, and distribute real-world assets at scale.',
+          ctaDocsBtn: 'Open Developer Portal', ctaDashBtn: 'Explore Dashboard',
+          footerDisclaimer: 'Antalpha Prime acts solely as a technology and data provider. It does not hold, manage, or operate user funds on Web3. Any on-chain fundraising is conducted by independent third parties using our infrastructure.',
+          footerPrivacy: 'Privacy Policy', footerLegal: 'Legal Disclaimer',
+          footerCopy: '© 2021 – 2026 Antalpha Platform Holdings Company'
+        },
+        zh: {
+          navHome: '首页', navExplore: '探索 RWA', navProducts: '收益产品', navDocs: 'API & MCP 文档', btnDemo: '申请演示',
+          heroBadge: '机构级 RWA 基础设施',
+          heroTitle1: '连接真实世界资产', heroTitle2: '赋能链上智能金融',
+          heroDesc: 'Antalpha Prime 提供机构级技术栈，驱动代币化真实世界资产的发行、风险监控与托管验证——同时服务于专业投资组合管理人与自主运行的 AI 智能体。',
+          statAssets: '管理资产规模', statProducts: '结构化收益产品', statAgents: 'AI 智能体接入',
+          ctaPrimary: '探索技术架构', ctaSecondary: '开发者门户',
+          capLabel: '核心能力', capTitle: '端到端 RWA 基础设施',
+          capDesc: '从发行方尽职调查到链上结算，RWA 生命周期的每一层均配备可验证数据、实时风险预言机与机构级托管方案。',
+          cap1Title: '发行承销与尽调', cap1Desc: '严格的发行方资质审查、信用评估与抵押品估值——每个资金池在资金部署前均经过机构标准的尽职调查。', cap1Link: '查看架构 →',
+          cap2Title: '风险预言机与监控', cap2Desc: '近实时抵押品监控、贷款价值比追踪与清算阈值预警——通过链上预言机与 REST API 实现持续风险可见性。', cap2Link: '技术栈 →',
+          cap3Title: '储备证明与托管', cap3Desc: '冷钱包持仓的密码学证明、第三方托管机构验证与链上储备证明——确保每一个检查节点的抵押品完整性。', cap3Link: '透明度看板 →',
+          cap4Title: '结构化收益产品', cap4Desc: 'BTC 质押借贷、算力抵押融资、电费资金池与多资产组合——每款产品均具备透明的收益率、到期日与风险参数化设定。', cap4Link: '查看产品 →',
+          cap5Title: '智能合约架构', cap5Desc: '经审计的模块化合约套件：标准化资金池构建、多币种结算、自动 NAV 计算与可编程清算逻辑。', cap5Link: '合约中心 →',
+          cap6Title: 'AI 智能体与 MCP 网关', cap6Desc: 'Model Context Protocol 集成、RESTful API 与实时数据推送——使自主智能体无缝发现收益、监控风险并验证托管。', cap6Link: 'MCP 文档 →',
+          aiLabel: 'AI 原生架构', aiTitle: '为自主金融而生',
+          aiSubtitle: 'Antalpha Prime 是首批原生支持 MCP 的 RWA 基础设施提供方——使 AI 智能体能够以编程方式发现、评估和监控代币化资产池，无需人工中介。',
+          aiF1: 'MCP 原生工具注册：资金池、风险、托管、收益率曲线',
+          aiF2: '机构级认证与速率限制的 RESTful API',
+          aiF3: '兼容智能体的数据模式：LTV、NAV 与抵押品',
+          aiF4: '链上事件流推送，实现实时持仓监控',
+          aiVisual: 'AI 智能体 ↔ MCP ↔ 风险预言机 ↔ 智能合约\n架构示意占位',
+          trLabel: '可验证透明度', trTitle: '每一个基点，链上可审计',
+          trSubtitle: '从 BTC 抵押品证明到每日 NAV 快照，驱动投资者收益的每一个数据点均可通过密码学验证，并可通过透明度看板与 API 查询。',
+          trF1: 'Cobo & Fireblocks 冷钱包证明的储备证明',
+          trF2: '每日 NAV 计算，含链上审计追踪',
+          trF3: '全局 LTV 监控，可配置清算阈值',
+          trF4: '第三方安全审计与公开 GitHub 代码库',
+          trVisual: '透明度看板\nTVL · LTV · NAV · 托管证明\n数据可视化占位',
+          ctaTitle: '准备好构建于', ctaTitleGradient: '机构级 RWA 之上？',
+          ctaDesc: '无论您是资产管理人、DeFi 协议还是 AI 智能体开发者——Antalpha Prime 提供将真实世界资产代币化、监控与分发的基础设施，支撑规模化运营。',
+          ctaDocsBtn: '打开开发者门户', ctaDashBtn: '探索透明度看板',
+          footerDisclaimer: 'Antalpha Prime 仅作为技术与数据提供方，不持有、管理或运营用户在 Web3 上的资金。任何链上募资均由独立第三方在使用我们基础设施的前提下进行。',
+          footerPrivacy: '隐私政策', footerLegal: '法律声明',
+          footerCopy: '© 2021 – 2026 Antalpha Platform Holdings Company'
+        }
+      };
+      function apply(lang) {
+        document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n'); if (L[lang] && L[lang][k] != null) el.textContent = L[lang][k];
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
+        try { localStorage.setItem('antalpha-lang', lang); } catch(e) {}
+      }
+      document.querySelectorAll('.lang-btn').forEach(function(b) { b.addEventListener('click', function() { apply(b.getAttribute('data-lang')); }); });
+      var saved = null; try { saved = localStorage.getItem('antalpha-lang'); } catch(e) {}
+      apply(saved === 'zh' ? 'zh' : 'en');
+    })();
+  </script>
+</body>
+</html>

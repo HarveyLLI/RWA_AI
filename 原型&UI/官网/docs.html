@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API & MCP Docs — Antalpha Prime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-primary: #1e40af;
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-code: #0d1117;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
+      --border: #334155;
+      --border-subtle: #1e293b;
+      --success: #22c55e;
+      --warning: #eab308;
+      --method-get: #22c55e;
+      --method-post: #3b82f6;
+      --method-put: #eab308;
+      --method-delete: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+    code, pre, .mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .header-inner { max-width: 1400px; margin: 0 auto; padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 24px; }
+    .logo { font-weight: 700; font-size: 1.125rem; color: var(--text-primary); text-decoration: none; }
+    .logo-divider { width: 1px; height: 24px; background: var(--border); }
+    .logo-sub { font-size: 0.875rem; color: var(--text-secondary); font-weight: 500; }
+    .header-nav { display: flex; align-items: center; gap: 24px; }
+    .header-nav a { color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; font-weight: 500; }
+    .header-nav a:hover { color: var(--accent); }
+    .header-nav a.active { color: var(--accent); }
+    .btn-github {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-secondary); font-size: 0.8125rem; font-weight: 500; text-decoration: none;
+    }
+    .btn-github:hover { border-color: var(--accent); color: var(--text-primary); }
+    .btn-github svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* Layout: sidebar + content */
+    .docs-layout {
+      display: flex; max-width: 1400px; margin: 0 auto; min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 260px; flex-shrink: 0; border-right: 1px solid var(--border);
+      padding: 32px 0; position: sticky; top: 64px; height: calc(100vh - 64px); overflow-y: auto;
+    }
+    .sidebar-group { margin-bottom: 28px; }
+    .sidebar-label {
+      font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-dim); padding: 0 24px; margin-bottom: 8px; font-weight: 600;
+    }
+    .sidebar a {
+      display: flex; align-items: center; gap: 8px; padding: 8px 24px; font-size: 0.875rem;
+      color: var(--text-secondary); text-decoration: none; border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .sidebar a:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+    .sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+    .sidebar .badge-method {
+      font-size: 0.625rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      text-transform: uppercase; line-height: 1; font-family: 'JetBrains Mono', monospace;
+    }
+    .badge-get { background: rgba(34,197,94,0.15); color: var(--method-get); }
+    .badge-post { background: rgba(59,130,246,0.15); color: var(--method-post); }
+
+    .docs-content {
+      flex: 1; min-width: 0; padding: 48px 56px 80px;
+    }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .docs-content { padding: 32px 24px 60px; }
+    }
+
+    /* Page header */
+    .docs-hero { margin-bottom: 48px; }
+    .docs-hero h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .docs-hero p { color: var(--text-secondary); font-size: 1rem; max-width: 640px; }
+    .docs-hero .version-badge {
+      display: inline-block; padding: 4px 10px; background: var(--accent-soft);
+      color: var(--accent); border-radius: 6px; font-size: 0.75rem; font-weight: 600; margin-bottom: 16px;
+    }
+
+    /* Section */
+    .doc-section { margin-bottom: 64px; scroll-margin-top: 96px; }
+    .doc-section h2 {
+      font-size: 1.5rem; font-weight: 700; margin-bottom: 12px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    }
+    .doc-section h3 { font-size: 1.125rem; font-weight: 600; margin: 32px 0 12px; }
+    .doc-section > p { color: var(--text-secondary); font-size: 0.9375rem; margin-bottom: 16px; line-height: 1.7; }
+
+    /* Code viewer - Morpho style */
+    .code-viewer {
+      background: var(--bg-code); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; margin: 24px 0;
+    }
+    .code-viewer-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .code-viewer-title { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
+    .code-viewer-link {
+      display: flex; align-items: center; gap: 6px; color: var(--text-secondary);
+      text-decoration: none; font-size: 0.8125rem; font-weight: 500;
+    }
+    .code-viewer-link:hover { color: var(--accent); }
+    .code-viewer-link svg { width: 14px; height: 14px; }
+    .code-viewer-body { display: flex; overflow-x: auto; }
+    .code-lines {
+      padding: 16px 0; min-width: 48px; text-align: right;
+      user-select: none; border-right: 1px solid var(--border);
+    }
+    .code-lines span {
+      display: block; padding: 0 12px; font-size: 0.8125rem;
+      color: var(--text-dim); line-height: 1.7; font-family: 'JetBrains Mono', monospace;
+    }
+    .code-body { padding: 16px 20px; flex: 1; min-width: 0; }
+    .code-body pre { font-size: 0.8125rem; line-height: 1.7; color: var(--text-primary); white-space: pre; }
+    .code-body .kw { color: #c678dd; }
+    .code-body .fn { color: #61afef; }
+    .code-body .tp { color: #e5c07b; }
+    .code-body .str { color: #98c379; }
+    .code-body .cm { color: #5c6370; font-style: italic; }
+    .code-body .num { color: #d19a66; }
+
+    /* Endpoint card */
+    .endpoint-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      margin: 16px 0; overflow: hidden; transition: border-color 0.15s;
+    }
+    .endpoint-card:hover { border-color: rgba(56, 189, 248, 0.3); }
+    .endpoint-header {
+      display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+      cursor: pointer; user-select: none;
+    }
+    .endpoint-method {
+      font-size: 0.6875rem; font-weight: 700; padding: 4px 8px; border-radius: 4px;
+      text-transform: uppercase; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em;
+    }
+    .method-get { background: rgba(34,197,94,0.15); color: var(--method-get); }
+    .method-post { background: rgba(59,130,246,0.15); color: var(--method-post); }
+    .endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: var(--text-primary); }
+    .endpoint-desc { margin-left: auto; font-size: 0.8125rem; color: var(--text-dim); }
+    .endpoint-body { padding: 0 20px 20px; display: none; }
+    .endpoint-card.open .endpoint-body { display: block; }
+    .endpoint-card.open { border-color: rgba(56, 189, 248, 0.25); }
+    .endpoint-body p { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 12px; }
+    .endpoint-body .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
+    .response-block {
+      background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px; overflow-x: auto;
+    }
+    .response-block pre { font-size: 0.8125rem; line-height: 1.6; color: var(--text-primary); }
+
+    /* Params table */
+    .params-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; margin: 12px 0 20px; }
+    .params-table th {
+      text-align: left; padding: 10px 12px; font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--border);
+    }
+    .params-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); }
+    .params-table .param-name { font-family: 'JetBrains Mono', monospace; color: var(--text-primary); font-size: 0.8125rem; }
+    .params-table .param-type { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 0.75rem; }
+    .params-table .required { color: var(--warning); font-size: 0.6875rem; font-weight: 600; }
+
+    /* MCP tool card */
+    .mcp-tool {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; margin: 16px 0; transition: border-color 0.15s;
+    }
+    .mcp-tool:hover { border-color: rgba(56, 189, 248, 0.3); }
+    .mcp-tool-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .mcp-tool-name { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 600; color: var(--accent); }
+    .mcp-tool-tag {
+      font-size: 0.625rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+      background: rgba(56, 189, 248, 0.12); color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .mcp-tool p { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 12px; }
+    .mcp-tool .sig {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; color: var(--text-primary);
+      background: var(--bg-code); border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px 14px; display: block; margin: 12px 0;
+    }
+
+    /* Quick start box */
+    .quickstart {
+      background: linear-gradient(135deg, rgba(30,64,175,0.15) 0%, rgba(56,189,248,0.08) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 14px;
+      padding: 28px; margin: 24px 0;
+    }
+    .quickstart h4 { font-size: 1rem; margin-bottom: 12px; color: var(--accent); }
+    .quickstart p { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px; }
+    .quickstart .step { display: flex; gap: 12px; margin-bottom: 12px; }
+    .quickstart .step-num {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft);
+      color: var(--accent); display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+    }
+    .quickstart .step-text { color: var(--text-secondary); font-size: 0.875rem; }
+    .quickstart code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-size: 0.8125rem; color: var(--accent); }
+
+    /* Auth box */
+    .auth-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px 24px; margin: 16px 0; display: flex; align-items: flex-start; gap: 16px;
+    }
+    .auth-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--accent); }
+    .auth-box .title { font-weight: 600; font-size: 0.9375rem; margin-bottom: 4px; }
+    .auth-box p { color: var(--text-secondary); font-size: 0.8125rem; }
+
+    /* Footer */
+    .footer { border-top: 1px solid var(--border); padding: 32px; text-align: center; font-size: 0.8125rem; color: var(--text-secondary); }
+    .footer a { color: var(--accent); text-decoration: none; margin: 0 12px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">Antalpha Prime</a>
+        <div class="logo-divider"></div>
+        <span class="logo-sub">Developer Docs</span>
+      </div>
+      <a href="#" class="btn-github">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <div class="docs-layout">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-group">
+        <div class="sidebar-label">Getting started</div>
+        <a href="#overview" class="active">Overview</a>
+        <a href="#quickstart">Quick start</a>
+        <a href="#auth">Authentication</a>
+      </div>
+      <div class="sidebar-group">
+        <div class="sidebar-label">Smart Contracts</div>
+        <a href="#contracts">Contract Hub</a>
+        <a href="#contract-code">Source Code</a>
+        <a href="#audit">Audit Reports</a>
+      </div>
+      <div class="sidebar-group">
+        <div class="sidebar-label">REST API</div>
+        <a href="#api">API Overview</a>
+        <a href="#ep-pools"><span class="badge-method badge-get">GET</span> /pools</a>
+        <a href="#ep-pool-detail"><span class="badge-method badge-get">GET</span> /pools/:id</a>
+        <a href="#ep-nav"><span class="badge-method badge-get">GET</span> /pools/:id/nav</a>
+        <a href="#ep-ltv"><span class="badge-method badge-get">GET</span> /risk/ltv</a>
+        <a href="#ep-custody"><span class="badge-method badge-get">GET</span> /custody/proof</a>
+      </div>
+      <div class="sidebar-group">
+        <div class="sidebar-label">MCP Protocol</div>
+        <a href="#mcp">MCP Overview</a>
+        <a href="#mcp-tools">Tool List</a>
+        <a href="#mcp-setup">Server Setup</a>
+      </div>
+    </nav>
+
+    <main class="docs-content">
+      <!-- Overview -->
+      <div class="docs-hero" id="overview">
+        <span class="version-badge">v1.0.0-beta</span>
+        <h1>API & MCP Documentation</h1>
+        <p>Smart contracts, REST API, and MCP protocol for builders, AI agents, and institutional integrators. Access pool data, risk metrics, custody proof, and yield curves.</p>
+      </div>
+
+      <!-- Quick start -->
+      <section class="doc-section" id="quickstart">
+        <h2>Quick Start</h2>
+        <p>Get started in three steps—connect to our API and start querying pool data in minutes.</p>
+        <div class="quickstart">
+          <h4>Integration in 3 steps</h4>
+          <div class="step"><span class="step-num">1</span><span class="step-text">Request an API key from the <a href="index.html" style="color:var(--accent)">developer dashboard</a> or contact your integration manager.</span></div>
+          <div class="step"><span class="step-num">2</span><span class="step-text">Set the header <code>X-API-Key: your_key</code> on every request to <code>https://api.antalpha.com/v1/</code></span></div>
+          <div class="step"><span class="step-num">3</span><span class="step-text">Call <code>GET /pools</code> to list all active pools and their current APY.</span></div>
+        </div>
+      </section>
+
+      <!-- Auth -->
+      <section class="doc-section" id="auth">
+        <h2>Authentication</h2>
+        <p>All API requests require an API key passed in the request header. MCP tools use the same key for server-to-server auth.</p>
+        <div class="auth-box">
+          <div class="auth-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <div class="title">API Key (Header)</div>
+            <p>Include <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;font-size:0.8125rem;color:var(--accent)">X-API-Key: ap_live_xxxxxxxxxxxx</code> in every request. Keys are scoped to read-only by default.</p>
+          </div>
+        </div>
+        <div class="code-viewer">
+          <div class="code-viewer-header">
+            <span class="code-viewer-title">Example request</span>
+          </div>
+          <div class="code-viewer-body">
+            <div class="code-lines"><span>1</span><span>2</span><span>3</span></div>
+            <div class="code-body"><pre><span class="fn">curl</span> <span class="str">https://api.antalpha.com/v1/pools</span> \
+  <span class="kw">-H</span> <span class="str">"X-API-Key: ap_live_xxxxxxxxxxxx"</span> \
+  <span class="kw">-H</span> <span class="str">"Accept: application/json"</span></pre></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Smart Contracts -->
+      <section class="doc-section" id="contracts">
+        <h2>Smart Contract Hub</h2>
+        <p>Standardized pool construction, multi-currency settlement, and automated NAV. All contracts are audited by independent firms.</p>
+
+        <h3 id="contract-code">Source Code</h3>
+        <p>Core contract: pool lifecycle, collateral management, and liquidation logic.</p>
+        <div class="code-viewer">
+          <div class="code-viewer-header">
+            <span class="code-viewer-title">AntalphaPool.sol</span>
+            <a href="#" class="code-viewer-link">
+              GitHub
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+          <div class="code-viewer-body">
+            <div class="code-lines"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span></div>
+            <div class="code-body"><pre><span class="cm">// SPDX-License-Identifier: MIT</span>
+<span class="kw">pragma solidity</span> ^<span class="num">0.8.20</span>;
+
+<span class="kw">import</span> <span class="str">"@openzeppelin/contracts/token/ERC20/IERC20.sol"</span>;
+<span class="kw">import</span> <span class="str">"./interfaces/IRiskOracle.sol"</span>;
+
+<span class="cm">/// @title AntalphaPool — Fixed-maturity RWA lending pool</span>
+<span class="cm">/// @notice Manages deposits, NAV accrual, and redemption</span>
+<span class="kw">contract</span> <span class="tp">AntalphaPool</span> {
+
+    <span class="tp">IERC20</span> <span class="kw">public immutable</span> depositToken;
+    <span class="tp">IRiskOracle</span> <span class="kw">public immutable</span> riskOracle;
+    <span class="tp">uint256</span> <span class="kw">public</span> totalDeposits;
+    <span class="tp">uint256</span> <span class="kw">public</span> currentNAV;
+
+    <span class="kw">mapping</span>(<span class="tp">address</span> => <span class="tp">uint256</span>) <span class="kw">public</span> balances;
+
+    <span class="kw">event</span> <span class="fn">Deposit</span>(<span class="tp">address indexed</span> user, <span class="tp">uint256</span> amount);
+    <span class="kw">event</span> <span class="fn">Redeem</span>(<span class="tp">address indexed</span> user, <span class="tp">uint256</span> amount);
+
+    <span class="kw">constructor</span>(<span class="tp">address</span> _token, <span class="tp">address</span> _oracle) {
+        depositToken = <span class="tp">IERC20</span>(_token);
+        riskOracle = <span class="tp">IRiskOracle</span>(_oracle);
+    }
+
+    <span class="cm">/// @notice Deposit stablecoins into the pool</span>
+    <span class="kw">function</span> <span class="fn">deposit</span>(<span class="tp">uint256</span> amount) <span class="kw">external</span> {
+        depositToken.<span class="fn">transferFrom</span>(<span class="kw">msg.sender</span>, <span class="kw">address</span>(<span class="kw">this</span>), amount);
+        balances[<span class="kw">msg.sender</span>] += amount;
+        totalDeposits += amount;</pre></div>
+          </div>
+        </div>
+
+        <h3 id="audit">Audit Reports</h3>
+        <p>Contracts have been audited by independent security firms. Reports are available below.</p>
+        <div class="auth-box">
+          <div class="auth-icon" style="background:rgba(34,197,94,0.12);color:var(--success);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="title">Security Audit — Passed</div>
+            <p>Last audit: Jan 2026. No critical or high issues found. <a href="#" style="color:var(--accent)">Download full report (PDF)</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- REST API -->
+      <section class="doc-section" id="api">
+        <h2>REST API Reference</h2>
+        <p>Base URL: <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;font-size:0.8125rem;color:var(--accent)">https://api.antalpha.com/v1</code>. All responses are JSON. Rate limit: 100 req/min per key.</p>
+
+        <!-- GET /pools -->
+        <div class="endpoint-card open" id="ep-pools">
+          <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/pools</span>
+            <span class="endpoint-desc">List all active pools</span>
+          </div>
+          <div class="endpoint-body">
+            <p>Returns all active lending pools with current APY, TVL, maturity, and risk grade.</p>
+            <div class="label">Parameters</div>
+            <table class="params-table">
+              <thead><tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">status</td><td class="param-type">string</td><td>No</td><td>Filter: <code>active</code>, <code>matured</code>, <code>all</code></td></tr>
+                <tr><td class="param-name">sort</td><td class="param-type">string</td><td>No</td><td>Sort by: <code>apy</code>, <code>tvl</code>, <code>maturity</code></td></tr>
+              </tbody>
+            </table>
+            <div class="label">Response</div>
+            <div class="response-block"><pre>{
+  <span class="str">"data"</span>: [
+    {
+      <span class="str">"id"</span>: <span class="str">"pool_btc_earn_01"</span>,
+      <span class="str">"name"</span>: <span class="str">"BTC-Backed Earn"</span>,
+      <span class="str">"type"</span>: <span class="str">"collateralized_lending"</span>,
+      <span class="str">"apy"</span>: <span class="num">0.085</span>,
+      <span class="str">"tvl"</span>: <span class="num">12400000</span>,
+      <span class="str">"currency"</span>: <span class="str">"USDT"</span>,
+      <span class="str">"maturity"</span>: <span class="str">"2026-06-30"</span>,
+      <span class="str">"risk_grade"</span>: <span class="str">"A"</span>,
+      <span class="str">"ltv"</span>: <span class="num">0.65</span>
+    }
+  ],
+  <span class="str">"total"</span>: <span class="num">4</span>
+}</pre></div>
+          </div>
+        </div>
+
+        <!-- GET /pools/:id -->
+        <div class="endpoint-card" id="ep-pool-detail">
+          <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/pools/:id</span>
+            <span class="endpoint-desc">Pool detail with risk metrics</span>
+          </div>
+          <div class="endpoint-body">
+            <p>Returns full pool detail: originator info, collateral breakdown, LTV history, custody proof hash.</p>
+            <div class="label">Response</div>
+            <div class="response-block"><pre>{
+  <span class="str">"id"</span>: <span class="str">"pool_btc_earn_01"</span>,
+  <span class="str">"name"</span>: <span class="str">"BTC-Backed Earn"</span>,
+  <span class="str">"originator"</span>: { <span class="str">"name"</span>: <span class="str">"BITMAIN"</span>, <span class="str">"rating"</span>: <span class="str">"A+"</span> },
+  <span class="str">"collateral"</span>: {
+    <span class="str">"type"</span>: <span class="str">"BTC"</span>,
+    <span class="str">"amount_btc"</span>: <span class="num">245.8</span>,
+    <span class="str">"custody_proof"</span>: <span class="str">"0x7a3b…c4d2"</span>
+  },
+  <span class="str">"current_ltv"</span>: <span class="num">0.65</span>,
+  <span class="str">"liquidation_ltv"</span>: <span class="num">0.85</span>,
+  <span class="str">"apy"</span>: <span class="num">0.085</span>,
+  <span class="str">"nav_per_token"</span>: <span class="num">1.0042</span>
+}</pre></div>
+          </div>
+        </div>
+
+        <!-- GET /pools/:id/nav -->
+        <div class="endpoint-card" id="ep-nav">
+          <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/pools/:id/nav</span>
+            <span class="endpoint-desc">NAV history for a pool</span>
+          </div>
+          <div class="endpoint-body">
+            <p>Returns daily NAV snapshots for a specific pool. Useful for charting and yield calculation.</p>
+            <div class="label">Parameters</div>
+            <table class="params-table">
+              <thead><tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">from</td><td class="param-type">date</td><td>No</td><td>Start date (ISO 8601)</td></tr>
+                <tr><td class="param-name">to</td><td class="param-type">date</td><td>No</td><td>End date (ISO 8601)</td></tr>
+              </tbody>
+            </table>
+            <div class="label">Response</div>
+            <div class="response-block"><pre>{
+  <span class="str">"pool_id"</span>: <span class="str">"pool_btc_earn_01"</span>,
+  <span class="str">"snapshots"</span>: [
+    { <span class="str">"date"</span>: <span class="str">"2026-02-25"</span>, <span class="str">"nav"</span>: <span class="num">1.0040</span> },
+    { <span class="str">"date"</span>: <span class="str">"2026-02-26"</span>, <span class="str">"nav"</span>: <span class="num">1.0042</span> }
+  ]
+}</pre></div>
+          </div>
+        </div>
+
+        <!-- GET /risk/ltv -->
+        <div class="endpoint-card" id="ep-ltv">
+          <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/risk/ltv</span>
+            <span class="endpoint-desc">Global LTV and risk snapshot</span>
+          </div>
+          <div class="endpoint-body">
+            <p>Returns real-time LTV ratios and risk indicators across all pools monitored by the risk oracle.</p>
+            <div class="label">Response</div>
+            <div class="response-block"><pre>{
+  <span class="str">"global_ltv"</span>: <span class="num">0.62</span>,
+  <span class="str">"pools"</span>: [
+    { <span class="str">"id"</span>: <span class="str">"pool_btc_earn_01"</span>, <span class="str">"ltv"</span>: <span class="num">0.65</span>, <span class="str">"status"</span>: <span class="str">"healthy"</span> },
+    { <span class="str">"id"</span>: <span class="str">"pool_miner_02"</span>, <span class="str">"ltv"</span>: <span class="num">0.58</span>, <span class="str">"status"</span>: <span class="str">"healthy"</span> }
+  ],
+  <span class="str">"updated_at"</span>: <span class="str">"2026-02-26T10:30:00Z"</span>
+}</pre></div>
+          </div>
+        </div>
+
+        <!-- GET /custody/proof -->
+        <div class="endpoint-card" id="ep-custody">
+          <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+            <span class="endpoint-method method-get">GET</span>
+            <span class="endpoint-path">/custody/proof</span>
+            <span class="endpoint-desc">Custody attestation data</span>
+          </div>
+          <div class="endpoint-body">
+            <p>Returns custody proof for BTC collateral: cold wallet addresses, attestation hashes, and custodian info.</p>
+            <div class="label">Response</div>
+            <div class="response-block"><pre>{
+  <span class="str">"custodian"</span>: <span class="str">"Cobo Custody"</span>,
+  <span class="str">"wallets"</span>: [
+    { <span class="str">"address"</span>: <span class="str">"bc1q…x7k9"</span>, <span class="str">"balance_btc"</span>: <span class="num">120.5</span> },
+    { <span class="str">"address"</span>: <span class="str">"bc1q…m3p2"</span>, <span class="str">"balance_btc"</span>: <span class="num">125.3</span> }
+  ],
+  <span class="str">"attestation_hash"</span>: <span class="str">"0x9f8e…d1a4"</span>,
+  <span class="str">"verified_at"</span>: <span class="str">"2026-02-26T00:00:00Z"</span>
+}</pre></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MCP -->
+      <section class="doc-section" id="mcp">
+        <h2>MCP (Model Context Protocol)</h2>
+        <p>Connect AI agents to Antalpha Prime data via MCP. Agents can discover products, monitor risk, and verify custody—all through standardized tool calls.</p>
+
+        <h3 id="mcp-tools">Available Tools</h3>
+
+        <div class="mcp-tool">
+          <div class="mcp-tool-header">
+            <span class="mcp-tool-name">get_pool_list</span>
+            <span class="mcp-tool-tag">Read</span>
+          </div>
+          <p>Returns all active lending pools with APY, TVL, maturity, and risk grade. Use for opportunity discovery.</p>
+          <code class="sig">get_pool_list(status?: "active" | "matured" | "all") → Pool[]</code>
+          <div class="response-block" style="margin-top:12px"><pre>{
+  <span class="str">"tool"</span>: <span class="str">"get_pool_list"</span>,
+  <span class="str">"result"</span>: [
+    { <span class="str">"id"</span>: <span class="str">"pool_btc_earn_01"</span>, <span class="str">"name"</span>: <span class="str">"BTC-Backed Earn"</span>, <span class="str">"apy"</span>: <span class="num">0.085</span> }
+  ]
+}</pre></div>
+        </div>
+
+        <div class="mcp-tool">
+          <div class="mcp-tool-header">
+            <span class="mcp-tool-name">get_pool_apy</span>
+            <span class="mcp-tool-tag">Read</span>
+          </div>
+          <p>Get current APY and yield curve for a specific pool. Agents use this to compare returns.</p>
+          <code class="sig">get_pool_apy(pool_id: string) → { apy: number, nav: number, maturity: string }</code>
+        </div>
+
+        <div class="mcp-tool">
+          <div class="mcp-tool-header">
+            <span class="mcp-tool-name">get_realtime_ltv</span>
+            <span class="mcp-tool-tag">Read</span>
+          </div>
+          <p>Real-time LTV and risk status across pools. Agents use this to monitor health and alert on thresholds.</p>
+          <code class="sig">get_realtime_ltv(pool_id?: string) → { global_ltv: number, pools: RiskEntry[] }</code>
+        </div>
+
+        <div class="mcp-tool">
+          <div class="mcp-tool-header">
+            <span class="mcp-tool-name">get_custody_proof</span>
+            <span class="mcp-tool-tag">Read</span>
+          </div>
+          <p>Verify custody attestation and cold wallet balances for a pool's BTC collateral.</p>
+          <code class="sig">get_custody_proof(pool_id: string) → { custodian: string, wallets: Wallet[], hash: string }</code>
+        </div>
+
+        <div class="mcp-tool">
+          <div class="mcp-tool-header">
+            <span class="mcp-tool-name">verify_kyc_status</span>
+            <span class="mcp-tool-tag">Read</span>
+          </div>
+          <p>Check the KYC/AML status of a wallet address. Returns verification level and expiry.</p>
+          <code class="sig">verify_kyc_status(address: string) → { verified: boolean, level: string, expires: string }</code>
+        </div>
+
+        <h3 id="mcp-setup">Server Setup</h3>
+        <p>Add the Antalpha Prime MCP server to your AI agent configuration. The server is hosted and requires your API key.</p>
+        <div class="code-viewer">
+          <div class="code-viewer-header">
+            <span class="code-viewer-title">mcp-config.json</span>
+          </div>
+          <div class="code-viewer-body">
+            <div class="code-lines"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span></div>
+            <div class="code-body"><pre>{
+  <span class="str">"mcpServers"</span>: {
+    <span class="str">"antalpha-prime"</span>: {
+      <span class="str">"url"</span>: <span class="str">"https://mcp.antalpha.com/sse"</span>,
+      <span class="str">"transport"</span>: <span class="str">"sse"</span>,
+      <span class="str">"headers"</span>: {
+        <span class="str">"X-API-Key"</span>: <span class="str">"ap_live_xxxxxxxxxxxx"</span>
+      },
+      <span class="str">"description"</span>: <span class="str">"Antalpha Prime RWA data — pools, risk, custody"</span>
+    }
+  }
+}</pre></div>
+          </div>
+        </div>
+        <div class="quickstart" style="margin-top:24px">
+          <h4>MCP Quick Start</h4>
+          <div class="step"><span class="step-num">1</span><span class="step-text">Copy the config above into your agent's MCP server configuration file.</span></div>
+          <div class="step"><span class="step-num">2</span><span class="step-text">Replace <code>ap_live_xxxxxxxxxxxx</code> with your API key.</span></div>
+          <div class="step"><span class="step-num">3</span><span class="step-text">Your agent can now call <code>get_pool_list</code>, <code>get_realtime_ltv</code>, etc.</span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p><strong>RWA Disclaimer:</strong> Antalpha Prime acts solely as a technology and data provider.</p>
+    <div style="margin-top:12px;"><a href="index.html">Home</a><a href="#">Privacy Policy</a><a href="#">Legal Disclaimer</a></div>
+    <p style="margin-top:12px;">© 2021 – 2026 Antalpha Platform Holdings Company</p>
+  </footer>
+
+  <script>
+    var links = document.querySelectorAll('.sidebar a');
+    function setActive(hash) {
+      links.forEach(function(a) {
+        a.classList.toggle('active', a.getAttribute('href') === hash);
+      });
+    }
+    links.forEach(function(a) {
+      a.addEventListener('click', function() { setActive(a.getAttribute('href')); });
+    });
+    window.addEventListener('hashchange', function() { setActive(location.hash); });
+  </script>
+</body>
+</html>

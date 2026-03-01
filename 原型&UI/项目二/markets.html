@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>固定收益市场 — WorldLend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-primary: #2563eb;
+      --bg-primary: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --bg-card: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-dim: #94a3b8;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --gold: #ca8a04;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+    .header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .header-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 700; font-size: 1.25rem; color: var(--text-primary); text-decoration: none; }
+    .nav { display: flex; align-items: center; gap: 4px; }
+    .nav a { color: var(--text-secondary); text-decoration: none; font-size: 0.9375rem; font-weight: 500; padding: 8px 14px; border-radius: 8px; }
+    .nav a:hover { color: var(--accent); background: var(--accent-soft); }
+    .nav a.active { color: var(--accent); background: var(--accent-soft); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .lang-btn { padding: 8px 14px; border: none; background: transparent; color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+    .lang-btn.active { background: var(--blue-primary); color: #fff; }
+    .btn-connect { background: var(--blue-primary); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; }
+    .btn-connect:hover { background: #1d4ed8; }
+    .main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .page-header p { color: var(--text-secondary); font-size: 1rem; }
+    .stats-row { display: flex; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; flex: 1; min-width: 160px; }
+    .stat-card .label { font-size: 0.8125rem; color: var(--text-dim); margin-bottom: 4px; }
+    .stat-card .val { font-size: 1.5rem; font-weight: 700; }
+    .stat-card .val.green { color: var(--success); }
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .filter-btn { padding: 8px 16px; border: 1px solid var(--border); background: var(--bg-card); border-radius: 8px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .vault-list { display: flex; flex-direction: column; gap: 12px; }
+    .vault-row {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 24px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 120px; gap: 16px; align-items: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .vault-row:hover { border-color: rgba(37,99,235,0.3); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+    @media (max-width: 900px) { .vault-row { grid-template-columns: 1fr 1fr; } }
+    .vault-row .name { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
+    .vault-row .token { font-size: 0.8125rem; color: var(--text-dim); font-family: monospace; }
+    .vault-row .col-label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 2px; }
+    .vault-row .col-val { font-size: 1rem; font-weight: 600; }
+    .vault-row .col-val.apy { color: var(--success); font-size: 1.125rem; }
+    .vault-row .col-val.gold { color: var(--gold); }
+    .btn-deposit {
+      display: inline-block; padding: 10px 24px; background: var(--blue-primary); color: #fff;
+      border: none; border-radius: 8px; font-weight: 600; font-size: 0.9375rem;
+      text-decoration: none; text-align: center; cursor: pointer;
+    }
+    .btn-deposit:hover { background: #1d4ed8; }
+    .list-header {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 120px; gap: 16px;
+      padding: 0 24px 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-dim); font-weight: 600;
+    }
+    @media (max-width: 900px) { .list-header { display: none; } }
+    .footer { border-top: 1px solid var(--border); padding: 40px 24px 32px; margin-top: 64px; font-size: 0.8125rem; color: var(--text-secondary); text-align: center; }
+    .footer a { color: var(--accent); text-decoration: none; margin: 0 12px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">WorldLend</a>
+      <nav class="nav">
+        <a href="index.html" data-i18n="navHome">总览</a>
+        <a href="markets.html" class="active" data-i18n="navMarkets">产品</a>
+        <a href="index.html" data-i18n="navPositions">投资组合</a>
+        <a href="index.html" data-i18n="navHelp">帮助中心</a>
+      </nav>
+      <div class="header-actions">
+        <div class="lang-toggle">
+          <button type="button" class="lang-btn active" data-lang="zh">中文</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button type="button" class="btn-connect" data-i18n="connectWallet">连接钱包</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 data-i18n="pageTitle">固定收益市场</h1>
+      <p data-i18n="pageDesc">按到期日选择结构化金库，查看固定年化收益、抵押覆盖与 $ANTA 权益折扣，一键存入获取收益凭证。</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="label" data-i18n="statTvl">协议总锁仓 (TVL)</div>
+        <div class="val">$52.4M</div>
+      </div>
+      <div class="stat-card">
+        <div class="label" data-i18n="statVaults">在售产品</div>
+        <div class="val">4</div>
+      </div>
+      <div class="stat-card">
+        <div class="label" data-i18n="statApy">固定 APY 区间</div>
+        <div class="val green">8.5 – 10.5%</div>
+      </div>
+      <div class="stat-card">
+        <div class="label" data-i18n="statCollateral">总抵押 BTC</div>
+        <div class="val">1,330 BTC</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button type="button" class="filter-btn active" data-i18n="filterAll">全部</button>
+      <button type="button" class="filter-btn" data-i18n="filterActive">进行中</button>
+      <button type="button" class="filter-btn" data-i18n="filterUpcoming">即将到期</button>
+    </div>
+
+    <div class="list-header">
+      <span data-i18n="colProduct">产品</span>
+      <span data-i18n="colMaturity">到期日</span>
+      <span data-i18n="colDays">距到期</span>
+      <span data-i18n="colApy">固定 APY</span>
+      <span data-i18n="colAnta">$ANTA 折扣</span>
+      <span data-i18n="colAction">操作</span>
+    </div>
+
+    <div class="vault-list">
+      <div class="vault-row">
+        <div><div class="name" data-i18n="v1Name">2026 Q2 固定收益池</div><div class="token">wlUSDT-Jun26</div></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-06-30</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v1Days">124 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">8.50%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">10%</div></div>
+        <div><a href="vault-detail.html?vault=jun26" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
+      </div>
+      <div class="vault-row">
+        <div><div class="name" data-i18n="v2Name">2026 Q3 固定收益池</div><div class="token">wlUSDT-Sep26</div></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-09-30</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v2Days">216 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">9.20%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">12%</div></div>
+        <div><a href="vault-detail.html?vault=sep26" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
+      </div>
+      <div class="vault-row">
+        <div><div class="name" data-i18n="v3Name">2026 Q4 固定收益池</div><div class="token">wlUSDT-Dec26</div></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-12-31</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v3Days">308 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">9.80%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">15%</div></div>
+        <div><a href="vault-detail.html?vault=dec26" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
+      </div>
+      <div class="vault-row">
+        <div><div class="name" data-i18n="v4Name">2027 Q1 固定收益池</div><div class="token">wlUSDT-Mar27</div></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2027-03-31</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v4Days">398 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">10.50%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">18%</div></div>
+        <div><a href="vault-detail.html?vault=mar27" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <a href="../官网/index.html" target="_blank">Antalpha Prime</a>
+    <a href="#" data-i18n="footerPrivacy">隐私政策</a>
+    <a href="#" data-i18n="footerLegal">法律声明</a>
+    <div style="margin-top:16px;" data-i18n="footerDisclaimer">WorldLend 运营主体为独立离岸基金/SPV（BVI）。产品涉及智能合约与代币风险，请谨慎参与。</div>
+  </footer>
+
+  <script>
+    (function() {
+      var L = {
+        zh: {
+          navHome: '总览', navMarkets: '产品', navPositions: '投资组合', navHelp: '帮助中心', connectWallet: '连接钱包',
+          pageTitle: '固定收益市场', pageDesc: '按到期日选择结构化金库，查看固定年化收益、抵押覆盖与 $ANTA 权益折扣，一键存入获取收益凭证。',
+          statTvl: '协议总锁仓 (TVL)', statVaults: '在售产品', statApy: '固定 APY 区间', statCollateral: '总抵押 BTC',
+          filterAll: '全部', filterActive: '进行中', filterUpcoming: '即将到期',
+          colProduct: '产品', colMaturity: '到期日', colDays: '距到期', colApy: '固定 APY', colAnta: '$ANTA 折扣', colAction: '操作', btnDeposit: '存入',
+          v1Name: '2026 Q2 固定收益池', v2Name: '2026 Q3 固定收益池', v3Name: '2026 Q4 固定收益池', v4Name: '2027 Q1 固定收益池',
+          v1Days: '124 天', v2Days: '216 天', v3Days: '308 天', v4Days: '398 天',
+          footerPrivacy: '隐私政策', footerLegal: '法律声明',
+          footerDisclaimer: 'WorldLend 运营主体为独立离岸基金/SPV（BVI）。产品涉及智能合约与代币风险，请谨慎参与。'
+        },
+        en: {
+          navHome: 'Overview', navMarkets: 'Products', navPositions: 'Portfolio', navHelp: 'Help Center', connectWallet: 'Connect Wallet',
+          pageTitle: 'Fixed Income Markets', pageDesc: 'Choose a structured vault by maturity. View fixed APY, collateral coverage, and $ANTA equity discount. Deposit USDT to receive yield tokens.',
+          statTvl: 'Total Value Locked', statVaults: 'Active Products', statApy: 'Fixed APY Range', statCollateral: 'Total BTC Collateral',
+          filterAll: 'All', filterActive: 'Active', filterUpcoming: 'Near Maturity',
+          colProduct: 'Product', colMaturity: 'Maturity', colDays: 'To Maturity', colApy: 'Fixed APY', colAnta: '$ANTA Discount', colAction: 'Action', btnDeposit: 'Deposit',
+          v1Name: 'Q2 2026 Fixed Yield', v2Name: 'Q3 2026 Fixed Yield', v3Name: 'Q4 2026 Fixed Yield', v4Name: 'Q1 2027 Fixed Yield',
+          v1Days: '124 days', v2Days: '216 days', v3Days: '308 days', v4Days: '398 days',
+          footerPrivacy: 'Privacy', footerLegal: 'Legal',
+          footerDisclaimer: 'WorldLend is operated by an offshore fund/SPV (BVI). Products involve smart contract and token risk.'
+        }
+      };
+      function getLang() { return localStorage.getItem('worldlend-lang') || 'zh'; }
+      function apply(lang) {
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+        document.title = L[lang].pageTitle + ' — WorldLend';
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n'); if (L[lang][k] != null) el.textContent = L[lang][k];
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
+        localStorage.setItem('worldlend-lang', lang);
+      }
+      document.querySelectorAll('.lang-btn').forEach(function(b) { b.addEventListener('click', function() { apply(b.getAttribute('data-lang')); }); });
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.addEventListener('click', function() { document.querySelectorAll('.filter-btn').forEach(function(x){x.classList.remove('active');}); b.classList.add('active'); }); });
+      apply(getLang());
+    })();
+  </script>
+</body>
+</html>

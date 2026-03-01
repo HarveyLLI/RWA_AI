@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Earn Products — Antalpha Prime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-primary: #1e40af;
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --accent: #38bdf8;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 700; font-size: 1.25rem; color: var(--text-primary); text-decoration: none; }
+    .nav { display: flex; align-items: center; gap: 28px; }
+    .nav a { color: var(--text-secondary); text-decoration: none; font-size: 0.9375rem; font-weight: 500; }
+    .nav a:hover, .nav a.active { color: var(--accent); }
+    .btn-demo { background: var(--blue-primary); color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; }
+    .main { max-width: 900px; margin: 0 auto; padding: 64px 32px 80px; }
+    .page-title { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+    .page-desc { color: var(--text-secondary); margin-bottom: 40px; }
+    .product-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 48px; }
+    .product-list a {
+      display: flex; align-items: center; justify-content: space-between; padding: 20px 24px;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      text-decoration: none; color: inherit; transition: border-color 0.2s;
+    }
+    .product-list a:hover { border-color: var(--accent); }
+    .product-list .name { font-weight: 600; }
+    .product-list .apy { font-size: 1.125rem; font-weight: 700; color: var(--success); }
+    .product-detail {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px;
+      margin-bottom: 32px; scroll-margin-top: 100px;
+    }
+    .product-detail .type { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 8px; }
+    .product-detail h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    .product-detail p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 16px; }
+    .product-detail .apy { font-size: 1.25rem; font-weight: 700; color: var(--success); margin-bottom: 20px; }
+    .product-detail .back { color: var(--accent); text-decoration: none; font-size: 0.9375rem; }
+    .product-detail .back:hover { text-decoration: underline; }
+    .footer { border-top: 1px solid var(--border); padding: 32px; text-align: center; font-size: 0.8125rem; color: var(--text-secondary); }
+    .footer a { color: var(--accent); text-decoration: none; margin: 0 12px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Antalpha Prime</a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="overview.html">RWA Tech Overview</a>
+        <a href="products.html" class="active">Earn Products</a>
+        <a href="docs.html">Developer & API</a>
+      </nav>
+      <button type="button" class="btn-demo">Request Demo</button>
+    </div>
+  </header>
+  <main class="main">
+    <h1 class="page-title">Earn products on the platform</h1>
+    <p class="page-desc">Products powered by Antalpha Prime infrastructure. Each offers transparent risk and yield; details below.</p>
+    <nav class="product-list" aria-label="Product quick links">
+      <a href="#btc-earn"><span class="name">BTC-Backed Earn</span><span class="apy">8.5% APY</span></a>
+      <a href="#miner-financing"><span class="name">Miner Financing Pool</span><span class="apy">10.2% APY</span></a>
+      <a href="#power-cost"><span class="name">Power Cost Financing</span><span class="apy">9.0% APY</span></a>
+      <a href="#multi-asset"><span class="name">Multi-Asset Earn</span><span class="apy">7.8% APY</span></a>
+    </nav>
+    <section class="product-detail" id="btc-earn">
+      <div class="type">Collateralized Lending</div>
+      <h2>BTC-Backed Earn</h2>
+      <p>Stable yield backed by crypto collateral. Originator due diligence and custody proof. Risk oracle and real-time LTV visibility.</p>
+      <div class="apy">8.5% APY</div>
+      <a href="index.html#transparency" class="back">← Back to transparency dashboard</a>
+    </section>
+    <section class="product-detail" id="miner-financing">
+      <div class="type">Mining Machine Loan</div>
+      <h2>Miner Financing Pool</h2>
+      <p>Financing for mining equipment. Repayment tied to hashrate and equipment collateral. Transparent risk parameters.</p>
+      <div class="apy">10.2% APY</div>
+      <a href="index.html#transparency" class="back">← Back to transparency dashboard</a>
+    </section>
+    <section class="product-detail" id="power-cost">
+      <div class="type">Electricity Loan</div>
+      <h2>Power Cost Financing</h2>
+      <p>Power cost financing for miners. Short-term working capital with transparent risk. Monitored via Antalpha Prime infrastructure.</p>
+      <div class="apy">9.0% APY</div>
+      <a href="index.html#transparency" class="back">← Back to transparency dashboard</a>
+    </section>
+    <section class="product-detail" id="multi-asset">
+      <div class="type">Collateralized Lending</div>
+      <h2>Multi-Asset Earn</h2>
+      <p>Diversified pool with multiple collateral types. Risk oracle and real-time LTV visibility. Standardized settlement and NAV automation.</p>
+      <div class="apy">7.8% APY</div>
+      <a href="index.html#transparency" class="back">← Back to transparency dashboard</a>
+    </section>
+  </main>
+  <footer class="footer">
+    <p><strong>RWA Disclaimer:</strong> Antalpha Prime acts solely as a technology and data provider.</p>
+    <div style="margin-top:12px;"><a href="#">Privacy Policy</a><a href="#">Legal Disclaimer</a></div>
+    <p style="margin-top:12px;">© 2021 – 2026 Antalpha Platform Holdings Company</p>
+  </footer>
+</body>
+</html>

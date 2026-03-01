@@ -1,0 +1,14 @@
+# 系统与编辑器
+.DS_Store
+*.local
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# 日志与临时文件
+*.log
+logs
+
+# 依赖与构建产物（若执行代码目录有前端/后端项目再按需补充）
+# node_modules
+# dist

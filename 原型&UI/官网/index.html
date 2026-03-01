@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antalpha Prime — Web3 Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* 官网蓝色系：深蓝、浅蓝、白色相间 */
+      --blue-primary: #1e40af;
+      --blue-dark: #0c4a6e;
+      --blue-bg: #0f172a;
+      --blue-card: #1e3a5f;
+      --blue-card-hover: #2563eb;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e3a5f;
+      --bg-card: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+      /* 板块相间：深蓝 / 浅蓝 / 白 */
+      --band-dark: #0f172a;
+      --band-dark-alt: #0c4a6e;
+      --band-light: #e0f2fe;
+      --band-light-border: #bae6fd;
+      --band-white: #ffffff;
+      --band-white-border: #e2e8f0;
+      --text-on-light: #0f172a;
+      --text-on-light-secondary: #475569;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--text-primary); }
+    .nav { display: flex; align-items: center; gap: 28px; }
+    .nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav a:hover { color: var(--accent); }
+    .nav a.active { color: var(--accent); }
+    .header-actions { display: flex; align-items: center; gap: 20px; }
+    .btn-demo {
+      background: var(--blue-primary);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-demo:hover { background: var(--blue-card-hover); }
+    .lang-toggle { display: flex; align-items: center; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .lang-btn {
+      padding: 8px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+    }
+    .lang-btn:hover { color: var(--text-primary); }
+    .lang-btn.active { background: var(--blue-primary); color: #fff; }
+
+    /* Hero — 更大气，突出 AI */
+    .hero {
+      padding: 100px 32px 120px;
+      text-align: center;
+      background: linear-gradient(160deg, var(--blue-dark) 0%, var(--bg-primary) 50%, var(--blue-bg) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .hero .hero-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 64px; text-align: left; }
+    .hero .hero-text { flex: 1; min-width: 0; }
+    .hero .hero-visual {
+      flex: 0 0 420px;
+      height: 320px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.12) 0%, rgba(30,58,95,0.5) 100%);
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+    }
+    @media (max-width: 900px) {
+      .hero .hero-content { flex-direction: column; text-align: center; }
+      .hero .hero-visual { flex: none; width: 100%; max-width: 420px; }
+    }
+    .hero .highlight-ai {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .hero .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 3.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 1.1875rem;
+      margin-bottom: 36px;
+      line-height: 1.7;
+      max-width: 680px;
+    }
+    .btn-explore {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg-primary);
+      padding: 16px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-explore:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    /* 流程图 */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    /* 深蓝 / 浅蓝 / 白色 全宽板块（伪元素实现全宽背景，内容仍 1200px 居中） */
+    .band-dark, .band-light, .band-white { position: relative; }
+    .band-dark::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100%;
+      top: 0;
+      background: var(--band-dark);
+      z-index: -1;
+    }
+    .band-dark { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+    .band-light::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100%;
+      top: 0;
+      background: var(--band-light);
+      z-index: -1;
+    }
+    .band-light { border-top: 1px solid var(--band-light-border); }
+    .band-light .section-title { color: var(--text-on-light); }
+    .band-light .section-desc { color: var(--text-on-light-secondary); }
+    .band-white::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 100%;
+      top: 0;
+      background: var(--band-white);
+      z-index: -1;
+    }
+    .band-white { border-top: 1px solid var(--band-white-border); }
+    .band-white .section-title { color: var(--text-on-light); }
+    .band-white .section-desc { color: var(--text-on-light-secondary); }
+    .band-light .compliance-note { color: var(--text-on-light-secondary); }
+    .band-white .compliance-note { color: var(--text-on-light-secondary); }
+    .band-white .dev-block h3 { color: var(--text-on-light); }
+    .band-white .dev-block p { color: var(--text-on-light-secondary); }
+    .band-white .dev-block a { color: var(--blue-primary); }
+    .band-white .dev-docs-link { color: var(--blue-primary); }
+    .band-white .dev-block pre { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+    .section--card { border-top-color: rgba(56, 189, 248, 0.12); }
+    .band-light .flow-wrap {
+      background: var(--band-white);
+      border-color: var(--band-light-border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .band-light .flow-node {
+      background: var(--band-white);
+      border-color: var(--band-light-border);
+    }
+    .band-light .flow-node .role { color: var(--blue-primary); }
+    .band-light .flow-node .name { color: var(--text-on-light); }
+    .band-light .flow-node .desc { color: var(--text-on-light-secondary); }
+    .band-light .flow-node.highlight { border-color: var(--accent); background: rgba(56, 189, 248, 0.08); }
+    .band-light .flow-node.base-node { border-color: var(--blue-primary); background: rgba(30, 64, 175, 0.08); }
+    .band-white .flow-wrap {
+      background: #f8fafc;
+      border-color: var(--band-white-border);
+    }
+    .band-white .dev-block {
+      background: var(--band-white);
+      border-color: var(--band-white-border);
+    }
+    .band-white .partner-card {
+      background: var(--band-white);
+      border-color: var(--band-white-border);
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .section-desc {
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-size: 1.0625rem;
+    }
+    /* How It Works — 分层流程：内容更宽、少换行 */
+    .flow-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .flow-layer {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+    .flow-layer:last-of-type { margin-bottom: 0; }
+    .flow-layer-connector {
+      display: flex;
+      justify-content: center;
+      padding: 8px 0;
+      color: var(--border);
+    }
+    .flow-layer-connector svg { width: 24px; height: 24px; }
+    .flow-node {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      text-align: center;
+      flex: 1;
+      max-width: 380px;
+      min-width: 0;
+      transition: border-color 0.2s;
+    }
+    .flow-node.highlight {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .flow-node.foundation-node { max-width: 400px; }
+    .flow-node.base-node {
+      max-width: 100%;
+      border-color: var(--blue-primary);
+      background: rgba(30, 64, 175, 0.12);
+    }
+    .flow-node .role {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .flow-node .name { font-weight: 700; font-size: 1.125rem; margin-bottom: 8px; }
+    .flow-node .desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.45; }
+    @media (max-width: 700px) {
+      .flow-layer { flex-direction: column; align-items: center; }
+      .flow-node { max-width: none; }
+    }
+
+    /* 第三版：技术能力 + AI 接入，左右排布 */
+    .section-module { border-top: 1px solid rgba(255, 255, 255, 0.06); }
+    .tech-section-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 32px;
+    }
+    .tech-section-wrap.band-white { background: transparent; }
+    .band-white .tech-card {
+      background: #f8fafc;
+      border-color: var(--band-white-border);
+    }
+    .band-white .tech-card.row-1 {
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+      border-color: #bae6fd;
+    }
+    .band-white .tech-card.row-1:hover { border-color: var(--blue-primary); }
+    .band-white .tech-card:hover { border-color: var(--blue-primary); }
+    .band-white .tech-card h3 { color: var(--text-on-light); }
+    .band-white .tech-card p { color: var(--text-on-light-secondary); }
+    .tech-section-wrap .section-title { text-align: center; margin-bottom: 12px; }
+    .tech-section-wrap .section-desc { text-align: center; margin-bottom: 48px; }
+    .tech-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 900px) { .tech-two-col { grid-template-columns: 1fr; } }
+    .ai-access-block {
+      background: linear-gradient(145deg, var(--blue-dark) 0%, var(--bg-card) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 16px;
+      padding: 36px;
+      position: sticky;
+      top: 100px;
+    }
+    .ai-access-block h3 { font-size: 1.375rem; margin-bottom: 12px; color: var(--accent); }
+    .ai-access-block p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 20px; }
+    .ai-access-block ul { list-style: none; }
+    .ai-access-block li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9375rem; color: var(--text-primary); }
+    .ai-access-block li:last-child { border-bottom: none; }
+    .ai-access-block a { display: inline-block; margin-top: 16px; color: var(--accent); font-weight: 600; text-decoration: none; }
+    .ai-access-block a:hover { text-decoration: underline; }
+    .tech-visual {
+      height: 280px;
+      background: linear-gradient(135deg, rgba(30,58,95,0.6) 0%, rgba(15,23,42,0.8) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+    }
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      column-gap: 24px;
+      row-gap: 32px;
+      align-items: stretch;
+    }
+    .tech-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tech-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--blue-primary);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tech-card:hover {
+      border-color: var(--blue-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+    .tech-card:hover::before { opacity: 1; }
+    .tech-card h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 10px; }
+    .tech-card p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6; }
+    /* 2-3 布局：第一行 2 张，第二行 3 张 */
+    .tech-card.row-1 {
+      grid-column: span 3;
+      padding: 32px 28px;
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 58, 95, 0.06) 100%);
+      border-radius: 16px;
+    }
+    .tech-card.row-1::before { opacity: 1; background: linear-gradient(180deg, var(--accent) 0%, var(--blue-primary) 100%); }
+    .tech-card.row-1 h3 { font-size: 1.2rem; margin-bottom: 12px; }
+    .tech-card.row-1 p { font-size: 0.9375rem; }
+    .tech-card.row-2 { grid-column: span 2; }
+    @media (max-width: 900px) {
+      .tech-grid { grid-template-columns: 1fr; }
+      .tech-card.row-1, .tech-card.row-2 { grid-column: span 1; }
+    }
+
+    /* AI 专区 — 突出 */
+    .ai-section {
+      background: linear-gradient(180deg, var(--blue-dark) 0%, var(--bg-primary) 100%);
+      border-radius: 20px;
+      padding: 64px 32px;
+      margin: 80px 32px 80px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      position: relative;
+    }
+    .ai-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.3), transparent, rgba(56,189,248,0.1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .ai-section .section-title { color: #fff; }
+    .ai-section .section-desc { color: var(--text-secondary); }
+    .ai-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .ai-card {
+      background: rgba(30, 58, 95, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .ai-card h3 {
+      font-size: 1.125rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ai-card h3::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .ai-card p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6; }
+    .ai-card a {
+      color: var(--accent);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 12px;
+      display: inline-block;
+    }
+    .ai-card a:hover { text-decoration: underline; }
+
+    .ai-hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .ai-hub-card {
+      background: rgba(30, 58, 95, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .ai-hub-card:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    .ai-hub-card h3 {
+      font-size: 1.125rem;
+      margin-bottom: 10px;
+      color: #fff;
+      font-weight: 600;
+    }
+    .ai-hub-card h3::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .ai-hub-card p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6; margin: 0; }
+    .ai-hub-cta {
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      text-align: center;
+      margin: 0;
+    }
+    .ai-hub-cta a { color: var(--accent); text-decoration: none; }
+    .ai-hub-cta a:hover { text-decoration: underline; }
+
+    /* 透明度看板 — Earn 视角总数据 + 产品列表（浅色板块内卡片样式） */
+    .transparency-section .section-desc { margin-bottom: 40px; }
+    .band-light .metric-card,
+    .band-white .metric-card {
+      background: var(--band-white);
+      border-color: var(--band-light-border);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .band-light .metric-label,
+    .band-white .metric-label { color: var(--text-on-light-secondary); }
+    .band-light .metric-value,
+    .band-white .metric-value { color: var(--text-on-light); }
+    .band-light .earn-products-heading,
+    .band-white .earn-products-heading { color: var(--text-on-light); }
+    .band-light .earn-product-card,
+    .band-white .earn-product-card {
+      background: var(--band-white);
+      border-color: var(--band-white-border);
+    }
+    .band-light .earn-product-card:hover,
+    .band-white .earn-product-card:hover { border-color: var(--blue-primary); }
+    .band-light .earn-product-card .product-name,
+    .band-white .earn-product-card .product-name { color: var(--text-on-light); }
+    .band-light .earn-product-card .product-desc,
+    .band-white .earn-product-card .product-desc { color: var(--text-on-light-secondary); }
+    .band-light .earn-product-card .product-type,
+    .band-white .earn-product-card .product-type { color: var(--blue-primary); }
+    .band-light .earn-products-link,
+    .band-white .earn-products-link { color: var(--text-on-light); }
+    .band-light .earn-products-link:hover,
+    .band-white .earn-products-link:hover { color: var(--blue-primary); }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 768px) { .metrics { grid-template-columns: 1fr; } }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+    }
+    .metric-label { color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px; }
+    .metric-value { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    .metric-value.safe { color: var(--success); }
+
+    .earn-products-heading {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .earn-product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .earn-product-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      position: relative;
+      text-align: left;
+    }
+    .earn-product-card:hover {
+      border-color: var(--blue-primary);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    .earn-product-card::after {
+      content: '';
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 5l7 7-7 7'/%3E%3C/svg%3E") no-repeat center;
+      opacity: 0.7;
+      transition: opacity 0.2s, right 0.2s;
+    }
+    .earn-product-card:hover::after {
+      opacity: 1;
+      right: 20px;
+    }
+    .earn-product-card .product-type {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .earn-product-card .product-name {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    .earn-product-card .product-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .earn-product-card .product-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .earn-product-card .apy {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .earn-product-card .apy-label { font-size: 0.75rem; color: var(--text-secondary); margin-left: 4px; }
+    .earn-product-card .view-detail {
+      font-size: 0.8125rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .earn-product-card:hover .view-detail { text-decoration: underline; }
+    a.earn-product-card { text-decoration: none; color: inherit; display: block; }
+    .earn-products-link { color: inherit; text-decoration: none; font-weight: 600; }
+    .earn-products-link:hover { color: var(--accent); }
+    .dev-docs-cta { text-align: center; margin-top: 20px; margin-bottom: 0; }
+    .dev-docs-link { color: var(--accent); font-weight: 600; text-decoration: none; }
+    .dev-docs-link:hover { text-decoration: underline; }
+
+    /* 合作方 */
+    .partners-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .partners-grid--relations {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    @media (max-width: 640px) { .partners-grid--relations { grid-template-columns: repeat(2, 1fr); } }
+    .partner-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 36px;
+      min-width: 200px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .partner-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .partner-card .name { font-weight: 600; margin-bottom: 0; }
+    .partner-card .tag { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 6px; }
+    .compliance-note { margin-top: 28px; font-size: 0.8125rem; color: var(--text-secondary); text-align: center; }
+
+    /* 开发者 */
+    .dev-blocks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    @media (max-width: 768px) { .dev-blocks { grid-template-columns: 1fr; } }
+    .dev-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+    .dev-block h3 { font-size: 1.125rem; margin-bottom: 12px; }
+    .dev-block pre {
+      background: #0d1321;
+      color: #94a3b8;
+      padding: 18px;
+      border-radius: 10px;
+      font-size: 0.8125rem;
+      overflow-x: auto;
+      margin-top: 14px;
+      border: 1px solid var(--border);
+    }
+    .dev-block a { color: var(--accent); font-size: 0.875rem; text-decoration: none; font-weight: 500; }
+    .dev-block a:hover { text-decoration: underline; }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 56px 32px 32px;
+      margin-top: 64px;
+      background: var(--bg-secondary);
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-disclaimer {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+    .footer-links { display: flex; gap: 28px; font-size: 0.875rem; }
+    .footer-links a { color: var(--text-secondary); text-decoration: none; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { margin-top: 28px; font-size: 0.8125rem; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo">Antalpha</a>
+      <nav class="nav">
+        <a href="#">Loans</a>
+        <a href="#">Risk Control</a>
+        <a href="overview.html" class="active" data-i18n="nav_explore_rwa">探索 RWA</a>
+        <a href="#">About Us</a>
+        <a href="#">Careers</a>
+        <a href="#">Investor Relations</a>
+      </nav>
+      <div class="header-actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-btn" data-lang="zh" aria-pressed="false">简中</button>
+        </div>
+        <button type="button" class="btn-demo" data-i18n="btn_demo">Request Demo</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1><span data-i18n="hero_title_1">Bridging Real-World Assets to</span><br><span class="gradient-text" data-i18n="hero_title_2">On-Chain Intelligence</span></h1>
+            <p data-i18n-html="hero_subtitle">Antalpha Prime delivers the institutional-grade technology stack that powers tokenized real-world asset origination, risk surveillance, and custody verification — purpose-built for both human portfolio managers and <span class="highlight-ai">autonomous AI agents</span>.</p>
+            <!-- 未来可改为独立 RWA Tech 概览页，见 项目一-延伸页面与链接规划.md -->
+            <a href="#transparency" class="btn-explore" data-i18n="hero_cta">Explore RWA 产品</a>
+          </div>
+          <div class="hero-visual" aria-hidden="true">Image placeholder — e.g. RWA / risk dashboard</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works：浅蓝板块 -->
+    <section class="section section--card band-light" id="how-it-works">
+      <h2 class="section-title" data-i18n="how_title">How It Works</h2>
+      <div class="flow-wrap">
+        <!-- Row 1: AI Agent + Investors -->
+        <div class="flow-layer">
+          <div class="flow-node highlight">
+            <div class="role" data-i18n="flow_1_role">Discovery</div>
+            <div class="name" data-i18n="flow_1_name">AI Agent</div>
+            <div class="desc" data-i18n="flow_1_desc">Explores and discovers investment opportunities; monitors risk and yield via MCP/API.</div>
+          </div>
+          <div class="flow-node">
+            <div class="role" data-i18n="flow_2_role">Authorization</div>
+            <div class="name" data-i18n="flow_2_name">Investors</div>
+            <div class="desc" data-i18n="flow_2_desc">Authorize trades and participate in products; returns from underlying real-world assets.</div>
+          </div>
+        </div>
+        <div class="flow-layer-connector" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
+        <div class="flow-layer">
+          <div class="flow-node foundation-node">
+            <div class="role" data-i18n="flow_3_role">Issuer & Fundraising</div>
+            <div class="name" data-i18n="flow_3_name">Foundation</div>
+            <div class="desc" data-i18n="flow_3_desc">Issues RWA products and runs the on-chain fundraising platform; holds the fund treasury.</div>
+          </div>
+        </div>
+        <div class="flow-layer-connector" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
+        <div class="flow-layer">
+          <div class="flow-node base-node">
+            <div class="role" data-i18n="flow_4_role">Infrastructure</div>
+            <div class="name" data-i18n="flow_4_name">Antalpha Prime</div>
+            <div class="desc" data-i18n="flow_4_desc">Smart contracts, risk oracle, due diligence, and custody proof power every product above.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第三版块：技术与风险管理 — 白色板块 -->
+    <section class="tech-section-wrap section section-module band-white" id="technology">
+      <h2 class="section-title" data-i18n="tech_title">Technology & Risk Management</h2>
+      <p class="section-desc" data-i18n="tech_desc">Verifiable, secure infrastructure: due diligence, real-time risk visibility, and custody proof.</p>
+      <div class="tech-grid">
+        <div class="tech-card row-1">
+          <h3 data-i18n="tech_1_title">Due Diligence & Underwriting</h3>
+          <p data-i18n="tech_1_desc">Every loan and every pool is reviewed; originator identity and risk rating are verified before capital is allocated.</p>
+        </div>
+        <div class="tech-card row-1">
+          <h3 data-i18n="tech_2_title">Risk Oracle & Transparency</h3>
+          <p data-i18n="tech_2_desc">Real-time risk and collateral data; borrowing health and liquidation thresholds are visible so you can monitor at a glance.</p>
+        </div>
+        <div class="tech-card row-2">
+          <h3 data-i18n="tech_3_title">Proof of Reserve / Custody</h3>
+          <p data-i18n="tech_3_desc">Third-party custodians hold collateral; cold wallet and attestation details are available for verification.</p>
+        </div>
+        <div class="tech-card row-2">
+          <h3 data-i18n="tech_4_title">Smart Contracts & Pools</h3>
+          <p data-i18n="tech_4_desc">Standardized pool construction, multi-currency settlement, and automated valuation so products run reliably on-chain.</p>
+        </div>
+        <div class="tech-card row-2">
+          <h3 data-i18n="tech_5_title">KYC / AML & Identity</h3>
+          <p data-i18n="tech_5_desc">On-chain identity and compliance tools so participants meet regulatory requirements while preserving privacy where needed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第四版块：AI 投资的聚集地 — 面向投资者，少技术语、无括号 -->
+    <section class="ai-section section-module" id="ai">
+      <h2 class="section-title" data-i18n="ai_title">Where AI Meets Investing</h2>
+      <p class="section-desc" data-i18n="ai_desc">Connect your AI to discover opportunities, monitor positions, and stay informed—without the jargon.</p>
+      <div class="ai-hub-grid">
+        <div class="ai-hub-card">
+          <h3 data-i18n="ai_1_title">Discover opportunities</h3>
+          <p data-i18n="ai_1_desc">Your AI can explore available products and their returns, compare risk levels, and surface options that match what you care about.</p>
+        </div>
+        <div class="ai-hub-card">
+          <h3 data-i18n="ai_2_title">Monitor what you hold</h3>
+          <p data-i18n="ai_2_desc">See current yields, how healthy the collateral is, and whether anything is approaching a risk threshold—so your AI can alert you when it matters.</p>
+        </div>
+        <div class="ai-hub-card">
+          <h3 data-i18n="ai_3_title">Act on your permission</h3>
+          <p data-i18n="ai_3_desc">When you authorize it, your AI can place or adjust positions on your behalf through our partners, so you can invest without watching the market around the clock.</p>
+        </div>
+        <div class="ai-hub-card">
+          <h3 data-i18n="ai_4_title">One place, one link</h3>
+          <p data-i18n="ai_4_desc">Connect once and your AI gets access to product details, returns, risk metrics, and custody information in one place—no need to juggle multiple dashboards.</p>
+        </div>
+      </div>
+      <p class="ai-hub-cta" data-i18n-html="ai_cta">Want your AI to connect? <a href="#developers">Visit our developer portal</a> for setup, or <a href="#contact">contact us</a> for a guided onboarding.</p>
+    </section>
+
+    <!-- RWA 透明度看板：浅蓝板块，背景统一 -->
+    <section class="section band-light transparency-section" id="transparency">
+      <h2 class="section-title" data-i18n="transparency_title">RWA Transparency Dashboard</h2>
+      <p class="section-desc" data-i18n="transparency_desc">See total assets, investor returns, and earn products powered by our infrastructure.</p>
+      <div class="metrics">
+        <div class="metric-card">
+          <div class="metric-label" data-i18n="metric_1_label">Total Investment Assets</div>
+          <div class="metric-value">$ 52.4M</div>
+          <div class="metric-label" style="margin-top:6px" data-i18n="metric_1_sub">Across all earn products</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label" data-i18n="metric_2_label">Total Returns for Investors</div>
+          <div class="metric-value safe">$ 3.8M</div>
+          <div class="metric-label" style="margin-top:6px" data-i18n="metric_2_sub">Cumulative yield generated</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label" data-i18n="metric_3_label">AI Connections</div>
+          <div class="metric-value">128</div>
+          <div class="metric-label" style="margin-top:6px" data-i18n="metric_3_sub">Agents linked to earn data</div>
+        </div>
+      </div>
+      <h3 class="earn-products-heading">
+        <a href="products.html" class="earn-products-link" data-i18n="earn_heading">Earn products on the platform</a>
+      </h3>
+      <div class="earn-product-list">
+        <a href="../项目二/vault-detail.html?vault=jun26" class="earn-product-card">
+          <div class="product-type" data-i18n="prod_1_type">Collateralized Lending</div>
+          <div class="product-name" data-i18n="prod_1_name">BTC-Backed Earn</div>
+          <p class="product-desc" data-i18n="prod_1_desc">Stable yield backed by crypto collateral. Originator due diligence and custody proof.</p>
+          <div class="product-meta">
+            <span class="apy">8.5%<span class="apy-label">APY</span></span>
+          </div>
+          <span class="view-detail" data-i18n="view_details">View details</span>
+        </a>
+        <a href="../项目二/vault-detail.html?vault=sep26" class="earn-product-card">
+          <div class="product-type" data-i18n="prod_2_type">Mining Machine Loan</div>
+          <div class="product-name" data-i18n="prod_2_name">Miner Financing Pool</div>
+          <p class="product-desc" data-i18n="prod_2_desc">Financing for mining equipment. Repayment tied to hashrate and equipment collateral.</p>
+          <div class="product-meta">
+            <span class="apy">10.2%<span class="apy-label">APY</span></span>
+          </div>
+          <span class="view-detail" data-i18n="view_details">View details</span>
+        </a>
+        <a href="../项目二/vault-detail.html?vault=dec26" class="earn-product-card">
+          <div class="product-type" data-i18n="prod_3_type">Electricity Loan</div>
+          <div class="product-name" data-i18n="prod_3_name">Power Cost Financing</div>
+          <p class="product-desc" data-i18n="prod_3_desc">Power cost financing for miners. Short-term working capital with transparent risk.</p>
+          <div class="product-meta">
+            <span class="apy">9.0%<span class="apy-label">APY</span></span>
+          </div>
+          <span class="view-detail" data-i18n="view_details">View details</span>
+        </a>
+        <a href="../项目二/vault-detail.html?vault=mar27" class="earn-product-card">
+          <div class="product-type" data-i18n="prod_4_type">Collateralized Lending</div>
+          <div class="product-name" data-i18n="prod_4_name">Multi-Asset Earn</div>
+          <p class="product-desc" data-i18n="prod_4_desc">Diversified pool with multiple collateral types. Risk oracle and real-time LTV visibility.</p>
+          <div class="product-meta">
+            <span class="apy">7.8%<span class="apy-label">APY</span></span>
+          </div>
+          <span class="view-detail" data-i18n="view_details">View details</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section band-dark" id="partners">
+      <h2 class="section-title" data-i18n="partners_title">Powered by Antalpha Prime</h2>
+      <p class="section-desc" data-i18n="partners_desc">Other Key Relationships</p>
+      <!-- 各卡片点击：先合规弹窗，再跳转至该合作方/基金会官网，见 项目一-延伸页面与链接规划.md -->
+      <div class="partners-grid partners-grid--relations" id="partners-grid">
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="BITMAIN" data-partner-url="https://www.bitmain.com"><div class="name">BITMAIN</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="NORTH STAR" data-partner-url=""><div class="name">NORTH STAR</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="BitFuFu" data-partner-url="https://www.bitfufu.com"><div class="name">BitFuFu</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="Metalpha" data-partner-url="https://www.metalpha.com"><div class="name">Metalpha</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="ANTPOOL" data-partner-url="https://www.antpool.com"><div class="name">ANTPOOL</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="cobo" data-partner-url="https://www.cobo.com"><div class="name">cobo</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="Fireblocks" data-partner-url="https://www.fireblocks.com"><div class="name">Fireblocks</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="tether" data-partner-url="https://tether.to"><div class="name">tether</div></div>
+        <div class="partner-card" role="button" tabindex="0" data-partner-name="OSL" data-partner-url="https://www.osl.com"><div class="name">OSL</div></div>
+      </div>
+      <p class="compliance-note" data-i18n="compliance_note">When you leave Antalpha Prime, a notice will ask you to confirm. Third-party sites are operated independently; we provide technology and risk support only.</p>
+    </section>
+
+    <section class="section band-white" id="developers">
+      <h2 class="section-title" data-i18n="dev_title">Developer & AI-Agent Portal</h2>
+      <p class="section-desc" data-i18n="dev_desc">Smart contracts, MCP, and API docs for builders and AI agents. Full reference on our documentation site.</p>
+      <div class="dev-blocks">
+        <div class="dev-block">
+          <h3 data-i18n="dev_1_title">Smart Contract Hub</h3>
+          <p style="color:var(--text-secondary);font-size:0.9375rem;" data-i18n="dev_1_p">Standard architecture: multi-currency settlement, NAV automation. Audited contracts and GitHub.</p>
+          <a href="docs.html#contracts" data-i18n="dev_1_link">View audit reports →</a>
+        </div>
+        <div class="dev-block">
+          <h3 data-i18n="dev_2_title">AI-Agent Kit & MCP</h3>
+          <p style="color:var(--text-secondary);font-size:0.9375rem;" data-i18n="dev_2_p">Example interfaces for agents:</p>
+          <pre>get_pool_apy(pool_id)
+get_realtime_ltv()
+verify_kyc_status(address)</pre>
+          <a href="docs.html#mcp" data-i18n="dev_2_link">MCP documentation →</a>
+        </div>
+      </div>
+      <p class="dev-docs-cta"><a href="docs.html" class="dev-docs-link" data-i18n="dev_docs_cta">Open API & MCP docs →</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p class="footer-disclaimer" data-i18n-html="footer_disclaimer"><strong>RWA Disclaimer:</strong> Antalpha Prime acts solely as a technology and data provider. It does not hold, manage, or operate user funds on Web3. Any on-chain fundraising is conducted by independent third parties using our infrastructure.</p>
+      <div class="footer-links">
+        <a href="#" data-i18n="footer_priv">Privacy Policy</a>
+        <a href="#" data-i18n="footer_cookie">Cookie Policy</a>
+        <a href="#" data-i18n="footer_legal">Legal Disclaimer</a>
+      </div>
+      <p class="footer-copy" data-i18n="footer_copy">© 2021 – 2026 Antalpha Platform Holdings Company</p>
+    </div>
+  </footer>
+
+  <div id="compliance-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; align-items:center; justify-content:center; padding:24px;">
+    <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; max-width:440px; padding:32px;">
+      <h3 id="compliance-modal-title" style="margin-bottom:12px; font-size:1.25rem;" data-i18n="modal_title">You are leaving Antalpha Prime</h3>
+      <p id="compliance-modal-text" style="color:var(--text-secondary); font-size:0.9375rem; margin-bottom:24px;">This site is operated by an independent third party. Antalpha provides technology and risk support only. Continue?</p>
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button type="button" onclick="closeComplianceModal()" style="padding:12px 24px; background:transparent; color:var(--text-secondary); border:1px solid var(--border); border-radius:8px; cursor:pointer; font-weight:500;" data-i18n="modal_cancel">Cancel</button>
+        <button type="button" id="compliance-modal-confirm" style="padding:12px 24px; background:var(--blue-primary); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600;" data-i18n="modal_confirm">Agree and continue</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    var pendingPartnerUrl = '';
+    var modalMsg = { en: { t: ' is operated by an independent third party. ', r: 'Antalpha provides technology and risk support only. Continue?' }, zh: { t: '由独立第三方运营。', r: 'Antalpha 仅提供技术与风险支持。是否继续？' } };
+    function showComplianceModal(partnerName, partnerUrl) {
+      var text = document.getElementById('compliance-modal-text');
+      var lang = (window.__antalpha_lang || 'en') === 'zh' ? 'zh' : 'en';
+      var m = modalMsg[lang];
+      text.textContent = (partnerName ? partnerName + m.t : '') + m.r;
+      pendingPartnerUrl = partnerUrl || '';
+      document.getElementById('compliance-modal').style.display = 'flex';
+    }
+    function closeComplianceModal() {
+      document.getElementById('compliance-modal').style.display = 'none';
+      pendingPartnerUrl = '';
+    }
+    document.getElementById('compliance-modal-confirm').onclick = function() {
+      closeComplianceModal();
+      if (pendingPartnerUrl) window.location.href = pendingPartnerUrl;
+      else if (typeof alert !== 'undefined') alert('In production: redirect to partner URL.');
+    };
+    document.getElementById('partners-grid').addEventListener('click', function(e) {
+      var card = e.target.closest('.partner-card');
+      if (!card) return;
+      var name = card.getAttribute('data-partner-name') || '';
+      var url = card.getAttribute('data-partner-url') || '';
+      showComplianceModal(name, url);
+    });
+
+    (function() {
+      var i18n = {
+        en: {
+          btn_demo: 'Request Demo',
+          hero_title_1: 'Bridging Real-World Assets to', hero_title_2: 'On-Chain Intelligence',
+          hero_subtitle: 'Antalpha Prime delivers the institutional-grade technology stack that powers tokenized real-world asset origination, risk surveillance, and custody verification — purpose-built for both human portfolio managers and <span class="highlight-ai">autonomous AI agents</span>.',
+          hero_cta: 'Explore RWA Products',
+          how_title: 'How It Works',
+          flow_1_role: 'Discovery', flow_1_name: 'AI Agent', flow_1_desc: 'Explores and discovers investment opportunities; monitors risk and yield via MCP/API.',
+          flow_2_role: 'Authorization', flow_2_name: 'Investors', flow_2_desc: 'Authorize trades and participate in products; returns from underlying real-world assets.',
+          flow_3_role: 'Issuer & Fundraising', flow_3_name: 'Foundation', flow_3_desc: 'Issues RWA products and runs the on-chain fundraising platform; holds the fund treasury.',
+          flow_4_role: 'Infrastructure', flow_4_name: 'Antalpha Prime', flow_4_desc: 'Smart contracts, risk oracle, due diligence, and custody proof power every product above.',
+          tech_title: 'Technology & Risk Management',
+          tech_desc: 'Verifiable, secure infrastructure: due diligence, real-time risk visibility, and custody proof.',
+          tech_1_title: 'Due Diligence & Underwriting', tech_1_desc: 'Every loan and every pool is reviewed; originator identity and risk rating are verified before capital is allocated.',
+          tech_2_title: 'Risk Oracle & Transparency', tech_2_desc: 'Real-time risk and collateral data; borrowing health and liquidation thresholds are visible so you can monitor at a glance.',
+          tech_3_title: 'Proof of Reserve / Custody', tech_3_desc: 'Third-party custodians hold collateral; cold wallet and attestation details are available for verification.',
+          tech_4_title: 'Smart Contracts & Pools', tech_4_desc: 'Standardized pool construction, multi-currency settlement, and automated valuation so products run reliably on-chain.',
+          tech_5_title: 'KYC / AML & Identity', tech_5_desc: 'On-chain identity and compliance tools so participants meet regulatory requirements while preserving privacy where needed.',
+          ai_title: 'Where AI Meets Investing',
+          ai_desc: 'Connect your AI to discover opportunities, monitor positions, and stay informed—without the jargon.',
+          ai_1_title: 'Discover opportunities', ai_1_desc: 'Your AI can explore available products and their returns, compare risk levels, and surface options that match what you care about.',
+          ai_2_title: 'Monitor what you hold', ai_2_desc: 'See current yields, how healthy the collateral is, and whether anything is approaching a risk threshold—so your AI can alert you when it matters.',
+          ai_3_title: 'Act on your permission', ai_3_desc: 'When you authorize it, your AI can place or adjust positions on your behalf through our partners, so you can invest without watching the market around the clock.',
+          ai_4_title: 'One place, one link', ai_4_desc: 'Connect once and your AI gets access to product details, returns, risk metrics, and custody information in one place—no need to juggle multiple dashboards.',
+          ai_cta: 'Want your AI to connect? <a href="#developers">Visit our developer portal</a> for setup, or <a href="#contact">contact us</a> for a guided onboarding.',
+          transparency_title: 'RWA Transparency Dashboard',
+          transparency_desc: 'See total assets, investor returns, and earn products powered by our infrastructure.',
+          metric_1_label: 'Total Investment Assets', metric_1_sub: 'Across all earn products',
+          metric_2_label: 'Total Returns for Investors', metric_2_sub: 'Cumulative yield generated',
+          metric_3_label: 'AI Connections', metric_3_sub: 'Agents linked to earn data',
+          earn_heading: 'Earn products on the platform',
+          prod_1_type: 'Collateralized Lending', prod_1_name: 'BTC-Backed Earn', prod_1_desc: 'Stable yield backed by crypto collateral. Originator due diligence and custody proof.',
+          prod_2_type: 'Mining Machine Loan', prod_2_name: 'Miner Financing Pool', prod_2_desc: 'Financing for mining equipment. Repayment tied to hashrate and equipment collateral.',
+          prod_3_type: 'Electricity Loan', prod_3_name: 'Power Cost Financing', prod_3_desc: 'Power cost financing for miners. Short-term working capital with transparent risk.',
+          prod_4_type: 'Collateralized Lending', prod_4_name: 'Multi-Asset Earn', prod_4_desc: 'Diversified pool with multiple collateral types. Risk oracle and real-time LTV visibility.',
+          view_details: 'View details',
+          partners_title: 'Powered by Antalpha Prime',
+          partners_desc: 'Other Key Relationships',
+          compliance_note: 'When you leave Antalpha Prime, a notice will ask you to confirm. Third-party sites are operated independently; we provide technology and risk support only.',
+          dev_title: 'Developer & AI-Agent Portal',
+          dev_desc: 'Smart contracts, MCP, and API docs for builders and AI agents. Full reference on our documentation site.',
+          dev_1_title: 'Smart Contract Hub', dev_1_p: 'Standard architecture: multi-currency settlement, NAV automation. Audited contracts and GitHub.', dev_1_link: 'View audit reports →',
+          dev_2_title: 'AI-Agent Kit & MCP', dev_2_p: 'Example interfaces for agents:', dev_2_link: 'MCP documentation →',
+          dev_docs_cta: 'Open API & MCP docs →',
+          footer_priv: 'Privacy Policy', footer_cookie: 'Cookie Policy', footer_legal: 'Legal Disclaimer',
+          footer_copy: '© 2021 – 2026 Antalpha Platform Holdings Company',
+          footer_disclaimer: '<strong>RWA Disclaimer:</strong> Antalpha Prime acts solely as a technology and data provider. It does not hold, manage, or operate user funds on Web3. Any on-chain fundraising is conducted by independent third parties using our infrastructure.',
+          modal_title: 'You are leaving Antalpha Prime', modal_cancel: 'Cancel', modal_confirm: 'Agree and continue',
+          nav_explore_rwa: 'Explore RWA'
+        },
+        zh: {
+          btn_demo: '申请演示',
+          hero_title_1: '连接真实世界资产，', hero_title_2: '赋能链上智能金融',
+          hero_subtitle: 'Antalpha Prime 提供机构级技术栈，驱动代币化真实世界资产的发行、风险监控与托管验证——同时服务于专业投资组合管理人与<span class="highlight-ai">自主运行的 AI 智能体</span>。',
+          hero_cta: '探索 RWA 产品',
+          how_title: '运作方式',
+          flow_1_role: '发现', flow_1_name: 'AI Agent', flow_1_desc: '发现投资机会，通过 MCP/API 监控风险与收益。',
+          flow_2_role: '授权', flow_2_name: '投资者', flow_2_desc: '授权交易并参与产品，收益来自底层现实资产。',
+          flow_3_role: '发行与募资', flow_3_name: '基金会', flow_3_desc: '发行 RWA 产品并运营链上募资平台，管理资金库。',
+          flow_4_role: '基础设施', flow_4_name: 'Antalpha Prime', flow_4_desc: '智能合约、风险预言机、尽调与托管证明，支撑上方所有产品。',
+          tech_title: '技术与风险管理',
+          tech_desc: '可验证、安全的基础设施：尽调、实时风险可见与托管证明。',
+          tech_1_title: '尽调与承销', tech_1_desc: '每笔贷款与每个资金池均经审核，发行方身份与风险评级在资金分配前完成核验。',
+          tech_2_title: '风险预言机与透明', tech_2_desc: '实时风险与抵押品数据，借款健康度与清算阈值一目了然。',
+          tech_3_title: '储备证明 / 托管', tech_3_desc: '第三方托管机构持有抵押品，冷钱包与 attestation 详情可核验。',
+          tech_4_title: '智能合约与资金池', tech_4_desc: '标准化资金池结构、多币种结算与自动估值，产品在链上稳定运行。',
+          tech_5_title: 'KYC/AML 与身份', tech_5_desc: '链上身份与合规工具，满足监管要求同时保护隐私。',
+          ai_title: 'AI 投资的聚集地',
+          ai_desc: '连接 AI 发现机会、监控持仓、获取信息，无需技术门槛。',
+          ai_1_title: '发现机会', ai_1_desc: '您的 AI 可查看在售产品与收益，对比风险等级，筛选符合您偏好的选项。',
+          ai_2_title: '监控持仓', ai_2_desc: '查看当前收益、抵押品健康状况及是否接近风险阈值，重要时由 AI 提醒。',
+          ai_3_title: '授权后操作', ai_3_desc: '您授权后，AI 可通过合作方代您下单或调仓，无需 24 小时盯盘。',
+          ai_4_title: '一站一联', ai_4_desc: '一次连接即可获取产品详情、收益、风险指标与托管信息，无需多端切换。',
+          ai_cta: '希望您的 AI 接入？<a href="#developers">前往开发者门户</a>完成配置，或<a href="#contact">联系我们</a>获取引导。',
+          transparency_title: 'RWA 透明度看板',
+          transparency_desc: '查看总资产、投资者收益及由我们基础设施支持的赚取产品。',
+          metric_1_label: '总投资资产', metric_1_sub: '覆盖全部赚取产品',
+          metric_2_label: '为投资者创造的总收益', metric_2_sub: '累计已产生收益',
+          metric_3_label: 'AI 接入数', metric_3_sub: '已连接赚取数据的智能体',
+          earn_heading: '平台赚取产品',
+          prod_1_type: '质押借贷', prod_1_name: 'BTC 背书赚取', prod_1_desc: '由加密资产抵押支撑的稳定收益，发行方尽调与托管证明。',
+          prod_2_type: '矿机贷', prod_2_name: '矿机融资池', prod_2_desc: '矿机设备融资，还款与算力及设备抵押挂钩。',
+          prod_3_type: '电费贷', prod_3_name: '电费融资', prod_3_desc: '矿工电费融资，短期周转，风险透明。',
+          prod_4_type: '质押借贷', prod_4_name: '多资产赚取', prod_4_desc: '多类抵押品的分散池，风险预言机与实时 LTV 可见。',
+          view_details: '查看详情',
+          partners_title: '由 Antalpha Prime 驱动',
+          partners_desc: '其他重要合作方',
+          compliance_note: '离开 Antalpha Prime 前将出现确认提示。第三方网站独立运营，我们仅提供技术与风险支持。',
+          dev_title: '开发者与 AI-Agent 门户',
+          dev_desc: '智能合约、MCP 与 API 文档，面向开发者与 AI 智能体。完整说明见文档站。',
+          dev_1_title: '智能合约库', dev_1_p: '标准架构：多币种结算、NAV 自动化。已审计合约与 GitHub。', dev_1_link: '查看审计报告 →',
+          dev_2_title: 'AI-Agent Kit 与 MCP', dev_2_p: '智能体示例接口：', dev_2_link: 'MCP 文档 →',
+          dev_docs_cta: '打开 API 与 MCP 文档 →',
+          footer_priv: '隐私政策', footer_cookie: 'Cookie 政策', footer_legal: '法律声明',
+          footer_copy: '© 2021 – 2026 Antalpha Platform Holdings Company',
+          footer_disclaimer: '<strong>RWA 声明：</strong> Antalpha Prime 仅作为技术与数据提供方，不持有、管理或运营用户在 Web3 上的资金。任何链上募资均由独立第三方在使用我们基础设施的前提下进行。',
+          modal_title: '您正在离开 Antalpha Prime', modal_cancel: '取消', modal_confirm: '同意并继续',
+          nav_explore_rwa: '探索 RWA'
+        }
+      };
+      function applyLang(lang) {
+        var L = i18n[lang] || i18n.en;
+        document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var key = el.getAttribute('data-i18n');
+          if (L[key] != null) el.textContent = L[key];
+        });
+        document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+          var key = el.getAttribute('data-i18n-html');
+          if (L[key] != null) el.innerHTML = L[key];
+        });
+        document.querySelectorAll('.lang-btn').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+          btn.setAttribute('aria-pressed', btn.getAttribute('data-lang') === lang ? 'true' : 'false');
+        });
+        try { localStorage.setItem('antalpha-lang', lang); } catch (e) {}
+        window.__antalpha_lang = lang;
+      }
+      document.querySelectorAll('.lang-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var lang = this.getAttribute('data-lang');
+          applyLang(lang);
+        });
+      });
+      var saved = null;
+      try { saved = localStorage.getItem('antalpha-lang'); } catch (e) {}
+      applyLang(saved === 'zh' ? 'zh' : 'en');
+    })();
+  </script>
+</body>
+</html>

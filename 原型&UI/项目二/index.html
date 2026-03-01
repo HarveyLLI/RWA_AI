@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorldLend — Web3 机构级固收产品超市</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-primary: #2563eb;
+      --blue-soft: #3b82f6;
+      --bg-primary: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --bg-card: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --gold: #ca8a04;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; min-height: 100vh; }
+
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-weight: 700; font-size: 1.25rem; color: var(--text-primary); text-decoration: none; }
+    .nav { display: flex; align-items: center; gap: 4px; }
+    .nav a {
+      color: var(--text-secondary); text-decoration: none; font-size: 0.9375rem; font-weight: 500;
+      padding: 8px 14px; border-radius: 8px; transition: color 0.2s, background 0.2s;
+    }
+    .nav a:hover { color: var(--accent); background: var(--accent-soft); }
+    .nav a.active { color: var(--accent); background: var(--accent-soft); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .btn-connect {
+      background: var(--blue-primary); color: #fff; border: none; padding: 10px 20px; border-radius: 8px;
+      font-size: 0.9375rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-connect:hover { background: #1d4ed8; }
+    .wallet-connected { display: flex; align-items: center; gap: 10px; font-size: 0.875rem; color: var(--text-secondary); }
+    .wallet-address { font-family: monospace; color: var(--accent); }
+    .btn-disconnect { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8125rem; }
+    .btn-disconnect:hover { color: var(--text-primary); }
+    .lang-toggle { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .lang-btn { padding: 8px 14px; border: none; background: transparent; color: var(--text-secondary); font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: color 0.2s, background 0.2s; }
+    .lang-btn:hover { color: var(--text-primary); }
+    .lang-btn.active { background: var(--blue-primary); color: #fff; }
+
+    /* ========== 首页 Landing（Morpho 风格）========== */
+    .hero {
+      padding: 80px 24px 100px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(37, 99, 235, 0.06) 0%, transparent 50%); pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .hero h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; line-height: 1.2; }
+    .hero .hero-sub { font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 48px; line-height: 1.6; }
+    .hero-stats { display: flex; justify-content: center; gap: 64px; flex-wrap: wrap; margin-bottom: 32px; }
+    .hero-stat { text-align: center; }
+    .hero-stat .value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .hero-stat .label { font-size: 0.875rem; color: var(--text-secondary); margin-top: 4px; }
+    .hero-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary { display: inline-block; padding: 16px 32px; background: var(--accent); color: var(--bg-primary); border-radius: 10px; font-size: 1rem; font-weight: 600; text-decoration: none; transition: filter 0.2s; }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-secondary { display: inline-block; padding: 16px 32px; background: transparent; color: var(--accent); border: 2px solid var(--accent); border-radius: 10px; font-size: 1rem; font-weight: 600; text-decoration: none; }
+    .btn-secondary:hover { background: var(--accent-soft); }
+    .scroll-hint { font-size: 0.875rem; color: var(--text-secondary); margin-top: 24px; }
+
+    /* Powered by */
+    .section { max-width: 1100px; margin: 0 auto; padding: 72px 24px; }
+    .section-title { font-size: 1.75rem; font-weight: 700; text-align: center; margin-bottom: 16px; }
+    .section-desc { text-align: center; color: var(--text-secondary); font-size: 1.0625rem; max-width: 640px; margin: 0 auto 48px; }
+    .powered-by-block {
+      background: linear-gradient(135deg, var(--bg-card) 0%, #f0f9ff 100%);
+      border: 1px solid var(--border); border-radius: 20px; padding: 48px;
+      text-align: center;
+    }
+    .powered-by-block .badge { display: inline-block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 12px; }
+    .powered-by-block h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    .powered-by-block p { color: var(--text-secondary); font-size: 0.9375rem; margin-bottom: 20px; }
+    .powered-by-block a { color: var(--accent); font-weight: 500; text-decoration: none; }
+    .powered-by-block a:hover { text-decoration: underline; }
+
+    /* Built for scale - 3 价值条 */
+    .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .value-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .value-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .value-card h3 { font-size: 1.25rem; margin-bottom: 12px; }
+    .value-card p { color: var(--text-secondary); font-size: 0.9375rem; line-height: 1.6; margin-bottom: 16px; }
+    .value-card .link { color: var(--accent); font-size: 0.9375rem; font-weight: 500; text-decoration: none; }
+    .value-card .link:hover { text-decoration: underline; }
+
+    /* 期限金库大厅 - 核心产品区，突出利率 */
+    .vault-hall { padding-top: 24px; }
+    .vault-hall .section-title { margin-bottom: 8px; }
+    .vault-hall .section-desc { margin-bottom: 32px; }
+    .vault-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-card); }
+    table.vault-table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+    .vault-table th { text-align: left; padding: 18px 20px; color: var(--text-secondary); font-weight: 600; border-bottom: 1px solid var(--border); }
+    .vault-table td { padding: 20px; border-bottom: 1px solid var(--border); }
+    .vault-table tr:last-child td { border-bottom: none; }
+    .vault-table tr:hover td { background: var(--accent-soft); }
+    .vault-name { font-weight: 600; color: var(--text-primary); }
+    .vault-name-link { font-weight: 600; color: var(--text-primary); text-decoration: none; }
+    .vault-name-link:hover { color: var(--accent); }
+    a.btn-deposit { display: inline-block; text-decoration: none; text-align: center; }
+    .vault-token { font-size: 0.8125rem; color: var(--text-secondary); }
+    .apy-cell { font-size: 1.25rem; font-weight: 700; color: var(--success); }
+    .apy-cell .unit { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin-left: 4px; }
+    .anta-discount { font-weight: 600; color: var(--gold); }
+    .btn-deposit { padding: 10px 20px; background: var(--blue-primary); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9375rem; }
+    .btn-deposit:hover { background: #1d4ed8; }
+    .vault-cards { display: none; }
+    @media (max-width: 768px) {
+      .vault-table-wrap { display: none; }
+      .vault-cards { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    }
+    .vault-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 24px;
+    }
+    .vault-card .vault-name { display: block; margin-bottom: 8px; text-decoration: none; color: var(--text-primary); }
+    .vault-card .vault-name:hover { color: var(--accent); }
+    .vault-card .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9375rem; }
+    .vault-card .apy-cell { margin: 12px 0; }
+    .vault-card .btn-deposit { width: 100%; margin-top: 12px; }
+
+    /* 三条退出路径 */
+    .exit-paths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 900px) { .exit-paths { grid-template-columns: 1fr; } }
+    .exit-path {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 28px;
+    }
+    .exit-path .tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 10px; }
+    .exit-path h3 { font-size: 1.125rem; margin-bottom: 10px; }
+    .exit-path p { color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6; }
+    .exit-path.highlight { border-color: var(--gold); background: rgba(202, 138, 4, 0.08); }
+    .exit-path.highlight .tag { color: var(--gold); }
+
+    /* 透明与安全 */
+    .transparency-block {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px;
+    }
+    .transparency-block h3 { font-size: 1.125rem; margin-bottom: 16px; }
+    .transparency-block ul { list-style: none; }
+    .transparency-block li { padding: 10px 0; border-bottom: 1px solid var(--border); color: var(--text-secondary); font-size: 0.9375rem; }
+    .transparency-block li:last-child { border-bottom: none; }
+    .transparency-block a { color: var(--accent); text-decoration: none; }
+    .transparency-block a:hover { text-decoration: underline; }
+
+    /* 内页通用 */
+    .main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .page-hero { margin-bottom: 40px; }
+    .page-hero h1 { font-size: 1.75rem; margin-bottom: 8px; }
+    .page-hero p { color: var(--text-secondary); font-size: 1rem; }
+
+    /* 我的持仓 */
+    .anta-preview { background: linear-gradient(135deg, rgba(202,138,4,0.1) 0%, rgba(202,138,4,0.04) 100%); border: 1px solid rgba(202,138,4,0.25); border-radius: 14px; padding: 24px; margin-bottom: 32px; }
+    .anta-preview h3 { font-size: 1rem; margin-bottom: 12px; }
+    .anta-preview .big { font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+    .anta-preview .note { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 8px; }
+    .positions-list { display: flex; flex-direction: column; gap: 12px; }
+    .position-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    }
+    .position-card .name { font-weight: 600; }
+    .position-card .token { font-size: 0.8125rem; color: var(--text-secondary); }
+    .position-card .value { font-size: 1.125rem; font-weight: 600; color: var(--success); }
+    .position-card .btn-redeem, .position-card .btn-swap-anta { padding: 8px 16px; border-radius: 8px; font-size: 0.875rem; cursor: pointer; margin-left: 8px; }
+    .position-card .btn-redeem { background: transparent; border: 1px solid var(--border); color: var(--text-primary); }
+    .position-card .btn-swap-anta { background: rgba(202,138,4,0.15); border: 1px solid var(--gold); color: #a16207; }
+    .empty-state { text-align: center; padding: 60px 24px; color: var(--text-secondary); }
+    .empty-state p { margin-bottom: 16px; }
+
+    /* API Keys */
+    .api-keys-actions { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .btn-create-key { padding: 10px 20px; background: var(--blue-primary); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9375rem; }
+    .key-list { display: flex; flex-direction: column; gap: 12px; }
+    .key-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .key-item .key-name { font-weight: 600; }
+    .key-item .key-meta { font-size: 0.8125rem; color: var(--text-secondary); }
+    .key-item .btn-copy, .key-item .btn-revoke { padding: 6px 12px; border-radius: 6px; font-size: 0.8125rem; cursor: pointer; }
+    .key-item .btn-copy { background: var(--accent-soft); color: var(--accent); border: none; }
+    .key-item .btn-revoke { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+    .form-create-key { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; max-width: 480px; margin-bottom: 24px; }
+    .form-create-key h3 { margin-bottom: 16px; font-size: 1.125rem; }
+    .form-create-key label { display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 6px; }
+    .form-create-key input { width: 100%; padding: 10px 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); margin-bottom: 16px; }
+    .form-create-key .row { display: flex; gap: 12px; margin-top: 16px; }
+    .form-create-key .row button { padding: 10px 20px; border-radius: 8px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; }
+    .key-created-msg { margin-top: 16px; padding: 12px; background: rgba(34,197,94,0.15); border: 1px solid var(--success); border-radius: 8px; font-size: 0.875rem; }
+    .key-created-msg code { word-break: break-all; font-size: 0.8125rem; color: var(--accent); }
+
+    /* 帮助 */
+    .help-content { max-width: 720px; }
+    .help-content h2 { font-size: 1.25rem; margin: 24px 0 12px; }
+    .help-content h2:first-child { margin-top: 0; }
+    .help-content p, .help-content ul { color: var(--text-secondary); font-size: 0.9375rem; margin-bottom: 16px; line-height: 1.7; }
+    .help-content ul { padding-left: 24px; }
+    .help-content a { color: var(--accent); text-decoration: none; }
+    .help-content a:hover { text-decoration: underline; }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border); padding: 40px 24px 32px; margin-top: 64px;
+      font-size: 0.8125rem; color: var(--text-secondary); text-align: center;
+    }
+    .footer a { color: var(--accent); text-decoration: none; margin: 0 12px; }
+    .footer .legal { margin-top: 16px; max-width: 640px; margin-left: auto; margin-right: auto; }
+    .footer .powered { margin-top: 20px; }
+
+    /* Modals */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; max-width: 440px; width: 100%; padding: 28px; }
+    .modal h3 { margin-bottom: 20px; font-size: 1.25rem; }
+    .modal-option { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.2s; }
+    .modal-option:hover { border-color: var(--accent); }
+    .modal .btn-close { margin-top: 16px; width: 100%; padding: 10px; background: transparent; border: 1px solid var(--border); color: var(--text-secondary); border-radius: 8px; cursor: pointer; }
+    .disclaimer-checkbox { display: flex; align-items: flex-start; gap: 12px; margin: 20px 0; font-size: 0.9375rem; color: var(--text-secondary); }
+    .disclaimer-checkbox input { margin-top: 4px; }
+    .modal .btn-confirm { width: 100%; padding: 14px; background: var(--gold); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9375rem; }
+    .modal .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* AI 客服 */
+    .ai-chat-toggle { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--blue-primary); color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(37,99,235,0.25); z-index: 150; font-size: 1.5rem; }
+    .ai-chat-toggle:hover { transform: scale(1.05); }
+    .ai-chat-panel { position: fixed; bottom: 90px; right: 24px; width: 380px; max-width: calc(100vw - 48px); height: 480px; max-height: 70vh; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); z-index: 151; display: none; flex-direction: column; overflow: hidden; }
+    .ai-chat-panel.show { display: flex; }
+    .ai-chat-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .ai-chat-header .btn-close-chat { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.25rem; }
+    .ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .ai-msg { max-width: 85%; padding: 12px 14px; border-radius: 12px; font-size: 0.9375rem; line-height: 1.5; }
+    .ai-msg.user { align-self: flex-end; background: var(--blue-primary); color: #fff; }
+    .ai-msg.bot { align-self: flex-start; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary); }
+    .ai-chat-input-wrap { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+    .ai-chat-input-wrap input { flex: 1; padding: 12px 14px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-size: 0.9375rem; }
+    .ai-chat-input-wrap button { padding: 12px 20px; background: var(--blue-primary); color: #fff; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; font-size: 0.9375rem; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo" data-page="home">WorldLend</a>
+      <nav class="nav">
+        <a href="#" class="nav-link active" data-page="home" data-i18n="navHome">总览</a>
+        <a href="markets.html" class="nav-link" data-i18n="navMarkets">产品</a>
+        <a href="#" class="nav-link" data-page="positions" data-i18n="navPositions">投资组合</a>
+        <a href="#" class="nav-link" data-page="api-keys" data-i18n="navApiKeys">API Keys</a>
+        <a href="#" class="nav-link" data-page="help" data-i18n="navHelp">帮助中心</a>
+      </nav>
+      <div class="header-actions">
+        <div class="lang-toggle">
+          <button type="button" class="lang-btn active" id="lang-zh" data-lang="zh">中文</button>
+          <button type="button" class="lang-btn" id="lang-en" data-lang="en">EN</button>
+        </div>
+        <button type="button" class="btn-connect" id="btn-connect" data-i18n="connectWallet">连接钱包</button>
+        <div class="wallet-connected" id="wallet-connected" style="display:none;">
+          <span class="wallet-address" id="wallet-address">0x1234…5678</span>
+          <button type="button" class="btn-disconnect" id="btn-disconnect" data-i18n="disconnect">断开</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== 首页 Landing ========== -->
+  <section id="page-home" class="page active">
+    <div class="hero">
+      <div class="hero-inner">
+        <h1 data-i18n="heroTitle">机构级链上固定收益协议</h1>
+        <p class="hero-sub" data-i18n="heroSub">固定到期日结构化金库，USDT 本位收益凭证。依托 Antalpha Prime 底层 BTC 超额抵押风控引擎，将非标机构信贷转化为标准化、高流动性的链上收益资产。</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="value">$ 52.4M</div><div class="label" data-i18n="heroStatTotal">协议总锁仓</div></div>
+          <div class="hero-stat"><div class="value">4</div><div class="label" data-i18n="heroStatVaults">在售金库</div></div>
+          <div class="hero-stat"><div class="value">8.5 – 9.8%</div><div class="label" data-i18n="heroStatApy">固定年化收益</div></div>
+        </div>
+        <div class="hero-cta">
+          <a href="markets.html" class="btn-primary" id="hero-cta-vaults" data-i18n="heroCtaVaults">浏览固定收益市场</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Powered by Antalpha Prime -->
+    <div class="section">
+      <div class="powered-by-block">
+        <span class="badge" data-i18n="poweredByBadge">技术背书</span>
+        <h2 data-i18n="poweredByTitle">Powered by Antalpha Prime</h2>
+        <p data-i18n="poweredByDesc">底层 LTV、托管状态的预言机喂价由 Antalpha Prime 主站提供支持。链上可查、审计可验。</p>
+        <a href="../官网/index.html" target="_blank" data-i18n="poweredByLink">前往 Antalpha Prime 官网 →</a>
+      </div>
+    </div>
+
+    <!-- Built for scale - 3 价值条 -->
+    <div class="section">
+      <h2 class="section-title" data-i18n="sectionBuiltTitle">产品架构与核心优势</h2>
+      <p class="section-desc" data-i18n="sectionBuiltDesc">固定到期日金库、三种退出路径、$ANTA 兑换飞轮，让收益与流动性兼得。</p>
+      <div class="value-grid">
+        <div class="value-card">
+          <h3 data-i18n="value1Title">结构化到期金库</h3>
+          <p data-i18n="value1Desc">按到期日划分的独立金库（如 2026 年 6 月 / 9 月到期）。存入 USDT 即获得同质化生息凭证 wlUSDT-[Date]，可在 DEX 交易或持有至到期 1:1 兑付本息。</p>
+        </div>
+        <div class="value-card">
+          <h3 data-i18n="value2Title">多维流动性出口</h3>
+          <p data-i18n="value2Desc"><strong>持有至到期</strong>：零摩擦赎回 USDT 本息。<strong>DEX 卖出</strong>：急需流动性时在 Uniswap 卖出凭证。<strong>闪电兑换 $ANTA</strong>：随时按金库折扣价换取 $ANTA 股票代币，期限越长折扣越高。</p>
+        </div>
+        <div class="value-card">
+          <h3 data-i18n="value3Title">$ANTA 权益兑换引擎</h3>
+          <p data-i18n="value3Desc">选择长期限金库的用户，享有更高的 $ANTA 兑换折扣（如 6 个月池 10%、3 个月池 5%）。不等到期也可随时以折扣价换 $ANTA，形成锁仓与股票吸筹飞轮。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 期限金库大厅 - 突出利率与引导购买 -->
+    <div class="section vault-hall" id="vault-hall">
+      <h2 class="section-title" data-i18n="vaultHallTitle">固定收益市场</h2>
+      <p class="section-desc" data-i18n="vaultHallDesc">按固定到期日选择金库，到期固定 APY 与 $ANTA 兑换折扣一目了然。存入 USDT，获得生息凭证。</p>
+      <div class="vault-table-wrap">
+        <table class="vault-table">
+          <thead>
+            <tr>
+              <th data-i18n="tableVault">产品</th>
+              <th data-i18n="tableMaturity">到期日</th>
+              <th data-i18n="tableToMaturity">距到期</th>
+              <th data-i18n="tableApy">到期固定 APY</th>
+              <th data-i18n="tableAntaDiscount">$ANTA 兑换折扣</th>
+              <th data-i18n="tableAction">交易</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="vault-detail.html?vault=jun26" class="vault-name-link"><span class="vault-name" data-i18n="vaultJun">2026 年 6 月底到期池</span></a><br><span class="vault-token">wlUSDT-Jun26</span></td>
+              <td>2026-06-30</td>
+              <td><span data-i18n="days124">124 天</span></td>
+              <td class="apy-cell">8.5% <span class="unit">APY</span></td>
+              <td class="anta-discount">10%</td>
+              <td><a href="vault-detail.html?vault=jun26" class="btn-deposit" data-i18n="btnDeposit">存入</a></td>
+            </tr>
+            <tr>
+              <td><a href="vault-detail.html?vault=sep26" class="vault-name-link"><span class="vault-name" data-i18n="vaultSep">2026 年 9 月底到期池</span></a><br><span class="vault-token">wlUSDT-Sep26</span></td>
+              <td>2026-09-30</td>
+              <td><span data-i18n="days216">216 天</span></td>
+              <td class="apy-cell">9.2% <span class="unit">APY</span></td>
+              <td class="anta-discount">12%</td>
+              <td><a href="vault-detail.html?vault=sep26" class="btn-deposit" data-i18n="btnDeposit">存入</a></td>
+            </tr>
+            <tr>
+              <td><a href="vault-detail.html?vault=dec26" class="vault-name-link"><span class="vault-name" data-i18n="vaultDec">2026 年 12 月底到期池</span></a><br><span class="vault-token">wlUSDT-Dec26</span></td>
+              <td>2026-12-31</td>
+              <td><span data-i18n="days308">308 天</span></td>
+              <td class="apy-cell">9.8% <span class="unit">APY</span></td>
+              <td class="anta-discount">15%</td>
+              <td><a href="vault-detail.html?vault=dec26" class="btn-deposit" data-i18n="btnDeposit">存入</a></td>
+            </tr>
+            <tr>
+              <td><a href="vault-detail.html?vault=mar27" class="vault-name-link"><span class="vault-name" data-i18n="vaultMar27">2027 Q1 固定收益池</span></a><br><span class="vault-token">wlUSDT-Mar27</span></td>
+              <td>2027-03-31</td>
+              <td><span data-i18n="days398">398 天</span></td>
+              <td class="apy-cell">10.5% <span class="unit">APY</span></td>
+              <td class="anta-discount">18%</td>
+              <td><a href="vault-detail.html?vault=mar27" class="btn-deposit" data-i18n="btnDeposit">存入</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="vault-cards">
+        <div class="vault-card">
+          <a href="vault-detail.html?vault=jun26" class="vault-name" data-i18n="vaultJun">2026 年 6 月底到期池</a>
+          <span class="vault-token">wlUSDT-Jun26</span>
+          <div class="row"><span data-i18n="tableMaturity">到期日</span><span>2026-06-30</span></div>
+          <div class="row"><span data-i18n="tableToMaturity">距到期</span><span>124 天</span></div>
+          <div class="apy-cell">8.5% <span class="unit">APY</span></div>
+          <div class="row"><span data-i18n="tableAntaShort">$ANTA 折扣</span><span class="anta-discount">10%</span></div>
+          <a href="vault-detail.html?vault=jun26" class="btn-deposit" data-i18n="btnDeposit">存入</a>
+        </div>
+        <div class="vault-card">
+          <a href="vault-detail.html?vault=sep26" class="vault-name" data-i18n="vaultSep">2026 年 9 月底到期池</a>
+          <span class="vault-token">wlUSDT-Sep26</span>
+          <div class="row"><span data-i18n="tableMaturity">到期日</span><span>2026-09-30</span></div>
+          <div class="row"><span data-i18n="tableToMaturity">距到期</span><span>216 天</span></div>
+          <div class="apy-cell">9.2% <span class="unit">APY</span></div>
+          <div class="row"><span data-i18n="tableAntaShort">$ANTA 折扣</span><span class="anta-discount">12%</span></div>
+          <a href="vault-detail.html?vault=sep26" class="btn-deposit" data-i18n="btnDeposit">存入</a>
+        </div>
+        <div class="vault-card">
+          <a href="vault-detail.html?vault=dec26" class="vault-name" data-i18n="vaultDec">2026 年 12 月底到期池</a>
+          <span class="vault-token">wlUSDT-Dec26</span>
+          <div class="row"><span data-i18n="tableMaturity">到期日</span><span>2026-12-31</span></div>
+          <div class="row"><span data-i18n="tableToMaturity">距到期</span><span>308 天</span></div>
+          <div class="apy-cell">9.8% <span class="unit">APY</span></div>
+          <div class="row"><span data-i18n="tableAntaShort">$ANTA 折扣</span><span class="anta-discount">15%</span></div>
+          <a href="vault-detail.html?vault=dec26" class="btn-deposit" data-i18n="btnDeposit">存入</a>
+        </div>
+        <div class="vault-card">
+          <a href="vault-detail.html?vault=mar27" class="vault-name" data-i18n="vaultMar27">2027 Q1 固定收益池</a>
+          <span class="vault-token">wlUSDT-Mar27</span>
+          <div class="row"><span data-i18n="tableMaturity">到期日</span><span>2027-03-31</span></div>
+          <div class="row"><span data-i18n="tableToMaturity">距到期</span><span>398 天</span></div>
+          <div class="apy-cell">10.5% <span class="unit">APY</span></div>
+          <div class="row"><span data-i18n="tableAntaShort">$ANTA 折扣</span><span class="anta-discount">18%</span></div>
+          <a href="vault-detail.html?vault=mar27" class="btn-deposit" data-i18n="btnDeposit">存入</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 三条退出路径 -->
+    <div class="section" id="exit-paths">
+      <h2 class="section-title" data-i18n="exitPathsTitle">灵活退出机制</h2>
+      <p class="section-desc" data-i18n="exitPathsDesc">持有生息凭证后，您可选择持有至到期、DEX 卖出或闪电兑换 $ANTA。</p>
+      <div class="exit-paths">
+        <div class="exit-path">
+          <span class="tag" data-i18n="pathA">路径 A</span>
+          <h3 data-i18n="pathATitle">持有至到期</h3>
+          <p data-i18n="pathADesc">零摩擦，无损耗。到期后在 WorldLend 直接 Redeem，拿回 100% USDT 本息。</p>
+        </div>
+        <div class="exit-path">
+          <span class="tag" data-i18n="pathB">路径 B</span>
+          <h3 data-i18n="pathBTitle">二级市场卖出</h3>
+          <p data-i18n="pathBDesc">急需 U 时无需排队，在 Uniswap 等 DEX 卖出凭证，由市场决定价格（或有小幅滑点）。</p>
+        </div>
+        <div class="exit-path highlight">
+          <span class="tag" data-i18n="pathC">路径 C · 飞轮核心</span>
+          <h3 data-i18n="pathCTitle">闪电兑换 $ANTA</h3>
+          <p data-i18n="pathCDesc">随时在官网将凭证销毁，按金库折扣价兑换 $ANTA 股票代币。期限越长，折扣越高。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 透明与安全 -->
+    <div class="section">
+      <h2 class="section-title" data-i18n="transparencyTitle">链上透明度与风控体系</h2>
+      <p class="section-desc" data-i18n="transparencyDesc">每个金库底层健康指标可查，托管与风控由 Antalpha Prime 支持。</p>
+      <div class="transparency-block">
+        <h3 data-i18n="transparencyBlockTitle">RWA 穿透与风控</h3>
+        <ul>
+          <li data-i18n="transparencyItem1">底层 BTC 质押率 LTV、托管行证明由 Antalpha Prime 预言机喂价，链上可查。</li>
+          <li data-i18n="transparencyItem2">每个到期日金库对应独立合约，NAV 按日更新，到期刚性兑付。</li>
+          <li><a href="../官网/index.html#transparency" target="_blank" data-i18n="transparencyLink">前往 Antalpha Prime 透明度看板查看详情 →</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========== 我的持仓 ========== -->
+  <section id="page-positions" class="page main">
+    <div class="page-hero">
+      <h1 data-i18n="pagePositionsTitle">投资组合</h1>
+      <p data-i18n="pagePositionsDesc">查看您持有的各期限生息凭证，以及若兑换为 $ANTA 可获得的数量与节省金额。</p>
+    </div>
+    <div id="positions-empty" class="empty-state">
+      <p data-i18n="positionsEmpty">请先连接钱包以查看持仓。</p>
+      <button type="button" class="btn-connect" id="btn-connect-positions" data-i18n="connectWallet">连接钱包</button>
+    </div>
+    <div id="positions-content" style="display:none;">
+      <div class="anta-preview">
+        <h3 data-i18n="antaPreviewTitle">若全部兑换为 $ANTA</h3>
+        <p class="big">约 12,500 $ANTA</p>
+        <p class="note" data-i18n="antaPreviewNote">相当于较市价省下约 $1,250（按当前 10% 折扣估算）。兑换前请阅读 $ANTA 风险提示。</p>
+        <button type="button" class="btn-swap-anta" id="btn-swap-anta" data-i18n="btnSwapAnta">兑换 $ANTA</button>
+      </div>
+      <div class="positions-list" id="positions-list">
+        <div class="position-card">
+          <div>
+            <div class="name" data-i18n="vaultJun">2026 年 6 月底到期池</div>
+            <div class="token">10,000 wlUSDT-Jun26</div>
+          </div>
+          <div>
+            <div class="value">$ 10,850</div>
+            <div class="token" data-i18n="positionEst">预估到期本息 · APY 8.5%</div>
+          </div>
+          <div>
+            <button type="button" class="btn-redeem" data-i18n="positionRedeem">到期赎回</button>
+            <button type="button" class="btn-swap-anta" data-i18n="btnSwapAnta">兑换 $ANTA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== API Keys ========== -->
+  <section id="page-api-keys" class="page main">
+    <div class="page-hero">
+      <h1 data-i18n="pageApiTitle">AI Agent API Keys</h1>
+      <p data-i18n="pageApiDesc">为 AI Agent 创建 API 密钥，可调用期限套利预言机接口（各金库 YTM、$ANTA 折扣、DEX 现货价等），实现自动化套利。</p>
+    </div>
+    <div class="api-keys-actions">
+      <h2 style="font-size:1.125rem;" data-i18n="myKeys">我的 Key</h2>
+      <button type="button" class="btn-create-key" id="btn-create-key" data-i18n="btnCreateKey">+ 创建新 Key</button>
+    </div>
+    <div id="form-create-key" class="form-create-key" style="display:none;">
+      <h3 data-i18n="formCreateKeyTitle">创建 API Key</h3>
+      <label data-i18n="keyNameLabel">Key 名称</label>
+      <input type="text" id="key-name" data-i18n-placeholder="keyNamePlaceholder" placeholder="例如：My AI Agent" />
+      <label data-i18n="keyScopeLabel">权限</label>
+      <input type="text" id="key-scope" value="只读 · 期限套利预言机" readonly />
+      <div class="row">
+        <button type="button" class="btn-submit" id="key-submit" data-i18n="keySubmit">创建</button>
+        <button type="button" class="btn-cancel" id="key-cancel" data-i18n="keyCancel">取消</button>
+      </div>
+      <div id="key-created-msg" class="key-created-msg" style="display:none;">
+        <strong data-i18n="keyCreatedMsg">创建成功，请妥善保存（仅显示一次）：</strong><br>
+        <code id="key-value"></code>
+      </div>
+    </div>
+    <div class="key-list" id="key-list">
+      <div class="key-item">
+        <div>
+          <div class="key-name" data-i18n="keyItemDemoName">生产环境只读 Key</div>
+          <div class="key-meta" id="key-meta-demo">只读 · 创建于 2026-02-20</div>
+        </div>
+        <div>
+          <button type="button" class="btn-copy" data-i18n="btnCopy">复制</button>
+          <button type="button" class="btn-revoke" data-i18n="btnRevoke">撤销</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 帮助 ========== -->
+  <section id="page-help" class="page main">
+    <div class="page-hero">
+      <h1 data-i18n="pageHelpTitle">帮助中心</h1>
+      <p data-i18n="pageHelpDesc">参与流程、赎回与 $ANTA 兑换、API 说明及常见问题。</p>
+    </div>
+    <div class="help-content">
+      <h2 data-i18n="help1Title">如何参与金库</h2>
+      <p data-i18n="help1Content">连接钱包后，在首页「期限金库大厅」选择到期日，点击「立即存入」。按提示授权 USDT，即可获得对应 wlUSDT-[Date] 生息凭证。存续期内 NAV 按日增长，到期可 1:1 兑付 USDT 本息。</p>
+      <h2 data-i18n="help2Title">三种退出方式</h2>
+      <p data-i18n="help2Content"><strong>持有至到期</strong>：在金库到期后，于「我的持仓」点击「到期赎回」拿回 USDT。<strong>DEX 卖出</strong>：将 wlUSDT 转入钱包后在 Uniswap 等 DEX 卖出。<strong>兑换 $ANTA</strong>：在「我的持仓」点击「兑换 $ANTA」，确认免责后按金库折扣价换取 $ANTA（存在代币波动风险，详见弹窗声明）。</p>
+      <h2 data-i18n="help3Title">API 与 AI Agent</h2>
+      <p data-i18n="help3Content">提供免鉴权接口 <code>/api/v1/vaults/yield-curve</code> 及 API Key 鉴权方式，返回各金库到期日、当前 NAV、YTM、$ANTA 折扣率、DEX 现货价等，便于 AI Agent 比对并执行最优退出策略。网站根目录提供 ai-plugin.json 供 Agent 发现合约与能力。</p>
+      <h2 data-i18n="help4Title">合规与主体</h2>
+      <p data-i18n="help4Content">WorldLend 前端与智能合约的法律主体为独立离岸基金/SPV（BVI）。部分地区可能受地理限制，请以页脚法律声明为准。兑换 $ANTA 前需确认您所在地区法律允许接收该类资产并了解波动风险。</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <a href="../官网/index.html" target="_blank" data-i18n="footerPrime">Antalpha Prime 官网</a>
+    <a href="#" data-i18n="footerPrivacy">隐私政策</a>
+    <a href="#" data-i18n="footerLegal">法律声明</a>
+    <div class="legal" style="margin-top:16px;" data-i18n="footerLegalText">
+      WorldLend 运营主体为独立离岸基金/SPV（BVI）。本网站不向受制裁或法律禁止的地区提供服务。产品涉及智能合约与代币风险，请谨慎参与。
+    </div>
+    <div class="powered" data-i18n="footerPowered">Powered by Antalpha Prime · 技术与风控由 Antalpha Prime 提供</div>
+  </footer>
+
+  <!-- 钱包弹窗 -->
+  <div id="wallet-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 data-i18n="modalWalletTitle">连接钱包</h3>
+      <div class="modal-option" data-wallet="metamask">
+        <div><div class="label">MetaMask</div><div class="desc" data-i18n="metamaskDesc">浏览器插件钱包</div></div>
+      </div>
+      <div class="modal-option" data-wallet="walletconnect">
+        <div><div class="label">WalletConnect</div><div class="desc" data-i18n="walletConnectDesc">扫码连接移动端钱包</div></div>
+      </div>
+      <button type="button" class="btn-close" id="wallet-modal-close" data-i18n="modalCancel">取消</button>
+    </div>
+  </div>
+
+  <!-- $ANTA 免责弹窗 -->
+  <div id="anta-modal" class="modal-overlay">
+    <div class="modal">
+      <h3 data-i18n="antaModalTitle">兑换 $ANTA 风险提示</h3>
+      <p style="color:var(--text-secondary); font-size:0.9375rem; margin-bottom:16px;" data-i18n="antaModalBody">
+        您即将通过智能合约将生息凭证兑换为 $ANTA 股票代币。$ANTA 为 Antalpha 股票代币，存在市场波动风险。兑换后无法再按 1:1 兑付 USDT 本息。
+      </p>
+      <label class="disclaimer-checkbox">
+        <input type="checkbox" id="anta-disclaimer-check" />
+        <span data-i18n="antaModalCheckbox">本人确认已了解 $ANTA 代币的市场波动风险，且本人所在地区法律允许接收此类资产。</span>
+      </label>
+      <div style="display:flex; gap:12px;">
+        <button type="button" class="btn-close" id="anta-modal-cancel" style="flex:1;" data-i18n="modalCancel">取消</button>
+        <button type="button" class="btn-confirm" id="anta-modal-confirm" disabled style="flex:1;" data-i18n="antaModalConfirm">确认兑换 $ANTA</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 客服 -->
+  <button type="button" class="ai-chat-toggle" id="ai-chat-toggle" data-i18n-title="aiChatToggleTitle" title="AI 客服">💬</button>
+  <div id="ai-chat-panel" class="ai-chat-panel">
+    <div class="ai-chat-header">
+      <h4 style="font-size:1rem;" data-i18n="aiChatTitle">AI 客服</h4>
+      <button type="button" class="btn-close-chat" id="ai-chat-close">×</button>
+    </div>
+    <div class="ai-chat-messages" id="ai-chat-messages">
+      <div class="ai-msg bot" id="ai-welcome-msg">您好，我是 WorldLend AI 客服。可咨询：金库利率、$ANTA 兑换、赎回流程、API 等。</div>
+    </div>
+    <div class="ai-chat-input-wrap">
+      <input type="text" id="ai-chat-input" data-i18n-placeholder="aiChatPlaceholder" placeholder="输入您的问题…" />
+      <button type="button" id="ai-chat-send" data-i18n="aiChatSend">发送</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var walletConnected = false;
+
+      var L = {
+        zh: {
+          docTitle: 'WorldLend — Web3 机构级固收产品超市',
+          navHome: '总览', navPositions: '投资组合', navApiKeys: 'API Keys', navHelp: '帮助中心',
+          connectWallet: '连接钱包', disconnect: '断开',
+          heroTitle: '机构级链上固定收益协议',
+          heroSub: '固定到期日结构化金库，USDT 本位收益凭证。依托 Antalpha Prime 底层 BTC 超额抵押风控引擎，将非标机构信贷转化为标准化、高流动性的链上收益资产。',
+          heroStatTotal: '协议总锁仓', heroStatVaults: '在售金库', heroStatApy: '固定年化收益',
+          navMarkets: '产品',
+          heroCtaVaults: '浏览固定收益市场',
+          poweredByBadge: '技术背书', poweredByTitle: 'Powered by Antalpha Prime',
+          poweredByDesc: '底层 LTV、托管状态的预言机喂价由 Antalpha Prime 主站提供支持。链上可查、审计可验。',
+          poweredByLink: '前往 Antalpha Prime 官网 →',
+          sectionBuiltTitle: '产品架构与核心优势',
+          sectionBuiltDesc: '固定到期日金库、三种退出路径、$ANTA 兑换飞轮，让收益与流动性兼得。',
+          value1Title: '结构化到期金库',
+          value1Desc: '按到期日划分的独立金库（如 2026 年 6 月 / 9 月到期）。存入 USDT 即获得同质化生息凭证 wlUSDT-[Date]，可在 DEX 交易或持有至到期 1:1 兑付本息。',
+          value2Title: '多维流动性出口',
+          value2Desc: '持有至到期：零摩擦赎回 USDT 本息。DEX 卖出：急需流动性时在 Uniswap 卖出凭证。闪电兑换 $ANTA：随时按金库折扣价换取 $ANTA 股票代币，期限越长折扣越高。',
+          value3Title: '$ANTA 权益兑换引擎',
+          value3Desc: '选择长期限金库的用户，享有更高的 $ANTA 兑换折扣（如 6 个月池 10%、3 个月池 5%）。不等到期也可随时以折扣价换 $ANTA，形成锁仓与股票吸筹飞轮。',
+          vaultHallTitle: '固定收益市场',
+          vaultHallDesc: '按固定到期日选择金库，到期固定 APY 与 $ANTA 兑换折扣一目了然。存入 USDT，获得生息凭证。',
+          tableVault: '产品', tableMaturity: '到期日', tableToMaturity: '距到期', tableApy: '到期固定 APY',
+          tableAntaDiscount: '$ANTA 兑换折扣', tableAntaShort: '$ANTA 折扣', tableAction: '交易',
+          btnDeposit: '存入',
+          vaultJun: '2026 年 6 月底到期池', vaultSep: '2026 年 9 月底到期池', vaultDec: '2026 年 12 月底到期池', vaultMar27: '2027 Q1 固定收益池',
+          days124: '124 天', days216: '216 天', days308: '308 天', days398: '398 天',
+          exitPathsTitle: '灵活退出机制',
+          exitPathsDesc: '持有生息凭证后，您可选择持有至到期、DEX 卖出或闪电兑换 $ANTA。',
+          pathA: '路径 A', pathATitle: '持有至到期',
+          pathADesc: '零摩擦，无损耗。到期后在 WorldLend 直接 Redeem，拿回 100% USDT 本息。',
+          pathB: '路径 B', pathBTitle: '二级市场卖出',
+          pathBDesc: '急需 U 时无需排队，在 Uniswap 等 DEX 卖出凭证，由市场决定价格（或有小幅滑点）。',
+          pathC: '路径 C · 飞轮核心', pathCTitle: '闪电兑换 $ANTA',
+          pathCDesc: '随时在官网将凭证销毁，按金库折扣价兑换 $ANTA 股票代币。期限越长，折扣越高。',
+          transparencyTitle: '链上透明度与风控体系',
+          transparencyDesc: '每个金库底层健康指标可查，托管与风控由 Antalpha Prime 支持。',
+          transparencyBlockTitle: 'RWA 穿透与风控',
+          transparencyItem1: '底层 BTC 质押率 LTV、托管行证明由 Antalpha Prime 预言机喂价，链上可查。',
+          transparencyItem2: '每个到期日金库对应独立合约，NAV 按日更新，到期刚性兑付。',
+          transparencyLink: '前往 Antalpha Prime 透明度看板查看详情 →',
+          pagePositionsTitle: '投资组合',
+          pagePositionsDesc: '查看您持有的各期限生息凭证，以及若兑换为 $ANTA 可获得的数量与节省金额。',
+          positionsEmpty: '请先连接钱包以查看持仓。',
+          antaPreviewTitle: '若全部兑换为 $ANTA', antaPreviewNote: '相当于较市价省下约 $1,250（按当前 10% 折扣估算）。兑换前请阅读 $ANTA 风险提示。',
+          btnSwapAnta: '兑换 $ANTA', positionRedeem: '到期赎回', positionEst: '预估到期本息 · APY 8.5%',
+          pageApiTitle: 'AI Agent API Keys',
+          pageApiDesc: '为 AI Agent 创建 API 密钥，可调用期限套利预言机接口（各金库 YTM、$ANTA 折扣、DEX 现货价等），实现自动化套利。',
+          myKeys: '我的 Key', btnCreateKey: '+ 创建新 Key',
+          formCreateKeyTitle: '创建 API Key', keyNameLabel: 'Key 名称', keyNamePlaceholder: '例如：My AI Agent',
+          keyScopeLabel: '权限', keyScopeValue: '只读 · 期限套利预言机',
+          keySubmit: '创建', keyCancel: '取消', keyCreatedMsg: '创建成功，请妥善保存（仅显示一次）：',
+          keyMetaReadOnly: '只读 · 创建于 ', keyItemDemoName: '生产环境只读 Key',
+          btnCopy: '复制', btnRevoke: '撤销',
+          pageHelpTitle: '帮助中心',
+          pageHelpDesc: '参与流程、赎回与 $ANTA 兑换、API 说明及常见问题。',
+          help1Title: '如何参与金库',
+          help1Content: '连接钱包后，在首页「期限金库大厅」选择到期日，点击「立即存入」。按提示授权 USDT，即可获得对应 wlUSDT-[Date] 生息凭证。存续期内 NAV 按日增长，到期可 1:1 兑付 USDT 本息。',
+          help2Title: '三种退出方式',
+          help2Content: '持有至到期：在金库到期后，于「我的持仓」点击「到期赎回」拿回 USDT。DEX 卖出：将 wlUSDT 转入钱包后在 Uniswap 等 DEX 卖出。兑换 $ANTA：在「我的持仓」点击「兑换 $ANTA」，确认免责后按金库折扣价换取 $ANTA（存在代币波动风险，详见弹窗声明）。',
+          help3Title: 'API 与 AI Agent',
+          help3Content: '提供免鉴权接口 /api/v1/vaults/yield-curve 及 API Key 鉴权方式，返回各金库到期日、当前 NAV、YTM、$ANTA 折扣率、DEX 现货价等，便于 AI Agent 比对并执行最优退出策略。网站根目录提供 ai-plugin.json 供 Agent 发现合约与能力。',
+          help4Title: '合规与主体',
+          help4Content: 'WorldLend 前端与智能合约的法律主体为独立离岸基金/SPV（BVI）。部分地区可能受地理限制，请以页脚法律声明为准。兑换 $ANTA 前需确认您所在地区法律允许接收该类资产并了解波动风险。',
+          footerPrime: 'Antalpha Prime 官网', footerPrivacy: '隐私政策', footerLegal: '法律声明',
+          footerLegalText: 'WorldLend 运营主体为独立离岸基金/SPV（BVI）。本网站不向受制裁或法律禁止的地区提供服务。产品涉及智能合约与代币风险，请谨慎参与。',
+          footerPowered: 'Powered by Antalpha Prime · 技术与风控由 Antalpha Prime 提供',
+          modalWalletTitle: '连接钱包', metamaskDesc: '浏览器插件钱包', walletConnectDesc: '扫码连接移动端钱包', modalCancel: '取消',
+          antaModalTitle: '兑换 $ANTA 风险提示',
+          antaModalBody: '您即将通过智能合约将生息凭证兑换为 $ANTA 股票代币。$ANTA 为 Antalpha 股票代币，存在市场波动风险。兑换后无法再按 1:1 兑付 USDT 本息。',
+          antaModalCheckbox: '本人确认已了解 $ANTA 代币的市场波动风险，且本人所在地区法律允许接收此类资产。',
+          antaModalConfirm: '确认兑换 $ANTA',
+          aiChatTitle: 'AI 客服', aiChatToggleTitle: 'AI 客服',
+          aiChatPlaceholder: '输入您的问题…', aiChatSend: '发送',
+          aiChatWelcome: '您好，我是 WorldLend AI 客服。可咨询：金库利率、$ANTA 兑换、赎回流程、API 等。'
+        },
+        en: {
+          docTitle: 'WorldLend — Web3 Institutional Fixed Income',
+          navHome: 'Overview', navPositions: 'Portfolio', navApiKeys: 'API Keys', navHelp: 'Help Center',
+          connectWallet: 'Connect Wallet', disconnect: 'Disconnect',
+          heroTitle: 'Institutional On-Chain Fixed Income Protocol',
+          heroSub: 'Structured fixed-maturity vaults with USDT-denominated yield tokens. Powered by Antalpha Prime\'s BTC over-collateralization risk engine, transforming institutional credit into standardized, liquid on-chain yield.',
+          heroStatTotal: 'Total Value Locked', heroStatVaults: 'Active Vaults', heroStatApy: 'Fixed APY Range',
+          navMarkets: 'Products',
+          heroCtaVaults: 'Browse Fixed Income Markets',
+          poweredByBadge: 'Powered by', poweredByTitle: 'Powered by Antalpha Prime',
+          poweredByDesc: 'LTV and custody oracles are provided by Antalpha Prime. On-chain verifiable and auditable.',
+          poweredByLink: 'Go to Antalpha Prime →',
+          sectionBuiltTitle: 'Architecture & Core Advantages',
+          sectionBuiltDesc: 'Fixed-maturity vaults, three exit paths, and $ANTA swap flywheel for yield and liquidity.',
+          value1Title: 'Structured Maturity Vaults',
+          value1Desc: 'Vaults by maturity (e.g. Jun/Sep 2026). Deposit USDT to receive wlUSDT-[Date] yield tokens—trade on DEX or hold to maturity for 1:1 principal and interest.',
+          value2Title: 'Multi-Path Liquidity',
+          value2Desc: 'Hold to maturity: frictionless USDT redemption. DEX sell: exit early on Uniswap. Instant $ANTA swap: burn tokens for $ANTA at vault discount—longer term, higher discount.',
+          value3Title: '$ANTA Equity Swap Engine',
+          value3Desc: 'Longer-term vaults get higher $ANTA swap discounts (e.g. 10% for 6M, 5% for 3M). Swap to $ANTA anytime at discount, driving lock-up and equity demand.',
+          vaultHallTitle: 'Fixed Income Markets',
+          vaultHallDesc: 'Choose a fixed-maturity vault. See fixed APY and $ANTA discount. Deposit USDT and receive yield tokens.',
+          tableVault: 'Product', tableMaturity: 'Maturity', tableToMaturity: 'To Maturity', tableApy: 'Fixed APY',
+          tableAntaDiscount: '$ANTA Discount', tableAntaShort: '$ANTA Discount', tableAction: 'Trade',
+          btnDeposit: 'Deposit',
+          vaultJun: 'Jun 2026 Maturity', vaultSep: 'Sep 2026 Maturity', vaultDec: 'Dec 2026 Maturity', vaultMar27: 'Q1 2027 Fixed Yield',
+          days124: '124 days', days216: '216 days', days308: '308 days', days398: '398 days',
+          exitPathsTitle: 'Flexible Exit Mechanisms',
+          exitPathsDesc: 'After holding yield tokens, choose hold to maturity, DEX sell, or instant $ANTA swap.',
+          pathA: 'Path A', pathATitle: 'Hold to Maturity',
+          pathADesc: 'Zero friction. Redeem 100% USDT principal and interest at maturity on WorldLend.',
+          pathB: 'Path B', pathBTitle: 'Sell on DEX',
+          pathBDesc: 'Need liquidity? Sell tokens on Uniswap or other DEXs—market price may have slight slippage.',
+          pathC: 'Path C · Flywheel', pathCTitle: 'Instant $ANTA Swap',
+          pathCDesc: 'Burn tokens on-site for $ANTA at vault discount. Longer term, higher discount.',
+          transparencyTitle: 'On-Chain Transparency & Risk Framework',
+          transparencyDesc: 'Per-vault health metrics and custody are supported by Antalpha Prime.',
+          transparencyBlockTitle: 'RWA & Risk',
+          transparencyItem1: 'BTC LTV and custody proofs are oracle-fed by Antalpha Prime and verifiable on-chain.',
+          transparencyItem2: 'Each maturity has a dedicated contract; NAV updates daily with rigid payout at maturity.',
+          transparencyLink: 'View Antalpha Prime transparency dashboard →',
+          pagePositionsTitle: 'Portfolio',
+          pagePositionsDesc: 'View your yield tokens and estimated $ANTA amount and savings if you swap.',
+          positionsEmpty: 'Connect wallet to view positions.',
+          antaPreviewTitle: 'If you swap all to $ANTA', antaPreviewNote: 'Approx. $1,250 saved vs market (at 10% discount). Please read $ANTA risk disclaimer before swapping.',
+          btnSwapAnta: 'Swap to $ANTA', positionRedeem: 'Redeem at Maturity', positionEst: 'Est. at maturity · 8.5% APY',
+          pageApiTitle: 'AI Agent API Keys',
+          pageApiDesc: 'Create API keys for AI agents to call the term-arbitrage oracle (YTM, $ANTA discount, DEX spot, etc.) for automated strategies.',
+          myKeys: 'My Keys', btnCreateKey: '+ Create Key',
+          formCreateKeyTitle: 'Create API Key', keyNameLabel: 'Key name', keyNamePlaceholder: 'e.g. My AI Agent',
+          keyScopeLabel: 'Scope', keyScopeValue: 'Read-only · Term arbitrage oracle',
+          keySubmit: 'Create', keyCancel: 'Cancel', keyCreatedMsg: 'Created. Save it now (shown once):',
+          keyMetaReadOnly: 'Read-only · Created ', keyItemDemoName: 'Production read-only key',
+          btnCopy: 'Copy', btnRevoke: 'Revoke',
+          pageHelpTitle: 'Help Center',
+          pageHelpDesc: 'How to participate, redeem, swap $ANTA, API, and FAQ.',
+          help1Title: 'How to participate',
+          help1Content: 'Connect wallet, go to Vault Hall, pick a maturity and click Deposit. Approve USDT to receive wlUSDT-[Date]. NAV grows daily; at maturity redeem 1:1 USDT.',
+          help2Title: 'Three exit options',
+          help2Content: 'Hold to maturity: click Redeem at Maturity in My Positions after maturity. DEX sell: send wlUSDT to your wallet and sell on Uniswap. Swap $ANTA: in My Positions click Swap to $ANTA, confirm disclaimer, then swap at vault discount (token risk—see modal).',
+          help3Title: 'API & AI Agent',
+          help3Content: 'Public /api/v1/vaults/yield-curve and API Key auth return maturity, NAV, YTM, $ANTA discount, DEX spot. ai-plugin.json at site root for agent discovery.',
+          help4Title: 'Compliance & Entity',
+          help4Content: 'WorldLend is operated by an offshore fund/SPV (BVI). Some regions may be restricted; see footer. Confirm your jurisdiction allows $ANTA and understand volatility before swapping.',
+          footerPrime: 'Antalpha Prime', footerPrivacy: 'Privacy', footerLegal: 'Legal',
+          footerLegalText: 'WorldLend is operated by an offshore fund/SPV (BVI). Not available in sanctioned or prohibited jurisdictions. Products involve smart contract and token risk.',
+          footerPowered: 'Powered by Antalpha Prime',
+          modalWalletTitle: 'Connect Wallet', metamaskDesc: 'Browser extension', walletConnectDesc: 'Scan to connect mobile wallet', modalCancel: 'Cancel',
+          antaModalTitle: '$ANTA Swap Risk Disclaimer',
+          antaModalBody: 'You are about to swap yield tokens for $ANTA via smart contract. $ANTA is an equity token with market risk. After swap you cannot redeem 1:1 USDT.',
+          antaModalCheckbox: 'I understand $ANTA volatility and that my jurisdiction allows receiving such assets.',
+          antaModalConfirm: 'Confirm Swap to $ANTA',
+          aiChatTitle: 'AI Support', aiChatToggleTitle: 'AI Support',
+          aiChatPlaceholder: 'Ask a question…', aiChatSend: 'Send',
+          aiChatWelcome: 'Hi, I\'m WorldLend AI support. Ask about vault rates, $ANTA swap, redemption, or API.'
+        }
+      };
+
+      function getLang() { return localStorage.getItem('worldlend-lang') || 'zh'; }
+      function setLang(lang) {
+        localStorage.setItem('worldlend-lang', lang);
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+        document.title = L[lang].docTitle;
+        document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
+        applyTranslations(lang);
+      }
+      function applyTranslations(lang) {
+        lang = lang || getLang();
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n');
+          if (L[lang] && L[lang][k] != null) el.textContent = L[lang][k];
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n-placeholder');
+          if (L[lang] && L[lang][k] != null) el.placeholder = L[lang][k];
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n-title');
+          if (L[lang] && L[lang][k] != null) el.title = L[lang][k];
+        });
+        var scopeEl = document.getElementById('key-scope');
+        if (scopeEl && L[lang].keyScopeValue) scopeEl.value = L[lang].keyScopeValue;
+        var welcome = document.getElementById('ai-welcome-msg');
+        if (welcome && L[lang].aiChatWelcome) welcome.textContent = L[lang].aiChatWelcome;
+        var keyMetaDemo = document.getElementById('key-meta-demo');
+        if (keyMetaDemo && L[lang].keyMetaReadOnly) keyMetaDemo.textContent = L[lang].keyMetaReadOnly + '2026-02-20';
+      }
+      document.getElementById('lang-zh').addEventListener('click', function() { setLang('zh'); });
+      document.getElementById('lang-en').addEventListener('click', function() { setLang('en'); });
+      setLang(getLang());
+
+      function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.nav-link').forEach(function(a) { a.classList.remove('active'); });
+        var page = document.getElementById('page-' + pageId);
+        var link = document.querySelector('.nav-link[data-page="' + pageId + '"]');
+        if (page) page.classList.add('active');
+        if (link) link.classList.add('active');
+      }
+      document.querySelectorAll('.nav-link, .logo').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          var page = el.getAttribute('data-page');
+          if (page) { e.preventDefault(); showPage(page); }
+        });
+      });
+      document.getElementById('hero-cta-vaults').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('vault-hall').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      function setWalletUI(connected) {
+        walletConnected = !!connected;
+        document.getElementById('btn-connect').style.display = connected ? 'none' : 'block';
+        document.getElementById('wallet-connected').style.display = connected ? 'flex' : 'none';
+        document.getElementById('positions-empty').style.display = connected ? 'none' : 'block';
+        document.getElementById('positions-content').style.display = connected ? 'block' : 'none';
+        if (connected) document.getElementById('wallet-address').textContent = '0x1234…5678';
+      }
+      document.getElementById('btn-connect').addEventListener('click', function() { document.getElementById('wallet-modal').classList.add('show'); });
+      document.getElementById('btn-connect-positions').addEventListener('click', function() { document.getElementById('wallet-modal').classList.add('show'); });
+      document.getElementById('wallet-modal-close').addEventListener('click', function() { document.getElementById('wallet-modal').classList.remove('show'); });
+      document.querySelectorAll('.modal-option').forEach(function(opt) {
+        opt.addEventListener('click', function() { setWalletUI(true); document.getElementById('wallet-modal').classList.remove('show'); });
+      });
+      document.getElementById('btn-disconnect').addEventListener('click', function() { setWalletUI(false); });
+
+      document.getElementById('btn-create-key').addEventListener('click', function() {
+        document.getElementById('form-create-key').style.display = 'block';
+        document.getElementById('key-created-msg').style.display = 'none';
+      });
+      document.getElementById('key-cancel').addEventListener('click', function() { document.getElementById('form-create-key').style.display = 'none'; });
+      document.getElementById('key-submit').addEventListener('click', function() {
+        var lang = getLang();
+        var name = document.getElementById('key-name').value.trim() || (lang === 'zh' ? '新 Key' : 'New Key');
+        var val = 'wl_live_' + Math.random().toString(36).slice(2, 18);
+        document.getElementById('key-value').textContent = val;
+        document.getElementById('key-created-msg').style.display = 'block';
+        var list = document.getElementById('key-list');
+        var item = document.createElement('div');
+        item.className = 'key-item';
+        var metaText = (L[lang].keyMetaReadOnly || '') + new Date().toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US');
+        item.innerHTML = '<div><div class="key-name">' + name + '</div><div class="key-meta">' + metaText + '</div></div><div><button type="button" class="btn-copy" data-i18n="btnCopy">' + L[lang].btnCopy + '</button><button type="button" class="btn-revoke" data-i18n="btnRevoke">' + L[lang].btnRevoke + '</button></div>';
+        list.insertBefore(item, list.firstChild);
+      });
+
+      var antamodal = document.getElementById('anta-modal');
+      var antacheck = document.getElementById('anta-disclaimer-check');
+      var antaconfirm = document.getElementById('anta-modal-confirm');
+      antacheck.addEventListener('change', function() { antaconfirm.disabled = !antacheck.checked; });
+      document.getElementById('btn-swap-anta').addEventListener('click', function() { antacheck.checked = false; antaconfirm.disabled = true; antamodal.classList.add('show'); });
+      document.querySelectorAll('.btn-swap-anta').forEach(function(btn) {
+        if (btn.id !== 'btn-swap-anta') btn.addEventListener('click', function() { antacheck.checked = false; antaconfirm.disabled = true; antamodal.classList.add('show'); });
+      });
+      document.getElementById('anta-modal-cancel').addEventListener('click', function() { antamodal.classList.remove('show'); });
+      antaconfirm.addEventListener('click', function() { antamodal.classList.remove('show'); alert('原型演示：兑换流程在实际产品中会调用合约'); });
+
+      var chatPanel = document.getElementById('ai-chat-panel');
+      var chatMessages = document.getElementById('ai-chat-messages');
+      var chatInput = document.getElementById('ai-chat-input');
+      var replies = [
+        '金库利率在首页「期限金库大厅」可查，当前 6 月池 8.5% APY、9 月池 9.2%、12 月池 9.8%，期限越长 APY 与 $ANTA 折扣越高。',
+        '兑换 $ANTA 在「我的持仓」点击「兑换 $ANTA」，阅读风险提示并勾选确认后即可按金库折扣价兑换。',
+        '到期后可在「我的持仓」点击「到期赎回」，按 1:1 拿回 USDT 本息。',
+        'API 文档与 yield-curve 接口说明见「帮助」页；创建 Key 在「API Keys」页。',
+      ];
+      function addBotMsg(text) {
+        var div = document.createElement('div');
+        div.className = 'ai-msg bot';
+        div.textContent = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      document.getElementById('ai-chat-toggle').addEventListener('click', function() { chatPanel.classList.toggle('show'); });
+      document.getElementById('ai-chat-close').addEventListener('click', function() { chatPanel.classList.remove('show'); });
+      function sendUserMsg() {
+        var text = chatInput.value.trim();
+        if (!text) return;
+        var userDiv = document.createElement('div');
+        userDiv.className = 'ai-msg user';
+        userDiv.textContent = text;
+        chatMessages.appendChild(userDiv);
+        chatInput.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        setTimeout(function() { addBotMsg(replies[Math.floor(Math.random() * replies.length)]); }, 500);
+      }
+      document.getElementById('ai-chat-send').addEventListener('click', sendUserMsg);
+      chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendUserMsg(); });
+    })();
+  </script>
+</body>
+</html>
