@@ -60,7 +60,18 @@
       align-items: center;
       justify-content: space-between;
     }
-    .logo { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--text-primary); }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .logo:hover { color: var(--text-primary); opacity: 0.9; }
+    .logo-img { display: block; height: 32px; width: auto; }
     .nav { display: flex; align-items: center; gap: 28px; }
     .nav a {
       color: var(--text-secondary);
@@ -82,6 +93,8 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
     }
     .btn-demo:hover { background: var(--blue-card-hover); }
     .lang-toggle { display: flex; align-items: center; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
@@ -130,23 +143,10 @@
       margin-bottom: 24px;
       border: 1px solid rgba(56, 189, 248, 0.3);
     }
-    .hero .hero-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 64px; text-align: left; }
-    .hero .hero-text { flex: 1; min-width: 0; }
-    .hero .hero-visual {
-      flex: 0 0 420px;
-      height: 320px;
-      background: linear-gradient(135deg, rgba(56,189,248,0.12) 0%, rgba(30,58,95,0.5) 100%);
-      border: 1px solid rgba(56,189,248,0.2);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-secondary);
-      font-size: 0.9375rem;
-    }
+    .hero .hero-content { max-width: 800px; margin: 0 auto; text-align: center; }
+    .hero .hero-text { min-width: 0; }
     @media (max-width: 900px) {
-      .hero .hero-content { flex-direction: column; text-align: center; }
-      .hero .hero-visual { flex: none; width: 100%; max-width: 420px; }
+      .hero .hero-content { padding: 0 16px; }
     }
     .hero .highlight-ai {
       color: var(--accent);
@@ -163,12 +163,16 @@
       margin-bottom: 24px;
       line-height: 1.1;
     }
+    /* 第一行、第二行整句保持不拆开，避免 "to" 或单词单独换行 */
+    .hero h1 .hero-title-line1,
+    .hero h1 .gradient-text { white-space: nowrap; display: inline-block; }
+    @media (max-width: 520px) { .hero h1 .hero-title-line1, .hero h1 .gradient-text { white-space: normal; } }
     .hero p {
       color: var(--text-secondary);
       font-size: 1.1875rem;
       margin-bottom: 36px;
       line-height: 1.7;
-      max-width: 680px;
+      max-width: 760px;
     }
     .btn-explore {
       display: inline-block;
@@ -581,6 +585,8 @@
     .band-white .earn-product-card .product-desc { color: var(--text-on-light-secondary); }
     .band-light .earn-product-card .product-type,
     .band-white .earn-product-card .product-type { color: var(--blue-primary); }
+    .band-light .earn-product-card .product-status-badge,
+    .band-white .earn-product-card .product-status-badge { background: rgba(37, 99, 235, 0.12); color: var(--blue-primary); }
     .band-light .earn-products-link,
     .band-white .earn-products-link { color: var(--text-on-light); }
     .band-light .earn-products-link:hover,
@@ -644,6 +650,11 @@
     .earn-product-card:hover::after {
       opacity: 1;
       right: 20px;
+    }
+    .earn-product-card .product-status-badge {
+      display: inline-block; margin-bottom: 8px; padding: 4px 10px; border-radius: 20px;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.03em;
+      background: rgba(37, 99, 235, 0.12); color: var(--blue-primary);
     }
     .earn-product-card .product-type {
       font-size: 0.75rem;
@@ -761,11 +772,13 @@
 <body>
   <header class="header">
     <div class="header-inner">
-      <a href="#" class="logo">Antalpha</a>
+      <a href="index.html" class="logo" title="Antalpha — 返回 RWA">
+        <img src="images/logo.svg" alt="Antalpha" class="logo-img" />
+      </a>
       <nav class="nav">
         <a href="#">Loans</a>
         <a href="#">Risk Control</a>
-        <a href="overview.html" class="active" data-i18n="nav_explore_rwa">探索 RWA</a>
+        <a href="index.html" class="active" data-i18n="nav_explore_rwa">探索 RWA</a>
         <a href="#">About Us</a>
         <a href="#">Careers</a>
         <a href="#">Investor Relations</a>
@@ -775,7 +788,7 @@
           <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
           <button type="button" class="lang-btn" data-lang="zh" aria-pressed="false">简中</button>
         </div>
-        <button type="button" class="btn-demo" data-i18n="btn_demo">Request Demo</button>
+        <a href="https://www.antalpha.com/request-access/" target="_blank" rel="noopener" class="btn-demo" data-i18n="btn_demo">Request Demo</a>
       </div>
     </div>
   </header>
@@ -785,12 +798,11 @@
       <div class="hero-inner">
         <div class="hero-content">
           <div class="hero-text">
-            <h1><span data-i18n="hero_title_1">Bridging Real-World Assets to</span><br><span class="gradient-text" data-i18n="hero_title_2">On-Chain Intelligence</span></h1>
+            <h1><span class="hero-title-line1" data-i18n="hero_title_1">Bridging Real-World Assets to</span><br><span class="gradient-text" data-i18n="hero_title_2">On-Chain Intelligence</span></h1>
             <p data-i18n-html="hero_subtitle">Antalpha Prime delivers the institutional-grade technology stack that powers tokenized real-world asset origination, risk surveillance, and custody verification — purpose-built for both human portfolio managers and <span class="highlight-ai">autonomous AI agents</span>.</p>
-            <!-- 未来可改为独立 RWA Tech 概览页，见 项目一-延伸页面与链接规划.md -->
-            <a href="#transparency" class="btn-explore" data-i18n="hero_cta">Explore RWA 产品</a>
+            <!-- 项目一仅展示由我们基础设施支持的产品概览；点击在新窗口打开项目二（基金会产品站）进行浏览与交易 -->
+            <a href="#transparency" class="btn-explore" data-i18n="hero_cta">探索 RWA 产品</a>
           </div>
-          <div class="hero-visual" aria-hidden="true">Image placeholder — e.g. RWA / risk dashboard</div>
         </div>
       </div>
     </section>
@@ -873,16 +885,16 @@
           <p data-i18n="ai_1_desc">Your AI can explore available products and their returns, compare risk levels, and surface options that match what you care about.</p>
         </div>
         <div class="ai-hub-card">
-          <h3 data-i18n="ai_2_title">Monitor what you hold</h3>
-          <p data-i18n="ai_2_desc">See current yields, how healthy the collateral is, and whether anything is approaching a risk threshold—so your AI can alert you when it matters.</p>
-        </div>
-        <div class="ai-hub-card">
           <h3 data-i18n="ai_3_title">Act on your permission</h3>
           <p data-i18n="ai_3_desc">When you authorize it, your AI can place or adjust positions on your behalf through our partners, so you can invest without watching the market around the clock.</p>
         </div>
         <div class="ai-hub-card">
           <h3 data-i18n="ai_4_title">One place, one link</h3>
           <p data-i18n="ai_4_desc">Connect once and your AI gets access to product details, returns, risk metrics, and custody information in one place—no need to juggle multiple dashboards.</p>
+        </div>
+        <div class="ai-hub-card">
+          <h3 data-i18n="ai_2_title">Monitor what you hold</h3>
+          <p data-i18n="ai_2_desc">See current yields, how healthy the collateral is, and whether anything is approaching a risk threshold—so your AI can alert you when it matters.</p>
         </div>
       </div>
       <p class="ai-hub-cta" data-i18n-html="ai_cta">Want your AI to connect? <a href="#developers">Visit our developer portal</a> for setup, or <a href="#contact">contact us</a> for a guided onboarding.</p>
@@ -910,42 +922,46 @@
         </div>
       </div>
       <h3 class="earn-products-heading">
-        <a href="products.html" class="earn-products-link" data-i18n="earn_heading">Earn products on the platform</a>
+        <a href="../项目二/markets.html" class="earn-products-link" target="_blank" rel="noopener" data-i18n="earn_heading">平台赚取产品</a>
       </h3>
       <div class="earn-product-list">
-        <a href="../项目二/vault-detail.html?vault=jun26" class="earn-product-card">
+        <a href="../项目二/vault-detail.html?vault=jun26" class="earn-product-card" target="_blank" rel="noopener">
+          <span class="product-status-badge" data-i18n="status_fundraising">募集中</span>
           <div class="product-type" data-i18n="prod_1_type">Collateralized Lending</div>
           <div class="product-name" data-i18n="prod_1_name">BTC-Backed Earn</div>
           <p class="product-desc" data-i18n="prod_1_desc">Stable yield backed by crypto collateral. Originator due diligence and custody proof.</p>
           <div class="product-meta">
-            <span class="apy">8.5%<span class="apy-label">APY</span></span>
+            <span class="apy">5.5%<span class="apy-label">APY</span></span>
           </div>
           <span class="view-detail" data-i18n="view_details">View details</span>
         </a>
-        <a href="../项目二/vault-detail.html?vault=sep26" class="earn-product-card">
+        <a href="../项目二/vault-detail.html?vault=sep26" class="earn-product-card" target="_blank" rel="noopener">
+          <span class="product-status-badge" data-i18n="status_fundraising">募集中</span>
           <div class="product-type" data-i18n="prod_2_type">Mining Machine Loan</div>
           <div class="product-name" data-i18n="prod_2_name">Miner Financing Pool</div>
           <p class="product-desc" data-i18n="prod_2_desc">Financing for mining equipment. Repayment tied to hashrate and equipment collateral.</p>
           <div class="product-meta">
-            <span class="apy">10.2%<span class="apy-label">APY</span></span>
+            <span class="apy">7.2%<span class="apy-label">APY</span></span>
           </div>
           <span class="view-detail" data-i18n="view_details">View details</span>
         </a>
-        <a href="../项目二/vault-detail.html?vault=dec26" class="earn-product-card">
+        <a href="../项目二/vault-detail.html?vault=dec26" class="earn-product-card" target="_blank" rel="noopener">
+          <span class="product-status-badge" data-i18n="status_fundraising">募集中</span>
           <div class="product-type" data-i18n="prod_3_type">Electricity Loan</div>
           <div class="product-name" data-i18n="prod_3_name">Power Cost Financing</div>
           <p class="product-desc" data-i18n="prod_3_desc">Power cost financing for miners. Short-term working capital with transparent risk.</p>
           <div class="product-meta">
-            <span class="apy">9.0%<span class="apy-label">APY</span></span>
+            <span class="apy">6.5%<span class="apy-label">APY</span></span>
           </div>
           <span class="view-detail" data-i18n="view_details">View details</span>
         </a>
-        <a href="../项目二/vault-detail.html?vault=mar27" class="earn-product-card">
+        <a href="../项目二/vault-detail.html?vault=mar27" class="earn-product-card" target="_blank" rel="noopener">
+          <span class="product-status-badge" data-i18n="status_fundraising">募集中</span>
           <div class="product-type" data-i18n="prod_4_type">Collateralized Lending</div>
           <div class="product-name" data-i18n="prod_4_name">Multi-Asset Earn</div>
           <p class="product-desc" data-i18n="prod_4_desc">Diversified pool with multiple collateral types. Risk oracle and real-time LTV visibility.</p>
           <div class="product-meta">
-            <span class="apy">7.8%<span class="apy-label">APY</span></span>
+            <span class="apy">6.0%<span class="apy-label">APY</span></span>
           </div>
           <span class="view-detail" data-i18n="view_details">View details</span>
         </a>
@@ -996,9 +1012,9 @@ verify_kyc_status(address)</pre>
     <div class="footer-inner">
       <p class="footer-disclaimer" data-i18n-html="footer_disclaimer"><strong>RWA Disclaimer:</strong> Antalpha Prime acts solely as a technology and data provider. It does not hold, manage, or operate user funds on Web3. Any on-chain fundraising is conducted by independent third parties using our infrastructure.</p>
       <div class="footer-links">
-        <a href="#" data-i18n="footer_priv">Privacy Policy</a>
-        <a href="#" data-i18n="footer_cookie">Cookie Policy</a>
-        <a href="#" data-i18n="footer_legal">Legal Disclaimer</a>
+        <a href="https://www.antalpha.com/policy/" target="_blank" rel="noopener" data-i18n="footer_priv">Privacy Policy</a>
+        <a href="https://www.antalpha.com/policy/?type=cookie" target="_blank" rel="noopener" data-i18n="footer_cookie">Cookie Policy</a>
+        <a href="https://www.antalpha.com/policy/?type=ld" target="_blank" rel="noopener" data-i18n="footer_legal">Legal Disclaimer</a>
       </div>
       <p class="footer-copy" data-i18n="footer_copy">© 2021 – 2026 Antalpha Platform Holdings Company</p>
     </div>
@@ -1074,6 +1090,7 @@ verify_kyc_status(address)</pre>
           metric_2_label: 'Total Returns for Investors', metric_2_sub: 'Cumulative yield generated',
           metric_3_label: 'AI Connections', metric_3_sub: 'Agents linked to earn data',
           earn_heading: 'Earn products on the platform',
+          status_fundraising: 'Fundraising',
           prod_1_type: 'Collateralized Lending', prod_1_name: 'BTC-Backed Earn', prod_1_desc: 'Stable yield backed by crypto collateral. Originator due diligence and custody proof.',
           prod_2_type: 'Mining Machine Loan', prod_2_name: 'Miner Financing Pool', prod_2_desc: 'Financing for mining equipment. Repayment tied to hashrate and equipment collateral.',
           prod_3_type: 'Electricity Loan', prod_3_name: 'Power Cost Financing', prod_3_desc: 'Power cost financing for miners. Short-term working capital with transparent risk.',
@@ -1123,6 +1140,7 @@ verify_kyc_status(address)</pre>
           metric_2_label: '为投资者创造的总收益', metric_2_sub: '累计已产生收益',
           metric_3_label: 'AI 接入数', metric_3_sub: '已连接赚取数据的智能体',
           earn_heading: '平台赚取产品',
+          status_fundraising: '募集中',
           prod_1_type: '质押借贷', prod_1_name: 'BTC 背书赚取', prod_1_desc: '由加密资产抵押支撑的稳定收益，发行方尽调与托管证明。',
           prod_2_type: '矿机贷', prod_2_name: '矿机融资池', prod_2_desc: '矿机设备融资，还款与算力及设备抵押挂钩。',
           prod_3_type: '电费贷', prod_3_name: '电费融资', prod_3_desc: '矿工电费融资，短期周转，风险透明。',

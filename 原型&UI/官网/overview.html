@@ -78,6 +78,10 @@
       font-size: clamp(2.5rem, 5vw, 3.75rem); font-weight: 800; letter-spacing: -0.03em;
       line-height: 1.1; margin-bottom: 24px;
     }
+    /* 第一行、第二行整句保持不拆开，避免 "to" 单独一行 */
+    .hero h1 .hero-title-line1,
+    .hero h1 .gradient-text { white-space: nowrap; display: inline-block; }
+    @media (max-width: 520px) { .hero h1 .hero-title-line1, .hero h1 .gradient-text { white-space: normal; } }
     .hero h1 .gradient-text {
       background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -245,7 +249,7 @@
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-badge animate" data-i18n="heroBadge">Institutional-Grade RWA Infrastructure</div>
-      <h1 class="animate delay-1"><span data-i18n="heroTitle1">Bridging Real-World Assets</span><br><span class="gradient-text" data-i18n="heroTitle2">to On-Chain Intelligence</span></h1>
+      <h1 class="animate delay-1"><span class="hero-title-line1" data-i18n="heroTitle1">Bridging Real-World Assets</span><br><span class="gradient-text" data-i18n="heroTitle2">to On-Chain Intelligence</span></h1>
       <p class="animate delay-2" data-i18n="heroDesc">Antalpha Prime delivers the institutional-grade technology stack that powers tokenized real-world asset origination, risk surveillance, and custody verification — purpose-built for both human portfolio managers and autonomous AI agents.</p>
       <div class="hero-stats animate delay-3">
         <div class="hero-stat"><div class="val accent">$700M+</div><div class="lbl" data-i18n="statAssets">Assets Under Management</div></div>

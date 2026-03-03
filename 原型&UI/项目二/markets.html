@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>固定收益市场 — WorldLend</title>
+  <title>收益产品市场 — WorldLend</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -36,9 +36,13 @@
     .lang-btn.active { background: var(--blue-primary); color: #fff; }
     .btn-connect { background: var(--blue-primary); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 0.9375rem; font-weight: 600; cursor: pointer; }
     .btn-connect:hover { background: #1d4ed8; }
+    .wallet-connected { display: flex; align-items: center; gap: 10px; }
+    .btn-disconnect { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8125rem; }
+    .btn-disconnect:hover { color: var(--text-primary); }
     .main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
     .page-header { margin-bottom: 40px; }
     .page-header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .page-header .product-tagline { font-size: 0.875rem; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; margin-bottom: 12px; }
     .page-header p { color: var(--text-secondary); font-size: 1rem; }
     .stats-row { display: flex; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
     .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; flex: 1; min-width: 160px; }
@@ -52,31 +56,64 @@
     .vault-list { display: flex; flex-direction: column; gap: 12px; }
     .vault-row {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 24px;
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 120px; gap: 16px; align-items: center;
+      display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr 120px; gap: 16px; align-items: center;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .vault-row:hover { border-color: rgba(37,99,235,0.3); box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
-    @media (max-width: 900px) { .vault-row { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 900px) { .vault-row { grid-template-columns: 1fr 1fr; } .vault-row .fundraising-cell { grid-column: 1 / -1; } }
+    .badge-fundraising { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: rgba(37,99,235,0.12); color: var(--accent); }
+    .badge-fundraising-done { background: rgba(22,163,74,0.12); color: var(--success); }
+    .fundraising-duration { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; display: block; }
     .vault-row .name { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
     .vault-row .token { font-size: 0.8125rem; color: var(--text-dim); font-family: monospace; }
+    .vault-row .min-badge { font-size: 0.6875rem; color: var(--success); font-weight: 600; margin-top: 4px; }
     .vault-row .col-label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 2px; }
     .vault-row .col-val { font-size: 1rem; font-weight: 600; }
     .vault-row .col-val.apy { color: var(--success); font-size: 1.125rem; }
     .vault-row .col-val.gold { color: var(--gold); }
+    .badge-fundraising { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: rgba(37, 99, 235, 0.12); color: var(--accent); }
+    .badge-fundraising-done { background: rgba(22, 163, 74, 0.12); color: var(--success); }
+    .vault-row .fundraising-duration { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
+    .fundraising-date-only { font-size: 0.875rem; color: var(--text-secondary); }
+    .fundraising-empty { font-size: 0.875rem; color: var(--text-dim); }
     .btn-deposit {
       display: inline-block; padding: 10px 24px; background: var(--blue-primary); color: #fff;
       border: none; border-radius: 8px; font-weight: 600; font-size: 0.9375rem;
       text-decoration: none; text-align: center; cursor: pointer;
     }
     .btn-deposit:hover { background: #1d4ed8; }
+    .btn-redeem { display: inline-block; padding: 10px 24px; background: var(--success); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.9375rem; text-decoration: none; text-align: center; cursor: pointer; }
+    .btn-redeem:hover { background: #15803d; }
+    .action-empty { font-size: 0.8125rem; color: var(--text-dim); }
     .list-header {
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 120px; gap: 16px;
+      display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr 120px; gap: 16px;
       padding: 0 24px 12px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
       color: var(--text-dim); font-weight: 600;
     }
-    @media (max-width: 900px) { .list-header { display: none; } }
+    @media (max-width: 900px) { .list-header { display: none; } .vault-row .fundraising-cell { grid-column: 1 / -1; } }
     .footer { border-top: 1px solid var(--border); padding: 40px 24px 32px; margin-top: 64px; font-size: 0.8125rem; color: var(--text-secondary); text-align: center; }
     .footer a { color: var(--accent); text-decoration: none; margin: 0 12px; }
+
+    /* AI 智能助理 悬浮 */
+    .ai-float-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 150; }
+    .ai-chat-toggle {
+      width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #0891b2 0%, #0f766e 100%);
+      color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(8, 145, 178, 0.4); font-size: 1.5rem;
+      display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .ai-chat-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(8, 145, 178, 0.5); }
+    .ai-chat-toggle .ai-float-label { position: absolute; right: 100%; margin-right: 12px; white-space: nowrap; font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); background: var(--bg-card); padding: 6px 12px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .ai-chat-toggle:hover .ai-float-label { opacity: 1; }
+    .ai-chat-panel { position: fixed; bottom: 90px; right: 24px; width: 360px; max-width: calc(100vw - 48px); height: 420px; background: var(--bg-card); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border: 1px solid var(--border); z-index: 149; display: none; flex-direction: column; overflow: hidden; }
+    .ai-chat-panel.show { display: flex; }
+    .ai-chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); }
+    .ai-chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .ai-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.875rem; line-height: 1.5; }
+    .ai-msg.bot { background: var(--bg-secondary); color: var(--text-primary); align-self: flex-start; }
+    .ai-msg.user { background: var(--accent); color: #fff; align-self: flex-end; }
+    .ai-chat-input-wrap { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); }
+    .ai-chat-input-wrap input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.875rem; }
+    .ai-chat-input-wrap button { padding: 10px 18px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.875rem; }
   </style>
 </head>
 <body>
@@ -84,25 +121,30 @@
     <div class="header-inner">
       <a href="index.html" class="logo">WorldLend</a>
       <nav class="nav">
-        <a href="index.html" data-i18n="navHome">总览</a>
-        <a href="markets.html" class="active" data-i18n="navMarkets">产品</a>
-        <a href="index.html" data-i18n="navPositions">投资组合</a>
-        <a href="index.html" data-i18n="navHelp">帮助中心</a>
+        <a href="index.html" class="nav-link" data-i18n="navHome">总览</a>
+        <a href="markets.html" class="nav-link active" data-i18n="navMarkets">产品</a>
+        <a href="index.html#positions" class="nav-link" data-i18n="navDashboard">仪表盘</a>
+        <a href="index.html#connect-ai" class="nav-link" data-i18n="navConnectAI">连接 AI</a>
       </nav>
       <div class="header-actions">
         <div class="lang-toggle">
           <button type="button" class="lang-btn active" data-lang="zh">中文</button>
           <button type="button" class="lang-btn" data-lang="en">EN</button>
         </div>
-        <button type="button" class="btn-connect" data-i18n="connectWallet">连接钱包</button>
+        <button type="button" class="btn-connect" id="btn-connect" data-i18n="connectWallet">连接钱包</button>
+        <div class="wallet-connected" id="wallet-connected" style="display:none;">
+          <span class="wallet-addr" style="font-size:0.8125rem;font-family:monospace;color:var(--accent);">0x1234…5678</span>
+          <button type="button" class="btn-disconnect" id="btn-disconnect" data-i18n="disconnect">断开</button>
+        </div>
       </div>
     </div>
   </header>
 
   <main class="main">
     <div class="page-header">
-      <h1 data-i18n="pageTitle">固定收益市场</h1>
-      <p data-i18n="pageDesc">按到期日选择结构化金库，查看固定年化收益、抵押覆盖与 $ANTA 权益折扣，一键存入获取收益凭证。</p>
+      <p class="product-tagline" data-i18n="productTagline">固定利率 · 固定到期日 · U 本位债 · 底层 BTC 质押借贷，首期募集 2000 万 USDT</p>
+      <h1 data-i18n="pageTitle">收益产品市场</h1>
+      <p data-i18n="pageDesc">按到期日选择结构化金库，查看年化收益、抵押覆盖与 $ANTA 权益折扣，一键存入获取收益凭证。支持 AI Agent 通过「连接 AI」接入数据与交易。</p>
     </div>
 
     <div class="stats-row">
@@ -112,65 +154,142 @@
       </div>
       <div class="stat-card">
         <div class="label" data-i18n="statVaults">在售产品</div>
-        <div class="val">4</div>
+        <div class="val">12</div>
       </div>
       <div class="stat-card">
-        <div class="label" data-i18n="statApy">固定 APY 区间</div>
-        <div class="val green">8.5 – 10.5%</div>
-      </div>
-      <div class="stat-card">
-        <div class="label" data-i18n="statCollateral">总抵押 BTC</div>
-        <div class="val">1,330 BTC</div>
+        <div class="label" data-i18n="statApy">到期 APY 区间</div>
+        <div class="val green">5 – 8%</div>
       </div>
     </div>
 
     <div class="filter-bar">
-      <button type="button" class="filter-btn active" data-i18n="filterAll">全部</button>
-      <button type="button" class="filter-btn" data-i18n="filterActive">进行中</button>
-      <button type="button" class="filter-btn" data-i18n="filterUpcoming">即将到期</button>
+      <button type="button" class="filter-btn active" data-filter="all" data-i18n="filterAll">全部</button>
+      <button type="button" class="filter-btn" data-filter="fundraising" data-i18n="filterFundraising">募集中</button>
+      <button type="button" class="filter-btn" data-filter="interest" data-i18n="filterInterest">计息中</button>
+      <button type="button" class="filter-btn" data-filter="expired" data-i18n="filterExpired">已到期</button>
     </div>
 
     <div class="list-header">
       <span data-i18n="colProduct">产品</span>
+      <span data-i18n="colFundraising">募集期</span>
       <span data-i18n="colMaturity">到期日</span>
       <span data-i18n="colDays">距到期</span>
-      <span data-i18n="colApy">固定 APY</span>
+      <span data-i18n="colApy">到期 APY</span>
       <span data-i18n="colAnta">$ANTA 折扣</span>
       <span data-i18n="colAction">操作</span>
     </div>
 
-    <div class="vault-list">
-      <div class="vault-row">
-        <div><div class="name" data-i18n="v1Name">2026 Q2 固定收益池</div><div class="token">wlUSDT-Jun26</div></div>
+    <div class="vault-list" id="vault-list">
+      <!-- 募集中 x4 -->
+      <div class="vault-row" data-state="fundraising">
+        <div><div class="name">2026 Q2 到期收益池 A</div><div class="token">wlUSDT-Jun26-A</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-date-only">至 2026-05-15</span></div>
         <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-06-30</div></div>
-        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v1Days">124 天</div></div>
-        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">8.50%</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">124 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">5.50%</div></div>
         <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">10%</div></div>
         <div><a href="vault-detail.html?vault=jun26" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
       </div>
-      <div class="vault-row">
-        <div><div class="name" data-i18n="v2Name">2026 Q3 固定收益池</div><div class="token">wlUSDT-Sep26</div></div>
+      <div class="vault-row" data-state="fundraising">
+        <div><div class="name">2026 Q3 到期收益池 B</div><div class="token">wlUSDT-Sep26-B</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-date-only">至 2026-06-20</span></div>
         <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-09-30</div></div>
-        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v2Days">216 天</div></div>
-        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">9.20%</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">216 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">6.50%</div></div>
         <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">12%</div></div>
         <div><a href="vault-detail.html?vault=sep26" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
       </div>
-      <div class="vault-row">
-        <div><div class="name" data-i18n="v3Name">2026 Q4 固定收益池</div><div class="token">wlUSDT-Dec26</div></div>
+      <div class="vault-row" data-state="fundraising">
+        <div><div class="name">2026 Q4 到期收益池 C</div><div class="token">wlUSDT-Dec26-C</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-date-only">至 2026-07-31</span></div>
         <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-12-31</div></div>
-        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v3Days">308 天</div></div>
-        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">9.80%</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">308 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">7.00%</div></div>
         <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">15%</div></div>
         <div><a href="vault-detail.html?vault=dec26" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
       </div>
-      <div class="vault-row">
-        <div><div class="name" data-i18n="v4Name">2027 Q1 固定收益池</div><div class="token">wlUSDT-Mar27</div></div>
+      <div class="vault-row" data-state="fundraising">
+        <div><div class="name">2027 Q1 到期收益池 D</div><div class="token">wlUSDT-Mar27-D</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-date-only">至 2027-01-15</span></div>
         <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2027-03-31</div></div>
-        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="v4Days">398 天</div></div>
-        <div><div class="col-label" data-i18n="colApy">固定 APY</div><div class="col-val apy">10.50%</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">398 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">7.50%</div></div>
         <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">18%</div></div>
         <div><a href="vault-detail.html?vault=mar27" class="btn-deposit" data-i18n="btnDeposit">存入</a></div>
+      </div>
+      <!-- 计息中 x4 -->
+      <div class="vault-row" data-state="interest">
+        <div><div class="name">2026 Q2 到期收益池 E</div><div class="token">wlUSDT-Jun26-E</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="badge-fundraising-done" data-i18n="statusInterestOnly">计息中</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-06-30</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">98 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">5.50%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">10%</div></div>
+        <div><span class="action-empty" data-i18n="noDeposit">—</span></div>
+      </div>
+      <div class="vault-row" data-state="interest">
+        <div><div class="name">2026 Q3 到期收益池 F</div><div class="token">wlUSDT-Sep26-F</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="badge-fundraising-done" data-i18n="statusInterestOnly">计息中</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-09-30</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">190 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">6.50%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">12%</div></div>
+        <div><span class="action-empty" data-i18n="noDeposit">—</span></div>
+      </div>
+      <div class="vault-row" data-state="interest">
+        <div><div class="name">2026 Q4 到期收益池 G</div><div class="token">wlUSDT-Dec26-G</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="badge-fundraising-done" data-i18n="statusInterestOnly">计息中</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2026-12-31</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">282 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">7.00%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">15%</div></div>
+        <div><span class="action-empty" data-i18n="noDeposit">—</span></div>
+      </div>
+      <div class="vault-row" data-state="interest">
+        <div><div class="name">2027 Q1 到期收益池 H</div><div class="token">wlUSDT-Mar27-H</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="badge-fundraising-done" data-i18n="statusInterestOnly">计息中</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2027-03-31</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val">372 天</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">7.50%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">18%</div></div>
+        <div><span class="action-empty" data-i18n="noDeposit">—</span></div>
+      </div>
+      <!-- 已到期 x4：登录后显示赎回 -->
+      <div class="vault-row" data-state="expired">
+        <div><div class="name">2025 Q4 到期收益池 I</div><div class="token">wlUSDT-Dec25-I</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-empty">—</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2025-12-31</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="alreadyExpired">已到期</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">5.20%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">—</div></div>
+        <div class="action-cell"><a href="index.html#positions" class="btn-redeem js-redeem-logged" style="display:none;" data-i18n="btnRedeem">赎回</a><span class="action-empty js-redeem-guest" data-i18n="loginToRedeem">登录后赎回</span></div>
+      </div>
+      <div class="vault-row" data-state="expired">
+        <div><div class="name">2025 Q3 到期收益池 J</div><div class="token">wlUSDT-Sep25-J</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-empty">—</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2025-09-30</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="alreadyExpired">已到期</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">5.00%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">—</div></div>
+        <div class="action-cell"><a href="index.html#positions" class="btn-redeem js-redeem-logged" style="display:none;" data-i18n="btnRedeem">赎回</a><span class="action-empty js-redeem-guest" data-i18n="loginToRedeem">登录后赎回</span></div>
+      </div>
+      <div class="vault-row" data-state="expired">
+        <div><div class="name">2025 Q2 到期收益池 K</div><div class="token">wlUSDT-Jun25-K</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-empty">—</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2025-06-30</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="alreadyExpired">已到期</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">4.80%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">—</div></div>
+        <div class="action-cell"><a href="index.html#positions" class="btn-redeem js-redeem-logged" style="display:none;" data-i18n="btnRedeem">赎回</a><span class="action-empty js-redeem-guest" data-i18n="loginToRedeem">登录后赎回</span></div>
+      </div>
+      <div class="vault-row" data-state="expired">
+        <div><div class="name">2025 Q1 到期收益池 L</div><div class="token">wlUSDT-Mar25-L</div><div class="min-badge" data-i18n="minBadge">起投 10 U</div></div>
+        <div class="fundraising-cell"><span class="fundraising-empty">—</span></div>
+        <div><div class="col-label" data-i18n="colMaturity">到期日</div><div class="col-val">2025-03-31</div></div>
+        <div><div class="col-label" data-i18n="colDays">距到期</div><div class="col-val" data-i18n="alreadyExpired">已到期</div></div>
+        <div><div class="col-label" data-i18n="colApy">到期 APY</div><div class="col-val apy">4.50%</div></div>
+        <div><div class="col-label" data-i18n="colAnta">$ANTA 折扣</div><div class="col-val gold">—</div></div>
+        <div class="action-cell"><a href="index.html#positions" class="btn-redeem js-redeem-logged" style="display:none;" data-i18n="btnRedeem">赎回</a><span class="action-empty js-redeem-guest" data-i18n="loginToRedeem">登录后赎回</span></div>
       </div>
     </div>
   </main>
@@ -182,30 +301,64 @@
     <div style="margin-top:16px;" data-i18n="footerDisclaimer">WorldLend 运营主体为独立离岸基金/SPV（BVI）。产品涉及智能合约与代币风险，请谨慎参与。</div>
   </footer>
 
+  <!-- AI 智能助理 悬浮 -->
+  <div class="ai-float-wrap">
+    <button type="button" class="ai-chat-toggle" id="ai-chat-toggle" title="AI 智能助理">
+      <span class="ai-float-label" data-i18n="aiAssistantLabel">AI 智能助理</span>💬
+    </button>
+  </div>
+  <div id="ai-chat-panel" class="ai-chat-panel">
+    <div class="ai-chat-header">
+      <h4 style="font-size:1rem;" data-i18n="aiAssistantLabel">AI 智能助理</h4>
+      <button type="button" class="ai-chat-close" id="ai-chat-close">×</button>
+    </div>
+    <div class="ai-chat-messages" id="ai-chat-messages">
+      <div class="ai-msg bot" data-i18n="aiWelcome">您好，我是 WorldLend AI 智能助理。可咨询金库利率、$ANTA 兑换、赎回流程等。也可 <a href="index.html">返回首页</a> 使用完整对话。</div>
+    </div>
+    <div class="ai-chat-input-wrap">
+      <input type="text" id="ai-chat-input" data-i18n-placeholder="aiPlaceholder" placeholder="输入您的问题…" />
+      <button type="button" id="ai-chat-send" data-i18n="aiSend">发送</button>
+    </div>
+  </div>
+
   <script>
     (function() {
       var L = {
         zh: {
-          navHome: '总览', navMarkets: '产品', navPositions: '投资组合', navHelp: '帮助中心', connectWallet: '连接钱包',
-          pageTitle: '固定收益市场', pageDesc: '按到期日选择结构化金库，查看固定年化收益、抵押覆盖与 $ANTA 权益折扣，一键存入获取收益凭证。',
-          statTvl: '协议总锁仓 (TVL)', statVaults: '在售产品', statApy: '固定 APY 区间', statCollateral: '总抵押 BTC',
-          filterAll: '全部', filterActive: '进行中', filterUpcoming: '即将到期',
-          colProduct: '产品', colMaturity: '到期日', colDays: '距到期', colApy: '固定 APY', colAnta: '$ANTA 折扣', colAction: '操作', btnDeposit: '存入',
-          v1Name: '2026 Q2 固定收益池', v2Name: '2026 Q3 固定收益池', v3Name: '2026 Q4 固定收益池', v4Name: '2027 Q1 固定收益池',
+          navHome: '总览', navMarkets: '产品', navDashboard: '仪表盘', navConnectAI: '连接 AI', connectWallet: '连接钱包',
+          pageTitle: '收益产品市场', pageDesc: '按到期日选择结构化金库，查看年化收益、抵押覆盖与 $ANTA 权益折扣，一键存入获取收益凭证。支持 AI Agent 通过「连接 AI」接入数据与交易。',
+          statTvl: '协议总锁仓 (TVL)', statVaults: '在售产品', statApy: '到期 APY 区间',
+          filterAll: '全部', filterFundraising: '募集中', filterInterest: '计息中', filterExpired: '已到期',
+          statusInterestOnly: '计息中', noDeposit: '—', btnRedeem: '赎回', loginToRedeem: '登录后赎回', alreadyExpired: '已到期', disconnect: '断开',
+          colProduct: '产品', colFundraising: '募集期', colMaturity: '到期日', colDays: '距到期', colApy: '到期 APY', colAnta: '$ANTA 折扣', colAction: '操作', btnDeposit: '存入',
+          productTagline: '固定利率 · 固定到期日 · U 本位债 · 底层 BTC 质押借贷，首期募集 2000 万 USDT',
+          minBadge: '起投 10 U',
+          statusFundraising: '募集中', statusInterest: '募集结束·计息中',
+          fundraisingDaysLeft: '剩余 15 天 · 至 2026-05-15', fundraisingTotalDays: '募集期 30 天 · 至 2026-04-30', fundraisingTotalDays2: '募集期 45 天 · 至 2027-02-15', fundraisingEnded: '募集已结束，T+1 起息',
+          v1Name: '2026 Q2 到期收益池', v2Name: '2026 Q3 到期收益池', v3Name: '2026 Q4 到期收益池', v4Name: '2027 Q1 到期收益池',
           v1Days: '124 天', v2Days: '216 天', v3Days: '308 天', v4Days: '398 天',
           footerPrivacy: '隐私政策', footerLegal: '法律声明',
-          footerDisclaimer: 'WorldLend 运营主体为独立离岸基金/SPV（BVI）。产品涉及智能合约与代币风险，请谨慎参与。'
+          footerDisclaimer: 'WorldLend 运营主体为独立离岸基金/SPV（BVI）。产品涉及智能合约与代币风险，请谨慎参与。',
+          aiAssistantLabel: 'AI 智能助理', aiWelcome: '您好，我是 WorldLend AI 智能助理。可咨询金库利率、$ANTA 兑换、赎回流程等。也可 <a href="index.html">返回首页</a> 使用完整对话。',
+          aiPlaceholder: '输入您的问题…', aiSend: '发送'
         },
         en: {
-          navHome: 'Overview', navMarkets: 'Products', navPositions: 'Portfolio', navHelp: 'Help Center', connectWallet: 'Connect Wallet',
-          pageTitle: 'Fixed Income Markets', pageDesc: 'Choose a structured vault by maturity. View fixed APY, collateral coverage, and $ANTA equity discount. Deposit USDT to receive yield tokens.',
-          statTvl: 'Total Value Locked', statVaults: 'Active Products', statApy: 'Fixed APY Range', statCollateral: 'Total BTC Collateral',
-          filterAll: 'All', filterActive: 'Active', filterUpcoming: 'Near Maturity',
-          colProduct: 'Product', colMaturity: 'Maturity', colDays: 'To Maturity', colApy: 'Fixed APY', colAnta: '$ANTA Discount', colAction: 'Action', btnDeposit: 'Deposit',
-          v1Name: 'Q2 2026 Fixed Yield', v2Name: 'Q3 2026 Fixed Yield', v3Name: 'Q4 2026 Fixed Yield', v4Name: 'Q1 2027 Fixed Yield',
+          navHome: 'Overview', navMarkets: 'Products', navDashboard: 'Dashboard', navConnectAI: 'Connect AI', connectWallet: 'Connect Wallet',
+          pageTitle: 'Yield Products', pageDesc: 'Choose a structured vault by maturity. View yield, collateral coverage, and $ANTA equity discount. Deposit USDT to receive yield tokens. AI agents can connect via Connect AI.',
+          statTvl: 'Total Value Locked', statVaults: 'Active Products', statApy: 'Yield APY Range',
+          filterAll: 'All', filterFundraising: 'Fundraising', filterInterest: 'Accruing', filterExpired: 'Expired',
+          statusInterestOnly: 'Accruing', noDeposit: '—', btnRedeem: 'Redeem', loginToRedeem: 'Login to redeem', alreadyExpired: 'Expired', disconnect: 'Disconnect',
+          colProduct: 'Product', colFundraising: 'Fundraising', colMaturity: 'Maturity', colDays: 'To Maturity', colApy: 'Yield APY', colAnta: '$ANTA Discount', colAction: 'Action', btnDeposit: 'Deposit',
+          productTagline: 'Fixed rate · Fixed maturity · USDT-denominated · BTC-backed lending, first round cap 20M USDT',
+          minBadge: 'Min. 10 U',
+          statusFundraising: 'Fundraising', statusInterest: 'Closed · Accruing',
+          fundraisingDaysLeft: '15 days left · Until 2026-05-15', fundraisingTotalDays: '30 days · Until 2026-04-30', fundraisingTotalDays2: '45 days · Until 2027-02-15', fundraisingEnded: 'Closed, T+1 accrual',
+          v1Name: 'Q2 2026 Maturity Pool', v2Name: 'Q3 2026 Maturity Pool', v3Name: 'Q4 2026 Maturity Pool', v4Name: 'Q1 2027 Maturity Pool',
           v1Days: '124 days', v2Days: '216 days', v3Days: '308 days', v4Days: '398 days',
           footerPrivacy: 'Privacy', footerLegal: 'Legal',
-          footerDisclaimer: 'WorldLend is operated by an offshore fund/SPV (BVI). Products involve smart contract and token risk.'
+          footerDisclaimer: 'WorldLend is operated by an offshore fund/SPV (BVI). Products involve smart contract and token risk.',
+          aiAssistantLabel: 'AI Assistant', aiWelcome: 'Hi, I\'m WorldLend AI Assistant. Ask about vault rates, $ANTA swap, redemption. You can also <a href="index.html">go to Home</a> for full chat.',
+          aiPlaceholder: 'Ask a question…', aiSend: 'Send'
         }
       };
       function getLang() { return localStorage.getItem('worldlend-lang') || 'zh'; }
@@ -213,13 +366,55 @@
         document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
         document.title = L[lang].pageTitle + ' — WorldLend';
         document.querySelectorAll('[data-i18n]').forEach(function(el) {
-          var k = el.getAttribute('data-i18n'); if (L[lang][k] != null) el.textContent = L[lang][k];
+          var k = el.getAttribute('data-i18n'); if (L[lang][k] != null) {
+            if (k === 'aiWelcome') el.innerHTML = L[lang][k]; else el.textContent = L[lang][k];
+          }
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n-placeholder'); if (L[lang][k] != null) el.placeholder = L[lang][k];
         });
         document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-lang') === lang); });
         localStorage.setItem('worldlend-lang', lang);
       }
       document.querySelectorAll('.lang-btn').forEach(function(b) { b.addEventListener('click', function() { apply(b.getAttribute('data-lang')); }); });
-      document.querySelectorAll('.filter-btn').forEach(function(b) { b.addEventListener('click', function() { document.querySelectorAll('.filter-btn').forEach(function(x){x.classList.remove('active');}); b.classList.add('active'); }); });
+      function setWalletUI(connected) {
+        document.getElementById('btn-connect').style.display = connected ? 'none' : 'block';
+        document.getElementById('wallet-connected').style.display = connected ? 'flex' : 'none';
+        document.querySelectorAll('.js-redeem-logged').forEach(function(el) { el.style.display = connected ? '' : 'none'; });
+        document.querySelectorAll('.js-redeem-guest').forEach(function(el) { el.style.display = connected ? 'none' : ''; });
+      }
+      document.getElementById('btn-connect').addEventListener('click', function() { setWalletUI(true); });
+      document.getElementById('btn-disconnect').addEventListener('click', function() { setWalletUI(false); });
+      function filterRows(filter) {
+        document.querySelectorAll('.vault-row').forEach(function(row) {
+          var state = row.getAttribute('data-state');
+          var show = filter === 'all' || state === filter;
+          row.style.display = show ? '' : 'none';
+        });
+      }
+      document.querySelectorAll('.filter-btn').forEach(function(b) {
+        b.addEventListener('click', function() {
+          document.querySelectorAll('.filter-btn').forEach(function(x){ x.classList.remove('active'); });
+          b.classList.add('active');
+          filterRows(b.getAttribute('data-filter'));
+        });
+      });
+      var chatPanel = document.getElementById('ai-chat-panel');
+      var chatMessages = document.getElementById('ai-chat-messages');
+      var chatInput = document.getElementById('ai-chat-input');
+      document.getElementById('ai-chat-toggle').addEventListener('click', function() { chatPanel.classList.toggle('show'); });
+      document.getElementById('ai-chat-close').addEventListener('click', function() { chatPanel.classList.remove('show'); });
+      var replies = ['金库利率在首页「期限金库大厅」可查，当前 6 月池 5.5% APY、9 月池 6.5%、12 月池 7%。', '兑换 $ANTA 在「我的持仓」点击「兑换 $ANTA」，阅读风险提示并勾选确认后即可按金库折扣价兑换。', '到期后可在「我的持仓」点击「到期赎回」，按 1:1 拿回 USDT 本息。'];
+      function addBotMsg(text) { var d = document.createElement('div'); d.className = 'ai-msg bot'; d.textContent = text; chatMessages.appendChild(d); chatMessages.scrollTop = chatMessages.scrollHeight; }
+      function sendMsg() {
+        var text = chatInput.value.trim();
+        if (!text) return;
+        var u = document.createElement('div'); u.className = 'ai-msg user'; u.textContent = text; chatMessages.appendChild(u);
+        chatInput.value = ''; chatMessages.scrollTop = chatMessages.scrollHeight;
+        setTimeout(function() { addBotMsg(replies[Math.floor(Math.random() * replies.length)]); }, 500);
+      }
+      document.getElementById('ai-chat-send').addEventListener('click', sendMsg);
+      chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMsg(); });
       apply(getLang());
     })();
   </script>
