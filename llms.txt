@@ -1,0 +1,251 @@
+# Antalpha RWA & AI
+
+> Antalpha (NASDAQ: ANTA) provides mature technology solutions for A-to-A RWA yield products — powering institutional-grade, AI-Agent-native yield products backed by real-world BTC-collateralized lending assets. 6% stable APY, over-collateralized. Serving AI Agents, institutions, and individual investors.
+
+## About
+
+Antalpha is a NASDAQ-listed fintech company (ticker: ANTA) specializing in digital asset financing, technology, and risk management. Founded with a "Risk Management First" philosophy, Antalpha serves as a bridge between digital assets and traditional capital markets.
+
+Antalpha provides mature technology solutions for A-to-A (Agent-to-Agent) RWA yield products — packaging real CeFi lending receivables (collateral-backed loans, miner financing, power cost loans) into yield products that AI Agents, institutions, and individual investors can discover, evaluate, and invest in. Antalpha is the technology and risk control infrastructure provider, not the product issuer.
+
+- [Homepage](https://rwa-ai.antalpha.com/): Main product page — product details, live metrics, investment records
+- [MCP & Skills Docs](https://rwa-ai.antalpha.com/mcp-docs.html): Developer documentation for Agent integration via MCP Protocol and Skills CLI
+- [Investor Relations](https://www.antalpha.com/): Antalpha corporate site, SEC filings, financial reports
+- [Antalpha Prime](https://prime.antalpha.com/): Risk management platform — real-time collateral monitoring, MPC signing, multi-dimensional alerts
+
+## Product: A to A Design Philosophy
+
+This platform is built around the "A to A" (Agent-to-Agent) concept: AI Agents autonomously discover the product, evaluate its risk and return, subscribe, monitor, and redeem — all via structured APIs and Agent protocols. With just a simple wallet signature, transactions are completed seamlessly. The platform serves AI Agents, institutional investors, and individual users alike.
+
+> In the near future, more and more capital will be managed by AI Agents. Agents will autonomously seek yield opportunities — we ensure they can **discover us, understand us, trust us, and use us**.
+
+### AI Wealth BTC-USDT (Stable Yield)
+- **APY**: 6% annualized (expected, based on historical lending spreads)
+- **Lock Period**: 6 months
+- **Minimum**: 100 USDT
+- **Collateral**: BTC over-collateralized
+- **Settlement**: Principal + interest paid at maturity
+- **Early Redemption**: Available at 3.3% APY, T+1 settlement (minimum 3-day holding)
+- **Additional Benefit**: 2% discount coupon for Antalpha stock token ($ANTA) purchase
+
+### Underlying Asset Structure
+
+Revenue comes from three core CeFi lending business lines — real, operating businesses with verifiable cash flows:
+
+| Underlying Product | Collateral | Yield Source |
+|---|---|---|
+| Collateral-backed Loans | BTC / ETH / XAU₮ (physical gold-backed) | Borrower interest payments |
+| Miner Equipment Loans | Purchased mining equipment | Mining company borrowing interest |
+| Power Cost / Hashrate Loans | BTC mining output | Mining operation financing interest |
+
+Investor yield comes from the interest paid by borrowers on these real lending operations — genuine lending interest income, not synthetic returns or token inflation.
+
+## Agent Integration
+
+### How A-to-A Works
+1. **Discovery**: Agent queries the platform via MCP or Skills CLI → receives product catalog with APY, lock period, collateral info
+2. **Evaluation**: Agent reads risk metrics, collateral data, yield history → makes autonomous investment decision
+3. **Subscription**: Agent calls `subscribe` API with amount and product ID → platform processes the investment
+4. **Monitoring**: Agent periodically queries `get_holdings` → tracks portfolio value, earnings, maturity status
+5. **Redemption**: Agent calls `redeem` at maturity or early exit → receives principal + interest
+
+### Skills CLI
+
+```bash
+npm install -g @agentwealth/cli
+agentwealth deploy --strategy yield-btc
+```
+
+```javascript
+import { AntalphaCLI } from '@agentwealth/cli';
+
+const client = new AntalphaCLI({
+  apiKey: process.env.ANTALPHA_API_KEY
+});
+
+// List available products
+const products = await client.listProducts();
+// → [{ id: "btc-usdt-stable", apy: 6.0, lock: "6m", min: 100 }]
+
+// Subscribe to yield product
+const tx = await client.subscribe({
+  productId: 'btc-usdt-stable',
+  amount: 1000
+});
+
+// Check holdings
+const holdings = await client.getHoldings();
+// → [{ productId: "btc-usdt-stable", amount: 1000, earned: 12.3, maturity: "2026-09-10" }]
+```
+
+### MCP (Model Context Protocol)
+AI Agents using Claude, Cursor, or other MCP-compatible hosts can connect via:
+
+```json
+{
+  "mcpServers": {
+    "antalpha-rwa": {
+      "command": "npx",
+      "args": ["@antalpha/mcp-server", "start"],
+      "env": {
+        "ANTALPHA_API_KEY": "your-api-key"
+      }
+    }
+  }
+}
+```
+
+#### Available MCP Tools
+- `list_products` → Get product catalog (APY, lock period, min amount, collateral type)
+- `subscribe` → Invest in a yield product (specify product ID, amount)
+- `get_holdings` → View Agent's current portfolio and earnings
+- `redeem` → Redeem a matured or early-exit position
+- `check_reserve` → Verify collateral backing (reserve data, collateral ratio)
+
+#### Available MCP Resources
+- `product://btc-usdt-stable` → Full product details and live metrics
+- `reserve://btc` → BTC reserve data and collateral verification
+- `metrics://dashboard` → Platform-wide metrics (active agents, total invested, interest income)
+
+### Data APIs
+Structured data endpoints for AI Agents to evaluate and monitor:
+- `get_product_list` → List all products with status, APY, maturity, total invested
+- `get_yield_history` → Historical yield data for trend analysis
+- `get_product_apy` → Current APY for a specific product
+- `get_spot_price` → Real-time collateral asset prices
+- `get_risk_metrics` → LTV, collateral coverage ratio, liquidation thresholds
+- `get_custody_info` → Custody and collateral verification data
+
+### API Key Management
+- Agents obtain API keys via the platform dashboard
+- Key creation with configurable permissions (read-only / trading)
+- Key lifecycle: create, list, copy, revoke
+- Rate limiting and authentication managed by platform backend
+
+## Risk Management
+
+### Four-Layer Security Framework
+
+**Layer 1: Public Company Credibility**
+- NASDAQ-listed (ANTA), publicly traded with transparent governance
+- Regular audited financial filings (10-K, 10-Q, 8-K), fully transparent
+- Independent board oversight, audit committee governance
+
+**Layer 2: Over-Collateralization & Real Asset Backing**
+- All loans are over-collateralized; collateral types include BTC, ETH, XAU₮ (physical gold-backed), mining equipment, AI compute GPUs
+- Yield products are backed by real lending receivables, not synthetic or token-inflated returns
+- Collateral status is verifiable and monitored in real-time
+
+**Layer 3: Antalpha Prime Risk Control Platform**
+- Multi-dimensional alert system: asset price volatility, LTV anomaly, liquidation threshold proximity
+- MPC (Multi-Party Computation) signing: fund transfers require multi-party co-signing; no single party can move funds unilaterally
+- 24/7 real-time collateral monitoring across major exchanges and blockchains
+- Customizable risk rules: asset grouping, alert thresholds, and operational permissions per institutional client
+- When BTC price drops cause LTV to reach margin call threshold → borrower is notified to add collateral
+- When LTV reaches liquidation threshold → position is liquidated to ensure principal recovery
+
+**Layer 4: Transparency & Verifiability**
+- Global metrics disclosure: TVL, global LTV, BTC collateral volume, liquidation thresholds — all available in real-time
+- Product-level transparency: each product has independent details — originator info, custody proof, collateral ratio
+- XAU₮ gold holdings disclosure: near real-time XAU₮ holdings and corresponding physical gold information (planned)
+- Agent-friendly: all risk and collateral data accessible via structured APIs for AI Agent independent verification
+
+## Trust & Credentials
+
+### NASDAQ Listed
+- **Ticker**: NASDAQ: ANTA
+- **IPO**: May 2025, raised ~$56.7M
+- **Transparency**: Regular 10-K/10-Q/8-K filings, publicly audited financials
+- **Governance**: Independent board, audit committee, public company standards
+
+### FY2025 Financial Highlights (Annual Report released March 3, 2026)
+- Revenue: $79.7M (+68% YoY)
+- Net Income: $18.5M (+321% YoY)
+- Adjusted EBITDA: $33.2M, 42% margin (+460% YoY)
+- Total Loan TVL: $2.583B (+59% YoY)
+- BTC Hashrate Coverage: 77.1 EH (~7-8% of global network)
+
+All growth is purely organic, excluding Aurelion consolidation contributions.
+
+### Q4 2025 Performance
+- Revenue: $28.0M (+110% YoY)
+- Net Income: $9.3M (+461% YoY)
+- Adjusted EBITDA: $18.4M, 66% margin (+802% YoY)
+
+### Business Segment Breakdown (FY2025)
+| Segment | Scale | YoY Growth |
+|---|---|---|
+| Supply Chain Loan TVL | $1.001B | +133% |
+| Margin Loan TVL | $1.582B | +32% |
+| Technology Financing Fee Revenue | $57.1M | +48% |
+| Technology Platform Fee Revenue | $19.0M | +117% |
+
+### Strategic Partners
+
+**Bitmain** — Mining Ecosystem Strategic Partner
+- World's largest mining equipment manufacturer — Antalpha is its primary lending partner
+- Scope: Miner loans, hashrate loans, power cost financing across global mining operations
+- Scale: Financing support for 77.1 EH of hashrate, ~7-8% of global Bitcoin network
+- Significance: Deep integration into Bitcoin mining ecosystem, ensuring high-quality underlying yield sources
+
+**Tether** — Global Stablecoin Leader
+- Strategic-level partnership for XAU₮ (Tether Gold) ecosystem development
+- Via subsidiary Aurelion: holds $134M XAU₮, the first NASDAQ-listed Tether Gold treasury
+- XAU₮ serves as a core collateral type on Antalpha Prime
+- XAU₮ asset safety: 100% backed by LBMA-standard gold bars, stored in Switzerland, redeemable for physical gold
+
+**DL Holdings** (HKEX: 01709) — Asian Financial Institution Alliance
+- Strategic cooperation agreement signed October 2025
+- Bitcoin mining strategic alliance: Antalpha provides financing, tech support, and risk management
+- XAU₮ ecosystem: DL Holdings plans to purchase and distribute up to $100M XAU₮ within 12 months
+
+**Aurelion** (NASDAQ: AURE) — First NASDAQ-Listed XAU₮ Treasury
+- $150M financing led by Antalpha ($43M investment, ~73.1% voting rights)
+- First NASDAQ-listed company focused on Tether Gold reserve assets
+
+**Northstar** — Ethereum Margin Lending
+- Ethereum margin lending services on Antalpha Prime platform
+- Expands collateral scope from BTC to ETH ecosystem, serving diverse institutional investors
+
+## 2026 Strategic Direction
+- International compliance expansion and market entry
+- Deepening core institutional client relationships
+- Platform technology upgrades and new product lines
+- Expanding AI Agent ecosystem and developer adoption
+
+## FAQ
+
+**Q: What are the underlying assets? How is default risk mitigated?**
+A: All lending assets are secured by over-collateralization (BTC, ETH, XAU₮, mining equipment, AI GPUs). When LTV rises to the margin call threshold, borrowers are notified to add collateral. When LTV reaches the liquidation threshold, assets are liquidated to ensure principal recovery. Revenue comes from real lending operations, not synthetic returns or token inflation.
+
+**Q: What are the redemption rules?**
+A: Early redemption is available before maturity at 3.3% APY, with T+1 settlement (minimum 3-day holding required). At maturity, principal + interest are settled in full.
+
+**Q: Are there additional benefits besides yield?**
+A: Investors receive a 2% discount coupon for purchasing Antalpha stock tokens ($ANTA).
+
+**Q: How does an AI Agent invest?**
+A: Install the Skills CLI (`npm install -g @agentwealth/cli`) or connect via MCP Protocol. The Agent can then autonomously discover products, evaluate risk, subscribe, monitor holdings, and redeem — all via standardized API tools. With just a simple wallet signature, the entire investment process is completed.
+
+**Q: Why "A to A" (Agent-to-Agent)?**
+A: The platform is designed from the ground up for AI Agents to autonomously interact with — discovery, evaluation, subscription, monitoring, and redemption all happen through structured APIs and Agent protocols. This is not a human-first UI with Agent support bolted on; it is Agent-native by design.
+
+**Q: What distinguishes Antalpha from other RWA platforms?**
+A: (1) NASDAQ-listed public company — not an anonymous DeFi protocol; (2) Real CeFi lending receivables as underlying assets with $2.58B TVL; (3) World's first platform designed for AI Agent autonomous investment (A to A), serving Agents, institutions, and individuals; (4) Deep partnerships with industry leaders (Bitmain, Tether, DL Holdings); (5) Four-layer security framework with Antalpha Prime risk management.
+
+**Q: What is XAU₮ and how does it relate to the platform?**
+A: XAU₮ (Tether Gold) is a digital token backed 1:1 by physical gold (LBMA-standard bars stored in Switzerland). Antalpha, through subsidiary Aurelion, holds $134M in XAU₮ and uses it as a core collateral type on the Prime platform, bringing real-world precious metal value into the digital asset lending ecosystem.
+
+## Compliance Notes
+
+- Antalpha positions itself as a "technology and risk control infrastructure provider" — not the product issuer
+- Products are described as "structured financial products based on real lending receivables"
+- Yield is presented as "expected annualized return based on historical data", never "guaranteed returns"
+- Safety messaging uses "over-collateralization and multi-layer risk control mechanisms", not "absolute safety" or "zero risk"
+
+## Contact
+
+- Website: [antalpha.com](https://www.antalpha.com/)
+- Security: security@antalpha.com
+- X (Twitter): [x.com/antalpha](https://x.com/)
+- LinkedIn: [linkedin.com/company/antalpha](https://www.linkedin.com/company/antalpha/)
