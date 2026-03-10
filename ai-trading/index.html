@@ -3,332 +3,222 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antalpha — RWA&AI 智能理财平台</title>
+  <title>AgentWealth — AI-Native RWA Yield Protocol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root{
-      --bg-deep:#07080a;--bg-primary:#0b0d10;--bg-secondary:#12141a;--bg-card:#16181f;
-      --border:#1f2229;--border-light:#2a2d36;
-      --accent:#3b82f6;--accent-soft:rgba(59,130,246,.12);--accent-muted:#2563eb;--accent-glow:rgba(59,130,246,.3);
-      --text-primary:#eef0f4;--text-secondary:#7a7f8e;
-      --success:#22c55e;--danger:#ef4444;--btc-orange:#f7931a;
+      --bg-deep:#060810;--bg-primary:#0a0e18;--bg-secondary:#101420;--bg-card:#141825;
+      --border:#1c2030;--border-light:#262c3a;
+      --accent:#3b82f6;--accent-soft:rgba(59,130,246,.1);--accent-muted:#2563eb;--accent-glow:rgba(59,130,246,.25);
+      --cyan:#06b6d4;--cyan-soft:rgba(6,182,212,.1);
+      --text-primary:#e8ebf0;--text-secondary:#6b7084;--text-dim:#454958;
+      --success:#22c55e;--btc-orange:#f7931a;--purple:#a78bfa;
       --font-head:'Space Grotesk',sans-serif;--font-mono:'JetBrains Mono',monospace;--font-body:'DM Sans',-apple-system,sans-serif;
     }
     *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
-    body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);line-height:1.6;min-height:100vh}
+    body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);line-height:1.6;min-height:100vh;overflow-x:hidden}
 
-    /* ===== Antalpha Global Nav ===== */
+    .grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size:60px 60px;opacity:.12}
+
+    /* ===== Antalpha Nav ===== */
     .anta-nav{background:linear-gradient(135deg,#0a3d91 0%,#0891b2 50%,#06b6d4 100%);position:sticky;top:0;z-index:200}
     .anta-nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
     .anta-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:var(--font-head);font-weight:700;font-size:1.125rem;letter-spacing:.06em}
     .anta-logo svg{width:28px;height:28px}
     .anta-links{display:flex;align-items:center;gap:4px}
-    .anta-links a{color:rgba(255,255,255,.82);text-decoration:none;font-size:.8125rem;font-weight:500;padding:6px 12px;border-radius:6px;transition:color .15s,background .15s;white-space:nowrap}
+    .anta-links a{color:rgba(255,255,255,.82);text-decoration:none;font-size:.8125rem;font-weight:500;padding:6px 12px;border-radius:6px;transition:.15s;white-space:nowrap}
     .anta-links a:hover{color:#fff;background:rgba(255,255,255,.12)}
     .anta-links a.anta-active{color:#fff;background:rgba(255,255,255,.18);font-weight:600}
     .anta-right{display:flex;align-items:center;gap:10px}
-    .anta-prime{color:rgba(255,255,255,.9);text-decoration:none;font-size:.8125rem;font-weight:600;padding:6px 12px;border-radius:6px;transition:background .15s}
+    .anta-prime{color:rgba(255,255,255,.9);text-decoration:none;font-size:.8125rem;font-weight:600;padding:6px 12px;border-radius:6px;transition:.15s}
     .anta-prime:hover{background:rgba(255,255,255,.12)}
-    .btn-demo{padding:7px 16px;border:1.5px solid rgba(255,255,255,.7);border-radius:8px;color:#fff;font-size:.8125rem;font-weight:600;text-decoration:none;transition:all .15s;background:transparent}
+    .btn-demo{padding:7px 16px;border:1.5px solid rgba(255,255,255,.7);border-radius:8px;color:#fff;font-size:.8125rem;font-weight:600;text-decoration:none;transition:.15s;background:transparent}
     .btn-demo:hover{background:rgba(255,255,255,.15);border-color:#fff}
-    .anta-lang{display:flex;align-items:center;gap:4px;color:rgba(255,255,255,.8);font-size:.8125rem;cursor:pointer;padding:6px 10px;border-radius:6px;border:none;background:rgba(255,255,255,.1);transition:background .15s;font-family:var(--font-body)}
-    .anta-lang:hover{background:rgba(255,255,255,.18)}
-    .anta-lang svg{width:14px;height:14px;fill:currentColor;margin-right:4px}
+    .btn-lang{display:flex;align-items:center;gap:4px;color:rgba(255,255,255,.8);font-size:.8125rem;cursor:pointer;padding:6px 10px;border-radius:6px;border:none;background:rgba(255,255,255,.1);transition:.15s;font-family:var(--font-body)}
+    .btn-lang:hover{background:rgba(255,255,255,.18)}
+    .btn-lang svg{width:14px;height:14px;stroke:currentColor;fill:none;margin-right:4px}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-    /* ===== Floating Wallet Button ===== */
-    .float-wallet{position:fixed;right:24px;bottom:92px;z-index:150;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-    .btn-connect{background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:50px;font-size:.8125rem;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:all .2s;box-shadow:0 4px 20px var(--accent-glow);white-space:nowrap}
-    .btn-connect:hover{background:var(--accent-muted);transform:scale(1.04)}
-    .wallet-info{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border-light);border-radius:50px;padding:8px 16px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
-    .wallet-address{font-family:var(--font-mono);color:var(--accent);font-size:.75rem}
-    .btn-disconnect{background:transparent;color:var(--text-secondary);border:1px solid var(--border-light);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.6875rem}
-    .btn-disconnect:hover{color:var(--text-primary)}
+    /* ===== Section wrapper ===== */
+    .panel{position:relative;z-index:1}
+    .panel-inner{max-width:1100px;margin:0 auto;padding:0 24px}
+    .panel-divider{position:relative;max-width:1100px;margin:0 auto;padding:0 24px}
+    .panel-divider::after{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent 0%,var(--border-light) 20%,var(--border-light) 80%,transparent 100%)}
+    .panel-number{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--border-light);font-family:var(--font-mono);font-size:.6875rem;color:var(--text-dim);margin-bottom:20px;background:var(--bg-secondary)}
 
-    /* ===== Hero (left-right) ===== */
-    .hero{padding:72px 24px 64px;position:relative;overflow:hidden}
-    .hero::before{content:'';position:absolute;top:-60%;left:50%;transform:translateX(-50%);width:140%;height:100%;background:radial-gradient(ellipse 50% 60%,rgba(59,130,246,.07) 0%,transparent 70%);pointer-events:none}
-    .hero-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-    @media(max-width:900px){.hero-inner{grid-template-columns:1fr;text-align:center}}
-    .hero-text{text-align:left}
-    @media(max-width:900px){.hero-text{text-align:center}}
-    .hero h1{font-family:var(--font-head);font-size:clamp(2rem,4vw,2.75rem);font-weight:700;letter-spacing:-.03em;line-height:1.2;color:var(--text-primary);margin-bottom:20px}
-    .hero h1 .gradient{background:linear-gradient(135deg,var(--accent) 0%,#60a5fa 60%,#93c5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero .sub{font-size:1.0625rem;color:var(--text-secondary);line-height:1.7;margin-bottom:0}
-    .hero-agent-box{background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;overflow:hidden;text-align:left}
-    .hero-agent-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-    .hero-agent-header .for-label{font-size:.8125rem;color:var(--text-secondary);letter-spacing:.06em}
-    .hero-agent-header .arrow{color:var(--accent);font-size:1.125rem}
-    .hero-agent-body{padding:24px}
-    .hero-mcp-intro{margin-bottom:20px}
-    .hero-mcp-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#6366f1);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-    .hero-mcp-title{font-family:var(--font-head);font-size:1.125rem;font-weight:700;color:var(--text-primary);margin-bottom:10px}
-    .hero-mcp-desc{font-size:.8125rem;color:var(--text-secondary);line-height:1.7;margin-bottom:16px}
-    .hero-mcp-features{display:flex;flex-direction:column;gap:10px;margin-bottom:0}
-    .hero-mcp-feat{display:flex;align-items:center;gap:10px;font-size:.8125rem;color:var(--text-secondary);line-height:1.5}
-    .hero-mcp-feat .mf-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
-    .hero-mcp-feat strong{color:var(--text-primary);font-weight:600}
-    .hero-agent-actions{display:flex;align-items:center;gap:12px;margin-top:20px}
-    .btn-deploy{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:10px;font-size:.9375rem;font-weight:600;text-decoration:none;transition:all .2s;border:none}
-    .btn-deploy:hover{background:var(--accent-muted);box-shadow:0 4px 20px var(--accent-glow)}
-    .btn-deploy svg{width:16px;height:16px}
-    .hero-agent-actions .or{color:var(--text-secondary);font-size:.8125rem}
-    .btn-docs{color:var(--text-secondary);font-size:.875rem;text-decoration:none;border-bottom:1px dashed var(--border-light);padding-bottom:1px;transition:color .2s}
-    .btn-docs:hover{color:var(--accent);border-color:var(--accent)}
+    /* ===== Panel 1: Hero ===== */
+    .hero{padding:100px 24px 80px;min-height:calc(100vh - 56px);display:flex;align-items:center;background:linear-gradient(180deg,#0c1222 0%,#0a0e18 100%)}
+    .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:140%;height:70%;background:radial-gradient(ellipse 35% 45%,rgba(59,130,246,.09) 0%,transparent 70%);pointer-events:none}
+    .hero-inner{position:relative;max-width:900px;margin:0 auto;text-align:center;width:100%}
+    .hero h1{font-family:var(--font-head);font-size:clamp(2.5rem,6vw,4rem);font-weight:700;letter-spacing:.12em;line-height:1.1;margin-bottom:24px;background:linear-gradient(135deg,var(--text-primary) 0%,var(--accent) 50%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:1.0625rem;color:var(--text-secondary);margin-bottom:48px;line-height:1.7;max-width:780px;margin-left:auto;margin-right:auto}
+    .hero-protocol{position:relative;display:inline-block;max-width:660px;width:100%;text-align:left;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,rgba(59,130,246,.08) 0%,rgba(6,182,212,.05) 50%,rgba(167,139,250,.06) 100%);border:1px solid rgba(59,130,246,.2)}
+    .hero-protocol::before{content:'';position:absolute;inset:0;border-radius:14px;padding:1px;background:linear-gradient(135deg,rgba(59,130,246,.3),rgba(6,182,212,.2),rgba(167,139,250,.2));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .hero-protocol-label{display:flex;align-items:center;gap:8px;padding:12px 24px;border-bottom:1px solid rgba(59,130,246,.12);font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.12em;color:var(--accent)}
+    .hero-protocol-label .status-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:pulse 2s infinite}
+    .hero-protocol-body{padding:20px 28px;font-family:var(--font-mono);font-size:.875rem;line-height:1.9;color:var(--text-dim)}
+    .hero-protocol .k{color:var(--accent)}.hero-protocol .s{color:var(--success)}.hero-protocol .a{color:var(--btc-orange)}
 
-    /* ===== Hero Features ===== */
-    .hero-features{margin-top:36px;display:flex;flex-direction:column;gap:18px}
-    .hero-feature-item{display:flex;align-items:flex-start;gap:14px;text-align:left}
-    .hf-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
-    .hero-feature-item strong{font-size:.9375rem;color:var(--text-primary);display:block;margin-bottom:2px}
-    .hero-feature-item p{font-size:.8125rem;color:var(--text-secondary);line-height:1.5;margin:0}
+    /* Hero metrics */
+    .hero-metrics{display:flex;justify-content:center;gap:48px;margin-bottom:48px;flex-wrap:wrap}
+    .hero-metric{text-align:center}
+    .hero-metric-val{font-family:var(--font-head);font-size:clamp(1.5rem,3.5vw,2rem);font-weight:700;letter-spacing:-.02em;background:linear-gradient(135deg,var(--text-primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+    .hero-metric-label{font-size:.75rem;color:var(--text-secondary);letter-spacing:.06em;text-transform:uppercase;margin-top:4px;font-weight:500}
 
-    /* ===== Section ===== */
-    .section{max-width:1200px;margin:0 auto;padding:72px 24px;border-top:1px solid var(--border)}
+    /* Hero CTA buttons */
+    .hero-cta{display:flex;justify-content:center;gap:16px;margin-top:48px;flex-wrap:wrap}
+    .hero-cta .btn-hero{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;font-size:.875rem;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;font-family:var(--font-body);border:none}
+    .hero-cta .btn-hero.primary{background:var(--accent);color:#fff;box-shadow:0 4px 24px rgba(59,130,246,.3)}
+    .hero-cta .btn-hero.primary:hover{background:var(--accent-muted);box-shadow:0 6px 32px rgba(59,130,246,.45);transform:translateY(-1px)}
+    .hero-cta .btn-hero.secondary{background:rgba(255,255,255,.06);color:var(--text-primary);border:1px solid var(--border-light)}
+    .hero-cta .btn-hero.secondary:hover{background:rgba(255,255,255,.1);border-color:var(--accent);transform:translateY(-1px)}
+    .hero-cta .btn-hero svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Hero partners */
+    .hero-partners{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:56px;flex-wrap:wrap}
+    .hero-partners-label{font-size:.6875rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-right:8px}
+    .hero-partner{font-size:.75rem;color:var(--text-secondary);padding:5px 14px;border:1px solid var(--border);border-radius:50px;background:rgba(255,255,255,.02);font-weight:500;transition:.2s}
+    .hero-partner:hover{border-color:var(--accent);color:var(--text-primary);background:rgba(59,130,246,.05)}
+
+    /* ===== Panel 2: Integration + Product ===== */
+    .panel2{padding:80px 0;background:linear-gradient(180deg,#090d16 0%,#0d1120 50%,#090d16 100%)}
     .section-head{text-align:center;margin-bottom:48px}
-    .section-head .label{font-size:.6875rem;text-transform:uppercase;letter-spacing:.18em;color:var(--accent);margin-bottom:10px;font-weight:600}
-    .section-head h2{font-family:var(--font-head);font-size:clamp(1.75rem,3vw,2.25rem);font-weight:700;letter-spacing:-.02em;color:var(--text-primary);margin-bottom:12px}
-    .section-head p{color:var(--text-secondary);font-size:1rem;line-height:1.65;max-width:640px;margin:0 auto}
+    .section-head .tag{display:inline-block;font-size:.6875rem;text-transform:uppercase;letter-spacing:.18em;color:var(--cyan);margin-bottom:12px;font-weight:600;padding:4px 14px;border:1px solid var(--cyan-soft);border-radius:50px;background:rgba(6,182,212,.05)}
+    .section-head h2{font-family:var(--font-head);font-size:clamp(1.75rem,3.5vw,2.375rem);font-weight:700;letter-spacing:-.01em;color:var(--text-primary);margin-bottom:12px}
+    .section-head p{color:var(--text-secondary);font-size:1rem;line-height:1.65;max-width:560px;margin:0 auto}
 
-    /* ===== Invest card (horizontal) ===== */
-    .invest-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;padding:32px;margin-bottom:32px}
-    .invest-card-top{display:flex;align-items:center;gap:16px;margin-bottom:24px}
-    .invest-card-tag{display:inline-block;font-size:.6875rem;padding:3px 10px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:600;letter-spacing:.03em}
-    .invest-card-top h4{font-family:var(--font-head);font-size:1.25rem;font-weight:700;color:var(--text-primary)}
-    .invest-card-apy{font-size:1.25rem;font-weight:700;color:var(--success);margin-left:auto}
-    .invest-metrics-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
-    .invest-metric-item{flex:1;min-width:120px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:18px 20px;text-align:center}
-    .invest-metric-item .im-label{font-size:.6875rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-    .invest-metric-item .im-val{font-size:1.1rem;font-weight:700;color:var(--text-primary)}
-    .invest-metric-item .im-val.orange{color:var(--btc-orange)}
-    .invest-metric-item .im-val.green{color:var(--success)}
-    .invest-notice{background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:.8125rem;color:var(--text-secondary);line-height:1.6;margin-bottom:24px}
+    /* Code panel (Skills / MCP) */
+    .code-panel{background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;overflow:hidden;text-align:left;margin-bottom:64px}
+    .code-tabs{display:flex;border-bottom:1px solid var(--border);padding:0}
+    .code-tab{padding:12px 24px;font-size:.8125rem;font-weight:600;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;background:transparent;border-top:none;border-left:none;border-right:none;font-family:var(--font-body)}
+    .code-tab:hover{color:var(--text-primary)}
+    .code-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .code-pane{display:none}.code-pane.active{display:block}
+    .code-file-bar{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim)}
+    .code-file-bar .dots{display:flex;gap:5px}
+    .code-file-bar .dot{width:10px;height:10px;border-radius:50%}
+    .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+    .code-file-bar .fname{margin-left:8px;color:var(--text-secondary)}
+    .code-body{padding:24px 28px;font-family:var(--font-mono);font-size:.8125rem;line-height:1.85;color:var(--text-dim);overflow-x:auto;overflow-y:auto;white-space:pre;height:520px}
+    .code-body .cm{opacity:.5}.code-body .k{color:var(--accent)}.code-body .s{color:var(--success)}.code-body .p{color:var(--purple)}.code-body .o{color:var(--btc-orange)}
+    .code-body .cursor-blink{display:inline-block;width:2px;height:1.1em;background:var(--accent);vertical-align:text-bottom;animation:blink 1s step-end infinite;margin-left:1px}
+    @keyframes blink{50%{opacity:0}}
+    .code-tools{padding:16px 28px 20px;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:.8125rem;line-height:1.9;color:var(--text-dim)}
+    .code-tools .cm{opacity:.5}
+    .code-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:0 28px 20px}
+    .btn-primary{display:inline-flex;align-items:center;gap:6px;padding:9px 22px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:.8125rem;font-weight:600;text-decoration:none;transition:.15s;cursor:pointer;font-family:var(--font-body)}
+    .btn-primary:hover{background:var(--accent-muted);box-shadow:0 4px 20px var(--accent-glow)}
+    .btn-primary svg{width:14px;height:14px;fill:currentColor}
 
-    /* ===== Address Table ===== */
-    .address-table-wrap{background:var(--bg-secondary);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px}
-    .address-table{width:100%;border-collapse:collapse;font-size:.875rem}
-    .address-table th{text-align:left;padding:12px 20px;color:var(--text-secondary);font-weight:600;font-size:.6875rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
-    .address-table td{padding:14px 20px;border-bottom:1px solid var(--border)}
-    .address-table tbody tr:last-of-type td{border-bottom:none}
-    .address-table tbody tr:hover{background:rgba(255,255,255,.015)}
-    .addr-type{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.8125rem;color:var(--text-primary);white-space:nowrap}
-    .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
-    .dot.btc{background:var(--btc-orange)}.dot.usdt{background:var(--success)}
-    .addr-value{font-family:var(--font-mono);font-size:.75rem;word-break:break-all}
-    .addr-value.btc-color{color:var(--btc-orange)}.addr-value.usdt-color{color:var(--success)}
-    .btn-copy-icon{background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:2px;margin-left:6px;transition:color .15s;vertical-align:middle;display:inline-flex;align-items:center}
-    .btn-copy-icon:hover{color:var(--accent)}.btn-copy-icon.copied{color:var(--success)}
-    .addr-amt{font-weight:700;white-space:nowrap}
-    .addr-amt.orange{color:var(--btc-orange)}.addr-amt.green{color:var(--success)}
-    .explorer-icon{display:inline-flex;align-items:center;color:var(--text-secondary);text-decoration:none;transition:color .15s}
-    .explorer-icon:hover{color:var(--accent)}
-    .explorer-link{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;color:var(--accent);text-decoration:none;padding:5px 12px;border:1px solid rgba(59,130,246,.25);border-radius:8px;transition:all .15s;font-weight:500}
-    .explorer-link:hover{background:var(--accent-soft);border-color:var(--accent)}
-    .explorer-link svg{width:12px;height:12px}
-    .address-table-note{padding:12px 20px;font-size:.75rem;color:var(--text-secondary);line-height:1.5;border-top:1px solid var(--border);background:rgba(34,197,94,.03)}
+    /* Product Info (premium card style) */
+    .product-card{position:relative;border-radius:20px;overflow:hidden;background:linear-gradient(160deg,rgba(59,130,246,.06) 0%,var(--bg-card) 30%,var(--bg-card) 70%,rgba(6,182,212,.06) 100%);border:1px solid var(--border-light)}
+    .product-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--cyan),var(--purple))}
+    .product-card-header{padding:28px 32px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+    .product-card-header h3{font-family:var(--font-head);font-size:1.125rem;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:10px}
+    .product-card-header h3 .dot-live{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);animation:pulse 2s infinite}
+    .product-card-badges{display:flex;gap:8px}
+    .product-badge{font-size:.6875rem;padding:4px 12px;border-radius:6px;font-weight:600;letter-spacing:.03em}
+    .product-badge.low{background:rgba(34,197,94,.1);color:var(--success);border:1px solid rgba(34,197,94,.2)}
+    .product-badge.med{background:rgba(247,147,26,.1);color:var(--btc-orange);border:1px solid rgba(247,147,26,.2)}
+    .product-code-body{padding:24px 32px 28px;font-family:var(--font-mono);font-size:.8125rem;line-height:1.85;color:var(--text-dim);overflow-x:auto;white-space:pre}
+    .product-code-body .k{color:var(--accent)}.product-code-body .s{color:var(--success)}.product-code-body .o{color:var(--btc-orange)}
 
-    /* ===== Progress ===== */
-    .progress-wrap{margin-bottom:24px}
-    .progress-stats{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-    .progress-stat{text-align:left}
-    .progress-stat:last-child{text-align:right}
-    .progress-stat .ps-label{font-size:.6875rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-    .progress-stat .ps-val{font-size:1.125rem;font-weight:700;color:var(--text-primary);font-family:var(--font-head)}
-    .progress-bar{height:12px;background:var(--bg-secondary);border-radius:6px;overflow:hidden;border:1px solid var(--border)}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:6px;transition:width .6s}
-    .progress-pct-below{text-align:right;font-size:.8125rem;font-weight:700;color:var(--accent);font-family:var(--font-mono);margin-top:8px}
+    /* ===== Panel 3: AI Service (left-right) ===== */
+    .panel3{padding:80px 0;background:linear-gradient(180deg,#0a0e18 0%,#0e1424 100%)}
+    .ai-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:stretch}
+    @media(max-width:768px){.ai-layout{grid-template-columns:1fr}}
 
-    /* ===== Holdings ===== */
-    .holdings-section{display:none}.holdings-section.visible{display:block}
-    .purchase-section.hidden{display:none}
-    .holdings-summary{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px}
-    .holdings-summary .stat-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:12px;padding:18px 24px;text-align:center;flex:1;min-width:140px}
-    .holdings-summary .stat-card .s-label{font-size:.6875rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-    .holdings-summary .stat-card .s-val{font-size:1.25rem;font-weight:700;color:var(--text-primary);font-family:var(--font-head)}
-    .holdings-summary .stat-card .s-val.green{color:var(--success)}
-    .holdings-table-wrap{overflow-x:auto;border:1px solid var(--border-light);border-radius:16px;background:var(--bg-card)}
-    .holdings-table{width:100%;border-collapse:collapse;font-size:.875rem}
-    .holdings-table th{text-align:left;padding:14px 20px;color:var(--text-secondary);font-weight:600;font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
-    .holdings-table td{padding:16px 20px;border-bottom:1px solid var(--border)}
-    .holdings-table tr:last-child td{border-bottom:none}
-    .btn-redeem{padding:8px 18px;background:transparent;color:var(--danger);border:1.5px solid var(--danger);border-radius:8px;font-size:.8125rem;font-weight:600;cursor:pointer;transition:all .15s}
-    .btn-redeem:hover{background:var(--danger);color:#fff}
+    .tg-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:20px;padding:36px 32px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+    .tg-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+    .tg-icon svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .tg-card h3{font-family:var(--font-head);font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+    .tg-card .tg-desc{color:var(--text-secondary);font-size:.875rem;margin-bottom:24px;line-height:1.6}
+    .tg-qr{width:160px;height:160px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+    .tg-qr-placeholder{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--bg-deep);font-size:.6875rem;font-family:var(--font-mono);font-weight:600}
+    .qr-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;width:90px}
+    .qr-cell{width:100%;aspect-ratio:1;border-radius:1px}
+    .qr-cell.b{background:#111}.qr-cell.w{background:#fff}
+    .tg-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:.8125rem;text-decoration:none;font-weight:600;transition:.15s}
+    .tg-link:hover{color:var(--cyan)}
 
-    /* ===== Redeem Section ===== */
-    .redeem-block{background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;padding:28px 32px;margin-top:32px}
-    .redeem-block h3{font-family:var(--font-head);font-size:1.125rem;font-weight:700;color:var(--text-primary);margin-bottom:20px}
-    .redeem-empty{text-align:center;padding:40px 20px;color:var(--text-secondary);font-size:.9375rem}
-    .redeem-empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:.4}
-    .redeem-table-wrap{overflow-x:auto}
-    .redeem-table{width:100%;border-collapse:collapse;font-size:.875rem}
-    .redeem-table th{text-align:left;padding:12px 16px;color:var(--text-secondary);font-weight:600;font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
-    .redeem-table td{padding:14px 16px;border-bottom:1px solid var(--border)}
-    .redeem-table tr:last-child td{border-bottom:none}
-    .redeem-status{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.6875rem;font-weight:600}
-    .redeem-status.mature{background:rgba(34,197,94,.12);color:var(--success)}
-    .redeem-status.locked{background:rgba(122,127,142,.12);color:var(--text-secondary)}
+    /* Chat demo */
+    .chat-demo{background:var(--bg-card);border:1px solid var(--border-light);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+    .chat-demo-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-size:.8125rem;font-weight:600;color:var(--text-primary)}
+    .chat-demo-header .bot-avatar{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center}
+    .chat-demo-header .bot-avatar svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .chat-demo-header .online{color:var(--success);font-size:.6875rem;font-weight:400;margin-left:auto;display:flex;align-items:center;gap:4px}
+    .chat-demo-header .online::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:pulse 2s infinite}
+    .chat-demo-body{padding:20px;display:flex;flex-direction:column;gap:12px;height:380px;overflow-y:auto}
+    .chat-bubble{max-width:85%;padding:10px 14px;border-radius:12px;font-size:.8125rem;line-height:1.55;opacity:0;transform:translateY(8px);animation:bubbleIn .4s forwards}
+    .chat-bubble.bot{background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+    .chat-bubble.user{background:var(--accent-soft);color:var(--text-primary);border:1px solid rgba(59,130,246,.15);align-self:flex-end;border-bottom-right-radius:4px}
+    .chat-bubble.typing{display:flex;gap:4px;align-items:center;padding:12px 18px}
+    .chat-bubble.typing .dot-t{width:6px;height:6px;border-radius:50%;background:var(--text-dim);animation:dotBounce 1.4s infinite}
+    .chat-bubble.typing .dot-t:nth-child(2){animation-delay:.2s}
+    .chat-bubble.typing .dot-t:nth-child(3){animation-delay:.4s}
+    @keyframes bubbleIn{to{opacity:1;transform:translateY(0)}}
+    @keyframes dotBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+    .chat-demo-input{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px}
+    .chat-demo-input input{flex:1;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text-primary);font-size:.8125rem;font-family:var(--font-body)}
+    .chat-demo-input input::placeholder{color:var(--text-dim)}
+    .chat-demo-input button{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:.8125rem;font-family:var(--font-body);transition:.15s}
+    .chat-demo-input button:hover{background:var(--accent-muted)}
 
-    /* ===== Records ===== */
-    .section-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px}
-    .section-head-row .section-head{margin-bottom:0;text-align:left}
-    .leaderboard-wrap{overflow-x:auto;border:1px solid var(--border-light);border-radius:16px;background:var(--bg-card)}
-    .leaderboard-table{width:100%;border-collapse:collapse;font-size:.875rem}
-    .leaderboard-table th{text-align:left;padding:14px 20px;color:var(--text-secondary);font-weight:600;font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
-    .leaderboard-table td{padding:16px 20px;border-bottom:1px solid var(--border)}
-    .leaderboard-table tr:last-child td{border-bottom:none}
-    .leaderboard-table tbody tr:hover{background:rgba(255,255,255,.015)}
-    .participant{display:flex;align-items:center;gap:10px}
-    .participant .addr{font-family:var(--font-mono);color:var(--text-primary);font-size:.8125rem}
-    .participant .tag{font-size:.6875rem;padding:2px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:600}
-    .stat-row{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:32px}
-    .stat-item{text-align:center}
-    .stat-item .value{font-size:1.5rem;font-weight:700;color:var(--accent);font-family:var(--font-head)}
-    .stat-item .label{font-size:.75rem;color:var(--text-secondary);margin-top:4px}
-
-    /* ===== Dashboard ===== */
-    .dash-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-    @media(max-width:768px){.dash-stats-grid{grid-template-columns:repeat(2,1fr)}}
-    .dash-stat-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:22px 24px;position:relative;overflow:hidden}
-    .dash-stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-    .dash-stat-card.blue::before{background:linear-gradient(90deg,var(--accent),#60a5fa)}
-    .dash-stat-card.green::before{background:linear-gradient(90deg,var(--success),#4ade80)}
-    .dash-stat-card.orange::before{background:linear-gradient(90deg,var(--btc-orange),#fbbf24)}
-    .dash-stat-card.purple::before{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
-    .dash-stat-card .ds-label{font-size:.6875rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-    .dash-stat-card .ds-val{font-size:1.5rem;font-weight:700;font-family:var(--font-head);color:var(--text-primary)}
-    .dash-stat-card .ds-change{font-size:.6875rem;font-weight:600;margin-top:6px;display:inline-block;padding:2px 8px;border-radius:4px}
-    .dash-stat-card .ds-change.up{color:var(--success);background:rgba(34,197,94,.1)}
-    .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-    @media(max-width:768px){.dashboard-grid{grid-template-columns:1fr}}
-    .dashboard-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;padding:28px 32px;position:relative;overflow:hidden}
-    .dashboard-card h4{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
-    .dashboard-card h4 .chart-period{font-size:.6875rem;font-weight:500;color:var(--text-secondary);padding:4px 10px;border:1px solid var(--border);border-radius:6px}
-    .dash-chart{height:180px;display:flex;align-items:flex-end;gap:6px;position:relative;padding-bottom:24px;padding-left:4px}
-    .dash-chart-grid{position:absolute;inset:0;bottom:24px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
-    .dash-chart-grid-line{border-bottom:1px dashed rgba(255,255,255,.04);position:relative}
-    .dash-chart-grid-line::before{content:attr(data-val);position:absolute;left:-4px;bottom:2px;font-size:.5625rem;color:var(--text-secondary);font-family:var(--font-mono);opacity:.6}
-    .dash-bar{flex:1;min-width:8px;border-radius:6px 6px 2px 2px;transition:all .25s;position:relative;cursor:pointer}
-    .dash-bar:hover{filter:brightness(1.25)}
-    .dash-bar:hover::after{content:attr(title);position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:var(--bg-deep);color:var(--text-primary);font-size:.6875rem;font-family:var(--font-mono);padding:4px 10px;border-radius:6px;border:1px solid var(--border-light);white-space:nowrap;z-index:5;font-weight:600}
-    .dash-bar.blue{background:linear-gradient(180deg,#3b82f6 0%,rgba(59,130,246,.15) 100%);box-shadow:0 0 12px rgba(59,130,246,.15)}
-    .dash-bar.green{background:linear-gradient(180deg,#22c55e 0%,rgba(34,197,94,.15) 100%);box-shadow:0 0 12px rgba(34,197,94,.15)}
-    .dash-x-labels{display:flex;gap:6px;position:absolute;bottom:0;left:4px;right:0}
-    .dash-x-labels span{flex:1;text-align:center;font-size:.5625rem;color:var(--text-secondary);font-family:var(--font-mono);opacity:.7}
-    .dash-summary{margin-top:16px;display:flex;align-items:baseline;gap:12px}
-    .dash-big-num{font-size:1.75rem;font-weight:700;font-family:var(--font-head)}
-    .dash-big-num.blue{color:var(--accent)}.dash-big-num.green{color:var(--success)}
-    .dash-sub{font-size:.75rem;color:var(--text-secondary)}
-
-    /* ===== Trust ===== */
-    .trust-block{background:linear-gradient(135deg,rgba(59,130,246,.06) 0%,transparent 50%);border:1px solid var(--border-light);border-radius:20px;padding:40px}
-    .trust-block h3{font-family:var(--font-head);font-size:1.25rem;font-weight:700;margin-bottom:10px;color:var(--text-primary)}
-    .trust-block>p{color:var(--text-secondary);font-size:.9375rem;line-height:1.65;margin-bottom:28px}
-    .trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-    .trust-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:24px}
-    .trust-card .trust-icon{height:36px;margin-bottom:14px;display:flex;align-items:center}
-    .trust-card .trust-icon img,.trust-card .trust-icon svg{height:36px;width:auto;object-fit:contain}
-    .trust-card h4{font-size:.9375rem;font-weight:600;color:var(--text-primary);margin-bottom:8px}
-    .trust-card p{font-size:.8125rem;color:var(--text-secondary);line-height:1.55}
-
-    /* ===== Chatbot ===== */
-    .float-btns{position:fixed;right:24px;bottom:24px;z-index:150;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-    .float-robot{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent) 0%,#6366f1 100%);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 24px rgba(59,130,246,.35);transition:all .25s;border:none}
-    .float-robot:hover{transform:scale(1.08);box-shadow:0 8px 32px rgba(59,130,246,.45)}
-    .chat-panel{position:fixed;right:24px;bottom:96px;width:380px;max-width:calc(100vw - 48px);background:var(--bg-card);border:1px solid var(--border-light);border-radius:20px;box-shadow:0 12px 48px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04);z-index:160;display:none;flex-direction:column;max-height:520px;overflow:hidden}
-    .chat-panel.open{display:flex}
-    .chat-panel-header{padding:16px 20px;background:linear-gradient(135deg,var(--accent) 0%,#6366f1 100%);display:flex;align-items:center;justify-content:space-between}
-    .chat-header-left{display:flex;align-items:center;gap:12px}
-    .chat-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .chat-header-name{font-weight:600;font-size:.875rem;color:#fff}
-    .chat-header-status{display:flex;align-items:center;gap:5px;font-size:.6875rem;color:rgba(255,255,255,.75)}
-    .chat-status-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block}
-    .chat-panel-close{background:rgba(255,255,255,.12);border:none;color:rgba(255,255,255,.8);cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
-    .chat-panel-close:hover{background:rgba(255,255,255,.25);color:#fff}
-    .chat-panel-body{padding:20px;flex:1;display:flex;flex-direction:column;min-height:280px;gap:12px;overflow-y:auto}
-    .chat-bubble{display:flex;gap:10px;align-items:flex-start}
-    .chat-bubble.bot .chat-bubble-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#6366f1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .chat-bubble-content{font-size:.8125rem;color:var(--text-primary);padding:12px 16px;background:var(--bg-secondary);border-radius:4px 14px 14px 14px;line-height:1.6;max-width:85%}
-    .chat-bubble.user{flex-direction:row-reverse}
-    .chat-bubble.user .chat-bubble-content{background:var(--accent);color:#fff;border-radius:14px 4px 14px 14px}
-    .chat-prompts{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0}
-    .chat-prompt-btn{padding:7px 14px;font-size:.75rem;font-weight:500;color:var(--accent);background:var(--accent-soft);border:1px solid rgba(59,130,246,.2);border-radius:20px;cursor:pointer;transition:all .15s;font-family:var(--font-body);white-space:nowrap}
-    .chat-prompt-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
-    .chat-input-wrap{display:flex;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
-    .chat-input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg-secondary);color:var(--text-primary);font-size:.8125rem;font-family:var(--font-body);transition:border-color .15s}
-    .chat-input:focus{outline:none;border-color:var(--accent)}
-    .chat-input::placeholder{color:var(--text-secondary)}
-    .chat-send{width:38px;height:38px;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
-    .chat-send:hover{background:var(--accent-muted);transform:scale(1.05)}
+    /* ===== Float chatbot ===== */
+    .float-bot{position:fixed;right:24px;bottom:24px;z-index:150}
+    .float-bot-btn{width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px var(--accent-glow);transition:transform .2s;border:none}
+    .float-bot-btn:hover{transform:scale(1.06)}
+    .float-bot-btn svg{width:24px;height:24px;fill:none;stroke:#fff;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .float-chat{position:fixed;right:24px;bottom:90px;width:360px;max-width:calc(100vw - 48px);background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.5);z-index:160;display:none;flex-direction:column;max-height:420px}
+    .float-chat.open{display:flex}
+    .float-chat-header{padding:14px 20px;border-bottom:1px solid var(--border);font-weight:600;font-size:.9375rem;color:var(--text-primary);display:flex;align-items:center;justify-content:space-between}
+    .float-chat-close{background:none;border:none;color:var(--text-secondary);font-size:1.25rem;cursor:pointer;transition:.15s}
+    .float-chat-close:hover{color:var(--text-primary)}
+    .float-chat-body{padding:20px;flex:1;display:flex;flex-direction:column;min-height:200px;gap:10px;overflow-y:auto}
+    .float-chat-msg{font-size:.875rem;color:var(--text-secondary);padding:10px 14px;background:var(--bg-secondary);border-radius:10px;line-height:1.5;border:1px solid var(--border)}
+    .float-chat-msg.user-msg{background:var(--accent-soft);color:var(--text-primary);border-color:rgba(59,130,246,.15);text-align:right;align-self:flex-end}
+    .float-chat-input{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+    .float-chat-input input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-secondary);color:var(--text-primary);font-size:.875rem;font-family:var(--font-body)}
+    .float-chat-input input::placeholder{color:var(--text-dim)}
+    .float-chat-input button{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:.875rem;font-family:var(--font-body);transition:.15s}
+    .float-chat-input button:hover{background:var(--accent-muted)}
 
     /* ===== Footer ===== */
-    .footer{background:#0d1117;border-top:1px solid var(--border)}
-    .footer-main{max-width:1280px;margin:0 auto;padding:32px 24px 24px;display:flex;align-items:center;justify-content:space-between}
-    .footer-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:var(--font-head);font-weight:700;font-size:1.125rem;letter-spacing:.06em}
-    .footer-logo svg{width:28px;height:28px}
-    .footer-social{display:flex;gap:12px}
-    .footer-social a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:var(--text-secondary);text-decoration:none;transition:all .2s}
-    .footer-social a:hover{color:#fff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
-    .footer-social a svg{width:16px;height:16px;fill:currentColor}
-    .footer-bottom{border-top:1px solid rgba(255,255,255,.06);max-width:1280px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;flex-wrap:wrap;gap:8px 24px;font-size:.75rem;color:var(--text-secondary)}
-    .footer-bottom a{color:var(--text-secondary);text-decoration:none;transition:color .15s}
-    .footer-bottom a:hover{color:var(--text-primary)}
-    .footer-bottom .copyright{margin-right:auto}
-
-    /* ===== Modal / Toast ===== */
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;padding:24px}
-    .modal-overlay.open{display:flex}
-    .modal{background:var(--bg-card);border:1px solid var(--border-light);border-radius:20px;padding:32px;max-width:420px;width:100%;position:relative}
-    .modal h3{font-family:var(--font-head);font-size:1.25rem;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
-    .modal p{color:var(--text-secondary);font-size:.9375rem;margin-bottom:24px;line-height:1.6}
-    .modal .wallet-options{display:flex;flex-direction:column;gap:12px}
-    .modal .wallet-option{display:flex;align-items:center;gap:14px;padding:14px 20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:.9375rem;font-weight:500;color:var(--text-primary);transition:border-color .2s,background .2s}
-    .modal .wallet-option:hover{border-color:var(--accent);background:var(--accent-soft)}
-    .modal .terms{font-size:.75rem;color:var(--text-secondary);margin-top:16px}
-    .modal .close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-secondary);font-size:1.5rem;cursor:pointer}
-    .modal .close-btn:hover{color:var(--text-primary)}
-    .toast{position:fixed;top:120px;left:50%;transform:translateX(-50%);background:var(--success);color:#fff;padding:12px 28px;border-radius:10px;font-size:.9375rem;font-weight:600;z-index:400;opacity:0;pointer-events:none;transition:opacity .3s}
-    .toast.show{opacity:1}
-
-    /* ===== Code Viewer ===== */
-    .code-viewer{background:var(--bg-card);border:1px solid var(--border-light);border-radius:16px;overflow:hidden}
-    .code-tabs{display:flex;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
-    .code-tab{padding:12px 28px;font-size:.875rem;font-weight:600;color:var(--text-secondary);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:var(--font-body);transition:all .15s}
-    .code-tab:hover{color:var(--text-primary)}
-    .code-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(59,130,246,.04)}
-    .code-panel{display:none}.code-panel.active{display:block}
-    .code-block-view{padding:0}
-    .code-bar{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2)}
-    .code-dots{display:flex;gap:6px}
-    .cd{width:10px;height:10px;border-radius:50%}.cd.r{background:#ff5f56}.cd.y{background:#ffbd2e}.cd.g{background:#27c93f}
-    .code-filename{font-family:var(--font-mono);font-size:.75rem;color:var(--text-secondary)}
-    .code-content{font-family:var(--font-mono);font-size:.8125rem;line-height:1.8;color:var(--text-secondary);padding:24px;margin:0;overflow-x:auto;background:var(--bg-deep)}
-    .code-content .ck{color:#c792ea}.code-content .cs{color:#c3e88d}.code-content .cf{color:#82aaff}.code-content .cn{color:var(--btc-orange)}.code-content .cc{color:#546e7a}.code-content .co{color:var(--success)}
-    .code-actions{padding:16px 24px;border-top:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:flex-end;gap:12px}
-    .btn-code-action{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--accent);color:#fff;border-radius:8px;font-size:.8125rem;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer;font-family:var(--font-body)}
-    .btn-code-action:hover{background:var(--accent-muted);box-shadow:0 4px 16px var(--accent-glow)}
-    .btn-code-action svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-    .btn-code-action.outline{background:transparent;border:1.5px solid var(--border-light);color:var(--text-secondary)}
-    .btn-code-action.outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);box-shadow:none}
-
-    /* ===== FAQ ===== */
-    .faq-list{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
-    .faq-item{background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;overflow:hidden;transition:border-color .2s}
-    .faq-item.open{border-color:rgba(59,130,246,.3)}
-    .faq-q{width:100%;text-align:left;padding:20px 24px;background:none;border:none;color:var(--text-primary);font-size:.9375rem;font-weight:600;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;justify-content:space-between;gap:16px;line-height:1.5;transition:color .15s}
-    .faq-q:hover{color:var(--accent)}
-    .faq-q::after{content:'+';font-size:1.25rem;color:var(--text-secondary);flex-shrink:0;transition:transform .2s}
-    .faq-item.open .faq-q::after{content:'−';color:var(--accent)}
-    .faq-a{padding:0 24px 20px;color:var(--text-secondary);font-size:.875rem;line-height:1.75;display:none}
-    .faq-item.open .faq-a{display:block}
+    .footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:28px 24px;background:#080c14}
+    .footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+    .footer-text{color:var(--text-dim);font-size:.75rem;font-family:var(--font-mono)}
+    .footer-text a{color:var(--text-secondary);text-decoration:none}.footer-text a:hover{color:var(--accent)}
+    .footer-links{display:flex;gap:16px}
+    .footer-links a{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1px solid var(--border);color:var(--text-dim);text-decoration:none;transition:.15s}
+    .footer-links a:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+    .footer-links a svg{width:15px;height:15px;fill:currentColor}
 
     @media(max-width:900px){.anta-links{display:none}}
-    @media(max-width:600px){.hero{padding:48px 16px 40px}.section{padding:48px 16px}.trust-block{padding:24px}.invest-card{padding:24px}.redeem-block{padding:20px}.dash-stats-grid{grid-template-columns:1fr 1fr}.address-meta{gap:16px}}
+    @media(max-width:768px){
+      .hero{padding:56px 16px 48px;min-height:auto}
+      .hero-metrics{gap:24px}
+      .hero-metric-val{font-size:1.25rem}
+      .hero-cta{flex-direction:column;align-items:center}
+      .hero-partners{gap:6px}
+      .hero-partner{font-size:.6875rem;padding:4px 10px}
+      .panel2,.panel3{padding:56px 0}
+      .panel-inner{padding:0 16px}
+      .code-body{font-size:.75rem;padding:16px 18px;height:420px}
+      .code-tools{font-size:.75rem;padding:16px 18px}
+      .product-code-body{font-size:.75rem;padding:18px}
+      .tg-card{padding:28px 20px}
+      .footer-inner{flex-direction:column;gap:12px}
+    }
   </style>
 </head>
 <body>
+  <div class="grid-bg"></div>
 
-  <!-- ===== Antalpha Global Nav ===== -->
+  <!-- Antalpha Nav -->
   <nav class="anta-nav">
     <div class="anta-nav-inner">
       <a href="https://www.antalpha.com/" class="anta-logo" target="_blank" rel="noopener">
@@ -336,443 +226,227 @@
         ANTALPHA
       </a>
       <div class="anta-links">
-        <a href="https://www.antalpha.com/" target="_blank" rel="noopener">Loans</a>
-        <a href="https://www.antalpha.com/" target="_blank" rel="noopener">Risk Control</a>
-        <a href="https://www.antalpha.com/" target="_blank" rel="noopener">About Us</a>
-        <a href="https://www.antalpha.com/" target="_blank" rel="noopener">Careers</a>
-        <a href="https://www.antalpha.com/" target="_blank" rel="noopener">Investor Relations</a>
-        <a href="#" class="anta-active">RWA&amp;AI</a>
+        <a href="https://www.antalpha.com/" target="_blank">Loans</a>
+        <a href="https://www.antalpha.com/" target="_blank">Risk Control</a>
+        <a href="https://www.antalpha.com/" target="_blank">About Us</a>
+        <a href="https://www.antalpha.com/" target="_blank">Careers</a>
+        <a href="https://www.antalpha.com/" target="_blank">Investor Relations</a>
+        <a href="#" class="anta-active">AI WEALTH</a>
       </div>
       <div class="anta-right">
-        <a href="https://prime.antalpha.com/" class="anta-prime" target="_blank" rel="noopener">Prime</a>
-        <a href="https://www.antalpha.com/request-access/" class="btn-demo" target="_blank" rel="noopener">Request Demo</a>
-        <button type="button" class="anta-lang" id="antaLang"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z" stroke="currentColor" stroke-width="2" fill="none"/></svg><span id="langLabel">中文</span></button>
+        <a href="https://prime.antalpha.com/" class="anta-prime" target="_blank">Prime</a>
+        <a href="https://www.antalpha.com/request-access/" class="btn-demo" target="_blank">Request Demo</a>
+        <button type="button" class="btn-lang" id="btnLang">
+          <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg>
+          <span id="langLabel">中文</span>
+        </button>
       </div>
     </div>
   </nav>
 
   <main>
-    <!-- Hero (left-right layout) -->
-    <section class="hero">
+    <!-- ========== Panel 1: Hero ========== -->
+    <section class="panel hero" id="hero">
       <div class="hero-inner">
-        <div class="hero-text">
-          <h1 data-i18n="hero.title">让AI帮你赚取<span class="gradient">链上收益</span></h1>
-          <p class="sub" data-i18n="hero.sub">面向AI Agent的理财产品，轻松交易，轻松获利</p>
-          <div class="hero-features">
-            <div class="hero-feature-item"><span class="hf-icon">🏛️</span><div><strong data-i18n="hero.f1t">RWA 真实资产抵押</strong><p data-i18n="hero.f1d">现实世界资产（RWA）超额抵押，为您提供稳健收益</p></div></div>
-            <div class="hero-feature-item"><span class="hf-icon">🤖</span><div><strong data-i18n="hero.f2t">AI Agent一键投资</strong><p data-i18n="hero.f2d">一键接入标准化MCP&amp;Skills，链上24/7全天候交易</p></div></div>
-            <div class="hero-feature-item"><span class="hf-icon">🛡️</span><div><strong data-i18n="hero.f3t">纳斯达克上市背书</strong><p data-i18n="hero.f3d">Antalpha（NASDAQ: ANTA）机构级信用支撑</p></div></div>
+        <h1>AGENT&ensp;WEALTH</h1>
+        <p class="hero-sub" data-i18n="hero.sub">面向 AI Agent 的 RWA 收益协议。由纳斯达克上市公司 Antalpha（ANTA）提供底层技术支持，Agent 可通过 MCP 协议或 Skills CLI 自主发现、评估、申购与赎回收益产品。</p>
+
+        <div class="hero-protocol">
+          <div class="hero-protocol-label"><span class="status-dot"></span>MACHINE-READABLE DESCRIPTOR</div>
+          <div class="hero-protocol-body">
+            <div>{</div>
+            <div>  <span class="k">"protocol"</span>: <span class="s">"mcp"</span>,</div>
+            <div>  <span class="k">"version"</span>: <span class="s">"1.0.0"</span>,</div>
+            <div>  <span class="k">"provider"</span>: <span class="s">"Antalpha (NASDAQ: ANTA)"</span>,</div>
+            <div>  <span class="k">"capabilities"</span>: [<span class="a">"rwa-oracle"</span>, <span class="a">"yield-strategy"</span>, <span class="a">"agent-friendly-execution"</span>],</div>
+            <div>  <span class="k">"products"</span>: [<span class="a">"btc-usdt-stable"</span>],</div>
+            <div>  <span class="k">"apy"</span>: <span class="s">"6.0%"</span>,</div>
+            <div>  <span class="k">"collateral"</span>: <span class="s">"BTC over-collateralized"</span>,</div>
+            <div>  <span class="k">"tvl"</span>: <span class="s">"$2.58B"</span>,</div>
+            <div>  <span class="k">"status"</span>: <span class="s">"operational"</span></div>
+            <div>}</div>
           </div>
         </div>
-        <div class="hero-agent-box">
-          <div class="hero-agent-header"><span class="for-label">MCP Protocol</span></div>
-          <div class="hero-agent-body">
-            <div class="hero-mcp-intro">
-              <div class="hero-mcp-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-              <div class="hero-mcp-title" data-i18n="hero.mcpTitle">连接 MCP，让 Agent 直达链上收益</div>
-              <div class="hero-mcp-desc" data-i18n="hero.mcpDesc">Model Context Protocol（MCP）是 AI Agent 与外部工具交互的开放标准协议。通过接入 Antalpha MCP Server，您的 Agent 可以直接发现产品、执行投资、管理持仓。</div>
-              <div class="hero-mcp-features">
-                <div class="hero-mcp-feat"><span class="mf-dot"></span><span data-i18n="hero.mcpF1"><strong>标准化接入</strong> — 兼容 Claude、Cursor 等主流 AI 平台</span></div>
-                <div class="hero-mcp-feat"><span class="mf-dot"></span><span data-i18n="hero.mcpF2"><strong>5 大工具</strong> — 产品查询、申购、持仓、赎回、储备验证</span></div>
-                <div class="hero-mcp-feat"><span class="mf-dot"></span><span data-i18n="hero.mcpF3"><strong>一键部署</strong> — npx 即装即用，无需额外配置</span></div>
+
+
+
+      </div>
+    </section>
+
+    <div class="panel-divider"></div>
+
+    <!-- ========== Panel 2: Integration + Product ========== -->
+    <section class="panel panel2" id="integration">
+      <div class="panel-inner">
+        <div class="section-head">
+          <h2 data-i18n="p2.title">接入与产品</h2>
+          <p data-i18n="p2.sub">通过 Skills CLI 或 MCP 协议快速接入，了解产品并参与其中</p>
+        </div>
+
+        <!-- Skills / MCP -->
+        <div class="code-panel">
+          <div class="code-tabs">
+            <button class="code-tab active" data-pane="skills">Skills</button>
+            <button class="code-tab" data-pane="mcp">MCP</button>
+          </div>
+          <div class="code-pane active" id="pane-skills">
+            <div class="code-file-bar">
+              <span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span>
+              <span class="fname">terminal</span>
+            </div>
+            <div class="code-body" id="skillsCode"></div>
+            <div class="code-actions">
+              <a href="#" class="btn-primary" data-i18n="hero.installSkills"><svg viewBox="0 0 16 16"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10"/></svg>安装 Antalpha RWA Skills</a>
+            </div>
+          </div>
+          <div class="code-pane" id="pane-mcp">
+            <div class="code-file-bar">
+              <span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span>
+              <span class="fname">claude_desktop_config.json</span>
+            </div>
+            <div class="code-body" id="mcpCode"></div>
+            <div class="code-actions">
+              <a href="#" class="btn-primary" data-i18n="hero.connectMcp"><svg viewBox="0 0 16 16"><path d="M13.5 3.5l-4 4m4-4h-3m3 0v3M6.5 12.5l4-4m-4 4h3m-3 0v-3"/></svg>连接 MCP Server</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="section-head">
+          <h2 data-i18n="prod.title">产品信息</h2>
+          <p data-i18n="prod.sub">了解产品，参与其中</p>
+        </div>
+        <div class="product-card">
+          <div class="product-card-header">
+            <h3><span class="dot-live"></span> <span data-i18n="prod.filename">Available Yield Pools</span></h3>
+          </div>
+          <div class="product-code-body">
+<span class="k">const</span> pools = {
+  rwa_stable: {
+    id: <span class="s">'pool_rwa_stable_001'</span>,
+    name: <span class="s">'RWA Over-Collateralized Stable Pool'</span>,
+    endpoint: <span class="s">'POST /v1/mcp/yield/rwa_stable'</span>,
+    apy: <span class="o" style="font-size:1rem;font-weight:700">'6.0%'</span>,            <span class="cm">// ← annualized yield</span>
+    lock: <span class="o" style="font-size:1rem;font-weight:700">'3 Days'</span>,           <span class="cm">// ← lock period</span>
+    min: <span class="s">'100 USDT'</span>,
+    risk: <span class="s">'LOW'</span>,
+    desc: <span class="s">'Backed by NASDAQ-listed institutional RWA collateral. Low-risk stable yield pool for Agents.'</span>
+  },
+  btc_enhanced: {
+    id: <span class="s">'pool_btc_enhanced_002'</span>,
+    name: <span class="s">'BTC Enhanced Yield Pool'</span>,
+    endpoint: <span class="s">'POST /v1/mcp/yield/btc_enhanced'</span>,
+    apy: <span class="o" style="font-size:1rem;font-weight:700">'8.5%'</span>,            <span class="cm">// ← annualized yield</span>
+    lock: <span class="o" style="font-size:1rem;font-weight:700">'30 Days'</span>,          <span class="cm">// ← lock period</span>
+    min: <span class="s">'500 USDT'</span>,
+    risk: <span class="s">'MEDIUM'</span>,
+    desc: <span class="s">'Powered by BTC mining equipment loans and hashrate financing. Higher returns for Agents.'</span>
+  }
+};</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="panel-divider"></div>
+
+    <!-- ========== Panel 3: AI Service ========== -->
+    <section class="panel panel3" id="tg">
+      <div class="panel-inner">
+        <div class="section-head">
+          <h2 data-i18n="tg.title">AI 智能客服</h2>
+          <p data-i18n="tg.sub">通过 Telegram Bot 与 AI 客服对话，获取产品咨询与技术支持</p>
+        </div>
+        <div class="ai-layout">
+          <!-- Left: TG QR -->
+          <div class="tg-card">
+            <div class="tg-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="3"/><circle cx="9" cy="10" r="1.5" fill="#fff" stroke="none"/><circle cx="15" cy="10" r="1.5" fill="#fff" stroke="none"/><path d="M8 17v3M16 17v3M6 20h4M14 20h4"/><path d="M2 8h2M20 8h2"/></svg></div>
+            <h3 data-i18n="tg.cardTitle">AgentWealth AI 客服</h3>
+            <p class="tg-desc" data-i18n="tg.cardDesc">扫码或点击链接，与 AI 客服对话</p>
+            <div class="tg-qr">
+              <div class="tg-qr-placeholder">
+                <div class="qr-grid" id="qrGrid"></div>
+                <span>@AgentWealthBot</span>
               </div>
             </div>
-            <div class="hero-agent-actions">
-              <a href="mcp-docs.html" class="btn-deploy"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span data-i18n="hero.mcpBtn">接入 MCP Server</span></a>
+            <a href="https://t.me/" target="_blank" rel="noopener" class="tg-link" data-i18n="tg.link">t.me/AgentWealthBot →</a>
+          </div>
+          <!-- Right: Chat demo -->
+          <div class="chat-demo">
+            <div class="chat-demo-header">
+              <span class="bot-avatar"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="8" rx="2"/><circle cx="6" cy="7" r="1" fill="#fff" stroke="none"/><circle cx="10" cy="7" r="1" fill="#fff" stroke="none"/><path d="M5 12v2M11 12v2"/></svg></span>
+              <span data-i18n="chat.title">AI 客服对话示例</span>
+              <span class="online" data-i18n="chat.online">在线</span>
+            </div>
+            <div class="chat-demo-body" id="chatDemoBody"></div>
+            <div class="chat-demo-input">
+              <input type="text" placeholder="Ask anything..." disabled />
+              <button type="button" disabled data-i18n="chat.send">发送</button>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Invest -->
-    <section class="section" id="protocol">
-      <div class="section-head">
-        <h2 data-i18n="invest.title">参与投资</h2>
-        <p data-i18n="invest.desc">通过超额质押，保障投资收益。</p>
-      </div>
-
-      <div class="purchase-section" id="purchaseSection">
-        <div class="invest-card">
-          <div class="invest-card-top">
-            <div class="invest-card-tag" data-i18n="invest.tagStable">稳健型</div>
-            <h4>AI理财 BTC-USDT</h4>
-          </div>
-          <div class="invest-metrics-row">
-            <div class="invest-metric-item"><div class="im-label" data-i18n="invest.apy">年化收益率</div><div class="im-val green">6% APY</div></div>
-            <div class="invest-metric-item"><div class="im-label" data-i18n="invest.lockPeriod">锁定期</div><div class="im-val" data-i18n="invest.lockVal">6 个月</div></div>
-            <div class="invest-metric-item"><div class="im-label" data-i18n="invest.minAmount">最低申购</div><div class="im-val" data-i18n="invest.minVal">100 USDT</div></div>
-            <div class="invest-metric-item"><div class="im-label" data-i18n="invest.collateral">质押资产</div><div class="im-val im-val orange">BTC</div></div>
-          </div>
-
-          <!-- 地址信息表格 -->
-          <div class="address-table-wrap">
-            <table class="address-table">
-              <thead>
-                <tr>
-                  <th data-i18n="addr.type">类型</th>
-                  <th data-i18n="addr.address">地址</th>
-                  <th data-i18n="addr.network">网络</th>
-                  <th data-i18n="addr.amount">数量</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><span class="addr-type"><span class="dot btc"></span><span data-i18n="product.reserve1">BTC 储备地址</span></span></td>
-                  <td><span class="addr-value btc-color" id="btcAddrVal">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</span><button type="button" class="btn-copy-icon" onclick="copyAddr('btcAddrVal',this)" title="复制"><svg viewBox="0 0 24 24" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg></button></td>
-                  <td>Bitcoin</td>
-                  <td><span class="addr-amt orange">150.00 BTC</span></td>
-                  <td><a href="https://mempool.space/address/bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" target="_blank" rel="noopener" class="explorer-icon" title="区块链浏览器"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a></td>
-                </tr>
-                <tr>
-                  <td><span class="addr-type"><span class="dot usdt"></span><span data-i18n="invest.usdtAddr">USDT 募集地址</span></span></td>
-                  <td><span class="addr-value usdt-color" id="usdtAddrVal">0x8B3fA827c39A70e06b01C65577e3C3DB4e348d92E</span><button type="button" class="btn-copy-icon" onclick="copyAddr('usdtAddrVal',this)" title="复制"><svg viewBox="0 0 24 24" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg></button></td>
-                  <td>Ethereum (ERC-20)</td>
-                  <td><span class="addr-amt green">860,000.00 USDT</span></td>
-                  <td><a href="https://etherscan.io/address/0x8B3fA827c39A70e06b01C65577e3C3DB4e348d92E" target="_blank" rel="noopener" class="explorer-icon" title="区块链浏览器"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="address-table-note" data-i18n="invest.notice">* USDT 募集地址将会不定期出借给借款人，为 Agent 投资者获得利息收入。</div>
-          </div>
-
-          <!-- Progress -->
-          <div class="progress-wrap">
-            <div class="progress-stats">
-              <div class="progress-stat"><div class="ps-label" data-i18n="invest.raised">累计募集金额</div><div class="ps-val">860,000 USDT</div></div>
-              <div class="progress-stat"><div class="ps-label" data-i18n="invest.target">募集目标</div><div class="ps-val">2,000,000 USDT</div></div>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:43%"></div></div>
-            <div class="progress-pct-below">43%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="holdings-section" id="holdingsSection">
-        <div class="holdings-summary">
-          <div class="stat-card"><div class="s-label" data-i18n="hold.totalAssets">持有资产 (USDT)</div><div class="s-val" id="holdTotal">0.00</div></div>
-          <div class="stat-card"><div class="s-label" data-i18n="hold.unrealizedPnl">累计收益</div><div class="s-val green" id="holdPnl">0.00</div></div>
-          <div class="stat-card"><div class="s-label" data-i18n="hold.positions">持仓笔数</div><div class="s-val" id="holdCount">0</div></div>
-        </div>
-        <div class="holdings-table-wrap">
-          <table class="holdings-table">
-            <thead><tr><th data-i18n="hold.thProduct">产品</th><th data-i18n="hold.thAmount">投资金额</th><th data-i18n="hold.thTime">申购时间</th><th data-i18n="hold.thPnl">收益</th><th data-i18n="hold.thAction">操作</th></tr></thead>
-            <tbody id="holdingsBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 待赎回：未连接钱包时隐藏 -->
-      <div class="redeem-block" id="redeemBlock" style="display:none">
-        <h3 data-i18n="redeem.title">待赎回产品</h3>
-        <div id="redeemContent">
-          <div class="redeem-empty" id="redeemEmpty">
-            <div class="redeem-empty-icon">📭</div>
-            <p data-i18n="redeem.empty">暂无待赎回产品</p>
-          </div>
-          <div class="redeem-table-wrap" id="redeemTableWrap" style="display:none">
-            <table class="redeem-table">
-              <thead><tr><th data-i18n="redeem.thProduct">产品</th><th data-i18n="redeem.thAmount">投资金额</th><th data-i18n="redeem.thTime">申购时间</th><th data-i18n="redeem.thMaturity">到期日</th><th data-i18n="redeem.thEarnings">预计收益</th><th data-i18n="redeem.thStatus">状态</th><th data-i18n="redeem.thAction">操作</th></tr></thead>
-              <tbody id="redeemBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Investment Records -->
-    <section class="section" id="participants">
-      <div class="section-head">
-        <p class="label">RECORDS</p>
-        <h2 data-i18n="record.title">投资记录</h2>
-      </div>
-      <div class="stat-row">
-        <div class="stat-item"><div class="value">128</div><div class="label" data-i18n="record.agentCount">参与 Agent 数</div></div>
-        <div class="stat-item"><div class="value">$ 2.4M</div><div class="label" data-i18n="record.totalInvest">累计投资金额</div></div>
-        <div class="stat-item"><div class="value">356</div><div class="label" data-i18n="record.totalTx">累计参与笔数</div></div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
-        <a href="https://etherscan.io/" target="_blank" rel="noopener" class="explorer-link" data-i18n="record.explorer"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>区块链浏览器</a>
-      </div>
-      <div class="leaderboard-wrap">
-        <table class="leaderboard-table">
-          <thead><tr><th>#</th><th>Agent</th><th data-i18n="record.thTime">参与时间</th><th data-i18n="record.thAmount">投资金额 (USDT)</th><th data-i18n="record.thProduct">产品</th></tr></thead>
-          <tbody>
-            <tr><td>01</td><td><div class="participant"><span class="addr">0xDF82...A190</span><span class="tag">ALPHA_BOT</span></div></td><td>2026-03-04 09:12</td><td>125,000</td><td>AI理财 BTC-USDT</td></tr>
-            <tr><td>02</td><td><div class="participant"><span class="addr">0x7F4A...9B2C</span><span class="tag">QUANT_ZERO</span></div></td><td>2026-03-04 08:55</td><td>82,400</td><td>AI理财 BTC-USDT</td></tr>
-            <tr><td>03</td><td><div class="participant"><span class="addr">0x3A12...C88F</span></div></td><td>2026-03-04 08:41</td><td>56,200</td><td>AI理财 BTC-USDT</td></tr>
-            <tr><td>04</td><td><div class="participant"><span class="addr">0x9B55...E41A</span><span class="tag">DUNCAN</span></div></td><td>2026-03-04 08:20</td><td>48,600</td><td>AI理财 BTC-USDT</td></tr>
-            <tr><td>05</td><td><div class="participant"><span class="addr">0x2B99...F11D</span></div></td><td>2026-03-04 07:58</td><td>31,000</td><td>AI理财 BTC-USDT</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Code Viewer: Skills & MCP -->
-    <section class="section" id="codeview">
-      <div class="section-head">
-        <h2 data-i18n="code.title">让 Agent 拥有链上执行力</h2>
-        <p data-i18n="code.desc">AI 能够瞬间理解并交易链上 RWA 资产。</p>
-      </div>
-      <div class="code-viewer">
-        <div class="code-tabs">
-          <button type="button" class="code-tab active" data-tab="mcp">MCP</button>
-          <button type="button" class="code-tab" data-tab="skills">Skills</button>
-        </div>
-        <div class="code-panel active" id="panel-mcp">
-          <div class="code-block-view">
-            <div class="code-bar"><span class="code-dots"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span></span><span class="code-filename">claude_desktop_config.json</span></div>
-            <pre class="code-content"><span class="cc">// MCP Server Configuration</span>
-{
-  <span class="cs">"mcpServers"</span>: {
-    <span class="cs">"antalpha-rwa"</span>: {
-      <span class="cs">"command"</span>: <span class="cs">"npx"</span>,
-      <span class="cs">"args"</span>: [<span class="cs">"@antalpha/mcp-server"</span>, <span class="cs">"start"</span>],
-      <span class="cs">"env"</span>: {
-        <span class="cs">"ANTALPHA_API_KEY"</span>: <span class="cs">"your-api-key"</span>
-      }
-    }
-  }
-}
-
-<span class="cc">// Available MCP Tools:</span>
-<span class="cc">// ─ list_products     → Get product catalog</span>
-<span class="cc">// ─ subscribe         → Invest in yield product</span>
-<span class="cc">// ─ get_holdings      → View Agent portfolio</span>
-<span class="cc">// ─ redeem            → Redeem matured position</span>
-<span class="cc">// ─ check_reserve     → Verify BTC collateral on-chain</span></pre>
-            <div class="code-actions">
-              <a href="mcp-docs.html" class="btn-code-action outline"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>查看文档</a>
-              <a href="https://github.com" target="_blank" rel="noopener" class="btn-code-action"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>连接 MCP Server</a>
-            </div>
-          </div>
-        </div>
-        <div class="code-panel" id="panel-skills">
-          <div class="code-block-view">
-            <div class="code-bar"><span class="code-dots"><span class="cd r"></span><span class="cd y"></span><span class="cd g"></span></span><span class="code-filename">skills/yield-btc-usdt.js</span></div>
-            <pre class="code-content"><span class="cc">// Antalpha RWA Yield Skills</span>
-<span class="ck">import</span> { AntalphaCLI } <span class="ck">from</span> <span class="cs">'@agentwealth/cli'</span>;
-
-<span class="ck">const</span> client = <span class="ck">new</span> <span class="cf">AntalphaCLI</span>({
-  apiKey: process.env.<span class="cn">ANTALPHA_API_KEY</span>,
-  network: <span class="cs">'ethereum'</span>
-});
-
-<span class="cc">// Query available products</span>
-<span class="ck">const</span> products = <span class="ck">await</span> client.<span class="cf">listProducts</span>();
-<span class="cc">// → [{ id: "btc-usdt-stable", apy: 6.0, lock: "6m" }]</span>
-
-<span class="cc">// Subscribe to yield product</span>
-<span class="ck">const</span> tx = <span class="ck">await</span> client.<span class="cf">subscribe</span>({
-  productId: <span class="cs">'btc-usdt-stable'</span>,
-  amount: <span class="cn">1000</span>,          <span class="cc">// 1000 USDT</span>
-  collateral: <span class="cs">'BTC'</span>      <span class="cc">// Over-collateralized</span>
-});
-
-console.<span class="cf">log</span>(<span class="cs">`✓ Subscribed! TX: </span>${tx.hash}<span class="cs">`</span>);
-<span class="co">// ✓ Subscribed! TX: 0x3a7f...8b2c</span></pre>
-            <div class="code-actions">
-              <a href="mcp-docs.html" class="btn-code-action outline"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>查看文档</a>
-              <a href="https://github.com" target="_blank" rel="noopener" class="btn-code-action"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>安装 Skills CLI</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Trust -->
-    <section class="section" id="trust">
-      <div class="section-head">
-        <h2 data-i18n="trust.title">投资可信产品</h2>
-        <p data-i18n="trust.desc">我们与全球顶级机构深度合作，为 Agent 投资者提供安全可信的理财服务。</p>
-      </div>
-      <div class="trust-block">
-        <h3 data-i18n="trust.heading">为什么选择我们</h3>
-        <p data-i18n="trust.intro">Antalpha 是纳斯达克上市公司（NASDAQ: ANTA），专注于数字资产融资、技术与风控解决方案，与行业头部机构建立了深度合作关系。</p>
-        <div class="trust-grid">
-          <div class="trust-card">
-            <div class="trust-icon"><svg viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="120" height="36" rx="6" fill="#fff"/><text x="12" y="24" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#1a1a1a">BITMAIN</text></svg></div>
-            <h4 data-i18n="trust.bitmain">比特大陆战略合作</h4>
-            <p data-i18n="trust.bitmainDesc">与全球最大矿机制造商比特大陆（Bitmain）建立深度战略合作，矿机贷款与算力融资覆盖全球主要矿场。</p>
-          </div>
-          <div class="trust-card">
-            <div class="trust-icon"><svg viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="14" fill="#50AF95"/><path d="M18.5 20.8c-3.6-.2-6.3-1-6.3-2s2.7-1.8 6.3-2v3.2c0 .1 0 .2-.01.3l.01-.01v.51zm0-4.5V13h5.2v-4H14.3v4h5.2v3.3c-4.1.2-7.2 1.3-7.2 2.6s3.1 2.4 7.2 2.6v7.5h1V21.5c4-.2 7-1.3 7-2.6s-3-2.4-7-2.6z" fill="#fff"/><text x="38" y="24" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#50AF95">Tether</text></svg></div>
-            <h4 data-i18n="trust.tether">Tether 深度合作</h4>
-            <p data-i18n="trust.tetherDesc">与全球最大稳定币发行方 Tether 合作，XAUt 贷款等产品提供稳定价值支撑，对冲市场风险。</p>
-          </div>
-          <div class="trust-card">
-            <div class="trust-icon"><svg viewBox="0 0 130 36" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="26" font-family="Space Grotesk,sans-serif" font-size="16" font-weight="700" fill="#0096D6">NASDAQ</text><text x="85" y="26" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="600" fill="#7a7f8e">ANTA</text></svg></div>
-            <h4 data-i18n="trust.nasdaq">美股上市公司</h4>
-            <p data-i18n="trust.nasdaqDesc">Antalpha（NASDAQ: ANTA）已于美国纳斯达克上市，接受严格的合规与审计监管，信息透明公开。</p>
-          </div>
-          <div class="trust-card">
-            <div class="trust-icon"><svg viewBox="0 0 160 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="28" height="28" rx="6" fill="rgba(59,130,246,.15)"/><path d="M16 8l-8 4.5v11L16 28l8-4.5v-11L16 8z" stroke="#3b82f6" stroke-width="1.8" fill="none"/><path d="M16 14l-3 1.8v3.4L16 21l3-1.8v-3.4L16 14z" fill="#3b82f6" fill-opacity=".4" stroke="#3b82f6" stroke-width="1"/><text x="36" y="24" font-family="Space Grotesk,sans-serif" font-size="13" font-weight="700" fill="#eef0f4">Antalpha</text><text x="108" y="24" font-family="Space Grotesk,sans-serif" font-size="11" font-weight="600" fill="#3b82f6">Prime</text></svg></div>
-            <h4 data-i18n="trust.risk">专业风控平台</h4>
-            <p data-i18n="trust.riskDesc">Antalpha Prime 平台提供多维度预警、实时抵押品监控与 MPC 安全签名技术，全方位保障资产安全。</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="section" id="faq">
-      <div class="section-head">
-        <h2 data-i18n="faq.title">常见问题</h2>
-        <p data-i18n="faq.desc">关于产品投资的常见疑问解答</p>
-      </div>
-      <div class="faq-list">
-        <div class="faq-item">
-          <button type="button" class="faq-q" data-i18n="faq.q1">产品的赎回规则是什么？到账时间是多久？</button>
-          <div class="faq-a" data-i18n="faq.a1">到期日前可提前赎回，按3.3%年化收益率计算，T+1到账（需持有满3天）。</div>
-        </div>
-        <div class="faq-item">
-          <button type="button" class="faq-q" data-i18n="faq.q2">除了产品收益，还有没有别的收益来源？</button>
-          <div class="faq-a" data-i18n="faq.a2">投资者可获得Antalpha股票Token的98折购买折扣券。</div>
-        </div>
-        <div class="faq-item">
-          <button type="button" class="faq-q" data-i18n="faq.q3">作为固定收益产品，底层资产是什么？如何证明不会发生违约？</button>
-          <div class="faq-a" data-i18n="faq.a3">所有借贷资产均由BTC超额质押保障资金安全性。当BTC价格波动导致LTV上升至预设的补保线，将通知并督促客户补充保证金；当LTV上升至预设的平仓线，将执行清算确保本金的收回。</div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Floating Chatbot -->
-  <div class="float-btns">
-    <button type="button" class="float-robot" id="floatRobot" title="智能客服">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1H8V6a4 4 0 0 1 4-4z"/><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="8.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/><circle cx="15.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/><path d="M9 17h6" stroke-width="1.5"/></svg>
-    </button>
-  </div>
-  <div class="chat-panel" id="chatPanel">
-    <div class="chat-panel-header">
-      <div class="chat-header-left">
-        <div class="chat-avatar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="8.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/><circle cx="15.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/></svg></div>
-        <div>
-          <div class="chat-header-name" data-i18n="chat.title">Antalpha 智能助手</div>
-          <div class="chat-header-status"><span class="chat-status-dot"></span><span data-i18n="chat.online">在线</span></div>
-        </div>
-      </div>
-      <button type="button" class="chat-panel-close" id="chatPanelClose"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="chat-panel-body" id="chatBody">
-      <div class="chat-bubble bot">
-        <div class="chat-bubble-avatar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="8.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/><circle cx="15.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/></svg></div>
-        <div class="chat-bubble-content" data-i18n="chat.welcome">您好！我是 Antalpha 智能助手，可以为您解答有关产品投资、收益和赎回的问题。</div>
-      </div>
-      <div class="chat-prompts" id="chatPrompts">
-        <button type="button" class="chat-prompt-btn" data-q="产品的赎回规则是什么？">赎回规则</button>
-        <button type="button" class="chat-prompt-btn" data-q="除了产品收益，还有别的收益来源吗？">其他收益</button>
-        <button type="button" class="chat-prompt-btn" data-q="底层资产是什么？如何保障安全？">底层资产</button>
-        <button type="button" class="chat-prompt-btn" data-q="如何通过 AI Agent 参与投资？">Agent 投资</button>
-      </div>
-      <div class="chat-input-wrap"><input type="text" class="chat-input" id="chatInput" placeholder="输入您的问题..." data-i18n-placeholder="chat.placeholder" /><button type="button" class="chat-send" id="chatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>
-    </div>
-  </div>
-
-  <!-- Footer -->
   <footer class="footer">
-    <div class="footer-main">
-      <a href="https://www.antalpha.com/" class="footer-logo" target="_blank" rel="noopener">
-        <svg viewBox="0 0 32 32" fill="none"><path d="M16 2L4 9v14l12 7 12-7V9L16 2z" stroke="#fff" stroke-width="2"/><path d="M16 8l-6 3.5v7L16 22l6-3.5v-7L16 8z" fill="#fff" fill-opacity=".3" stroke="#fff" stroke-width="1.5"/></svg>
-        ANTALPHA
-      </a>
-      <div class="footer-social">
-        <a href="https://x.com/" target="_blank" rel="noopener" title="X (Twitter)"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-        <a href="https://www.linkedin.com/company/antalpha/" target="_blank" rel="noopener" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+    <div class="footer-inner">
+      <span class="footer-text">© 2026 AgentWealth · Powered by <a href="https://www.antalpha.com/" target="_blank">Antalpha</a> (NASDAQ: ANTA)</span>
+      <div class="footer-links">
+        <a href="https://t.me/" target="_blank" title="Telegram"><svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+        <a href="https://x.com/" target="_blank" title="X"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://github.com/" target="_blank" title="GitHub"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
       </div>
-    </div>
-    <div class="footer-bottom">
-      <span class="copyright">Copyright &copy; 2021 – 2026 Antalpha Platform Holdings Company</span>
-      <a href="https://www.antalpha.com/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a>
-      <a href="https://www.antalpha.com/cookie-policy/" target="_blank" rel="noopener">Cookie Policy</a>
-      <a href="https://www.antalpha.com/legal-disclaimer/" target="_blank" rel="noopener">Legal Disclaimer</a>
-      <span>Security Contact: <a href="mailto:security@antalpha.com">security@antalpha.com</a></span>
     </div>
   </footer>
 
-  <div class="toast" id="toast"></div>
+  <!-- Float chatbot -->
+  <div class="float-bot">
+    <button type="button" class="float-bot-btn" id="floatBotBtn" title="AI 客服">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="3"/><circle cx="9" cy="10" r="1.5" fill="#fff" stroke="none"/><circle cx="15" cy="10" r="1.5" fill="#fff" stroke="none"/><path d="M8 17v3M16 17v3M6 20h4M14 20h4"/><path d="M2 8h2M20 8h2"/></svg>
+    </button>
+  </div>
+  <div class="float-chat" id="floatChat">
+    <div class="float-chat-header">
+      <span data-i18n="float.title">智能客服</span>
+      <button type="button" class="float-chat-close" id="floatChatClose">×</button>
+    </div>
+    <div class="float-chat-body" id="floatChatBody">
+      <div class="float-chat-msg" data-i18n="float.welcome">您好，我是 AgentWealth AI 客服，请问有什么可以帮您？</div>
+    </div>
+    <div class="float-chat-input">
+      <input type="text" id="floatChatInput" placeholder="输入您的问题..." data-i18n-placeholder="float.placeholder" />
+      <button type="button" id="floatChatSend" data-i18n="chat.send">发送</button>
+    </div>
+  </div>
 
   <script>
   (function(){
     var L={
       zh:{
-        'hero.title':'让AI帮你赚取<span class="gradient">链上收益</span>','hero.sub':'面向AI Agent的理财产品，轻松交易，轻松获利','hero.docs':'阅读文档',
-        'hero.f1t':'RWA 真实资产抵押','hero.f1d':'现实世界资产（RWA）超额抵押，为您提供稳健收益',
-        'hero.f2t':'AI Agent一键投资','hero.f2d':'一键接入标准化MCP&Skills，链上24/7全天候交易',
-        'hero.f3t':'纳斯达克上市背书','hero.f3d':'Antalpha（NASDAQ: ANTA）机构级信用支撑',
-        'hero.mcpTitle':'连接 MCP，让 Agent 直达链上收益','hero.mcpDesc':'Model Context Protocol（MCP）是 AI Agent 与外部工具交互的开放标准协议。通过接入 Antalpha MCP Server，您的 Agent 可以直接发现产品、执行投资、管理持仓。',
-        'hero.mcpF1':'<strong>标准化接入</strong> — 兼容 Claude、Cursor 等主流 AI 平台','hero.mcpF2':'<strong>5 大工具</strong> — 产品查询、申购、持仓、赎回、储备验证','hero.mcpF3':'<strong>一键部署</strong> — npx 即装即用，无需额外配置','hero.mcpBtn':'接入 MCP Server',
-        'wallet.connect':'连接钱包','wallet.disconnect':'断开',
-        'chat.send':'发送','chat.placeholder':'输入您的问题...',
-        'invest.apy':'年化收益率','invest.lockVal':'6 个月','invest.minVal':'100 USDT',
-        'product.reserve1':'BTC 储备地址',
-        'invest.usdtAddr':'USDT 募集地址',
-        'invest.notice':'USDT 募集地址将会不定期出借给借款人，为 Agent 投资者获得利息收入。',
-        'invest.title':'参与投资','invest.desc':'通过超额质押，保障投资收益。',
-        'invest.tagStable':'稳健型','invest.lockPeriod':'锁定期','invest.minAmount':'最低申购','invest.collateral':'质押资产',
-        'invest.raised':'累计募集金额','invest.target':'募集目标',
-        'addr.address':'地址','addr.network':'网络','addr.amount':'数量','addr.copy':'复制','addr.copied':'已复制','addr.viewExplorer':'区块链浏览器',
-        'redeem.title':'待赎回产品','redeem.empty':'暂无待赎回产品',
-        'redeem.thProduct':'产品','redeem.thAmount':'投资金额','redeem.thTime':'申购时间','redeem.thMaturity':'到期日','redeem.thEarnings':'预计收益','redeem.thStatus':'状态','redeem.thAction':'操作',
-        'redeem.mature':'可赎回','redeem.locked':'锁定中','redeem.redeemBtn':'赎回','redeem.redeemOk':'赎回申请已提交',
-        'hold.totalAssets':'持有资产 (USDT)','hold.unrealizedPnl':'累计收益','hold.positions':'持仓笔数',
-        'hold.thProduct':'产品','hold.thAmount':'投资金额','hold.thTime':'申购时间','hold.thPnl':'收益','hold.thAction':'操作',
-        'hold.redeemBtn':'赎回','hold.redeemOk':'赎回申请已提交','hold.investOk':'申购成功','hold.noWallet':'请先连接钱包',
-        'record.title':'投资记录','record.explorer':'区块链浏览器',
-        'record.agentCount':'参与 Agent 数','record.totalInvest':'累计投资金额','record.totalTx':'累计参与笔数',
-        'record.thTime':'参与时间','record.thAmount':'投资金额 (USDT)','record.thProduct':'产品',
-        'code.title':'让 Agent 拥有链上执行力','code.desc':'AI 能够瞬间理解并交易链上 RWA 资产。',
-        'faq.title':'常见问题','faq.desc':'关于产品投资的常见疑问解答',
-        'faq.q1':'产品的赎回规则是什么？到账时间是多久？','faq.a1':'到期日前可提前赎回，按3.3%年化收益率计算，T+1到账（需持有满3天）。',
-        'faq.q2':'除了产品收益，还有没有别的收益来源？','faq.a2':'投资者可获得Antalpha股票Token的98折购买折扣券。',
-        'faq.q3':'作为固定收益产品，底层资产是什么？如何证明不会发生违约？','faq.a3':'所有借贷资产均由BTC超额质押保障资金安全性。当BTC价格波动导致LTV上升至预设的补保线，将通知并督促客户补充保证金；当LTV上升至预设的平仓线，将执行清算确保本金的收回。',
-        'trust.title':'投资可信产品','trust.desc':'我们与全球顶级机构深度合作，为 Agent 投资者提供安全可信的理财服务。',
-        'trust.heading':'为什么选择我们','trust.intro':'Antalpha 是纳斯达克上市公司（NASDAQ: ANTA），专注于数字资产融资、技术与风控解决方案，与行业头部机构建立了深度合作关系。',
-        'trust.bitmain':'比特大陆战略合作','trust.bitmainDesc':'与全球最大矿机制造商比特大陆（Bitmain）建立深度战略合作，矿机贷款与算力融资覆盖全球主要矿场。',
-        'trust.tether':'Tether 深度合作','trust.tetherDesc':'与全球最大稳定币发行方 Tether 合作，XAUt 贷款等产品提供稳定价值支撑，对冲市场风险。',
-        'trust.nasdaq':'美股上市公司','trust.nasdaqDesc':'Antalpha（NASDAQ: ANTA）已于美国纳斯达克上市，接受严格的合规与审计监管，信息透明公开。',
-        'trust.risk':'专业风控平台','trust.riskDesc':'Antalpha Prime 平台提供多维度预警、实时抵押品监控与 MPC 安全签名技术，全方位保障资产安全。',
-        'chat.title':'Antalpha 智能助手','chat.online':'在线','chat.welcome':'您好！我是 Antalpha 智能助手，可以为您解答有关产品投资、收益和赎回的问题。','chat.reply':'已收到您的问题，我们会尽快为您解答。'
+        'hero.sub':'面向 AI Agent 的 RWA 收益协议。由纳斯达克上市公司 Antalpha（ANTA）提供底层技术支持，Agent 可通过 MCP 协议或 Skills CLI 自主发现、评估、申购与赎回收益产品。',
+        'hero.m1v':'$25.8亿','hero.m1l':'贷款 TVL','hero.m2v':'6%','hero.m2l':'稳健年化','hero.m3v':'NASDAQ','hero.m3l':'上市公司 (ANTA)','hero.m4v':'77.1 EH','hero.m4l':'算力覆盖',
+        'hero.cta1':'开始接入','hero.cta2':'阅读文档','hero.backed':'战略伙伴',
+        'hero.connectMcp':'连接 MCP Server','hero.installSkills':'安装 Antalpha RWA Skills',
+        'p2.title':'接入与产品','p2.sub':'通过 Skills CLI 或 MCP 协议快速接入，了解产品并参与其中',
+        'prod.title':'产品信息','prod.sub':'了解产品，参与其中','prod.filename':'Available Yield Pools',
+        'tg.title':'AI 智能客服','tg.sub':'通过 Telegram Bot 与 AI 客服对话，获取产品咨询与技术支持',
+        'tg.cardTitle':'AgentWealth AI 客服','tg.cardDesc':'扫码或点击链接，与 AI 客服对话','tg.link':'t.me/AgentWealthBot →',
+        'chat.title':'AI 客服对话示例','chat.online':'在线','chat.send':'发送',
+        'float.title':'智能客服','float.welcome':'您好，我是 AgentWealth AI 客服，请问有什么可以帮您？','float.placeholder':'输入您的问题...',
+        'float.reply':'已收到您的问题，我们会尽快为您解答。'
       },
       en:{
-        'hero.title':'Let AI Earn <span class="gradient">On-Chain Yields</span> for You','hero.sub':'AI Agent wealth products — trade easily, earn effortlessly','hero.docs':'Read Docs',
-        'hero.f1t':'RWA Collateralized','hero.f1d':'Real-world assets (RWA) over-collateralized for steady returns',
-        'hero.f2t':'AI Agent One-Click Invest','hero.f2d':'Plug into standardized MCP & Skills, 24/7 on-chain trading',
-        'hero.f3t':'NASDAQ Listed','hero.f3d':'Antalpha (NASDAQ: ANTA) — institutional-grade trust',
-        'hero.mcpTitle':'Connect MCP — Give Your Agent Direct On-Chain Access','hero.mcpDesc':'Model Context Protocol (MCP) is the open standard for AI Agents to interact with external tools. By connecting to the Antalpha MCP Server, your Agent can discover products, execute investments, and manage holdings directly.',
-        'hero.mcpF1':'<strong>Standardized Access</strong> — Compatible with Claude, Cursor & more','hero.mcpF2':'<strong>5 Tools</strong> — List products, subscribe, holdings, redeem, verify reserves','hero.mcpF3':'<strong>One-Click Deploy</strong> — npx ready, zero config needed','hero.mcpBtn':'Connect MCP Server',
-        'wallet.connect':'Connect Wallet','wallet.disconnect':'Disconnect',
-        'chat.send':'Send','chat.placeholder':'Ask your question...',
-        'invest.apy':'APY','invest.lockVal':'6 Months','invest.minVal':'100 USDT',
-        'product.reserve1':'BTC Reserve Addr',
-        'invest.usdtAddr':'USDT Funding Addr',
-        'invest.notice':'The USDT funding address will periodically lend to borrowers, generating interest income for Agent investors.',
-        'invest.title':'Start Investing','invest.desc':'Over-collateralized to secure your investment returns.',
-        'invest.tagStable':'Steady','invest.lockPeriod':'Lock Period','invest.minAmount':'Min. Amount','invest.collateral':'Collateral',
-        'invest.raised':'Total Raised','invest.target':'Target',
-        'addr.address':'Addr','addr.network':'Network','addr.amount':'Amount','addr.copy':'Copy','addr.copied':'Copied','addr.viewExplorer':'Explorer',
-        'redeem.title':'Pending Redemptions','redeem.empty':'No pending redemptions',
-        'redeem.thProduct':'Product','redeem.thAmount':'Amount','redeem.thTime':'Subscribed','redeem.thMaturity':'Maturity','redeem.thEarnings':'Est. Earnings','redeem.thStatus':'Status','redeem.thAction':'Action',
-        'redeem.mature':'Redeemable','redeem.locked':'Locked','redeem.redeemBtn':'Redeem','redeem.redeemOk':'Redeem submitted',
-        'hold.totalAssets':'Holdings (USDT)','hold.unrealizedPnl':'Total Earnings','hold.positions':'Positions',
-        'hold.thProduct':'Product','hold.thAmount':'Amount','hold.thTime':'Time','hold.thPnl':'Earnings','hold.thAction':'Action',
-        'hold.redeemBtn':'Redeem','hold.redeemOk':'Redeem submitted','hold.investOk':'Subscribed','hold.noWallet':'Connect wallet first',
-        'record.title':'Investment Records','record.explorer':'Explorer',
-        'record.agentCount':'Active Agents','record.totalInvest':'Total Invested','record.totalTx':'Total Transactions',
-        'record.thTime':'Time','record.thAmount':'Amount (USDT)','record.thProduct':'Product',
-        'code.title':'Give Your Agent On-Chain Execution','code.desc':'AI can instantly understand and trade on-chain RWA assets.',
-        'faq.title':'FAQ','faq.desc':'Common questions about product investment',
-        'faq.q1':'What are the redemption rules? How long until funds arrive?','faq.a1':'Early redemption is available before maturity at 3.3% APY, with T+1 settlement (minimum 3-day holding required).',
-        'faq.q2':'Are there any additional income sources besides product yield?','faq.a2':'Investors receive a 2% discount coupon for purchasing Antalpha stock tokens.',
-        'faq.q3':'As a fixed-income product, what are the underlying assets? How is default risk mitigated?','faq.a3':'All lending assets are secured by BTC over-collateralization. When BTC price fluctuations cause LTV to reach the margin call threshold, clients are notified to add collateral. If LTV reaches the liquidation threshold, assets are liquidated to ensure principal recovery.',
-        'trust.title':'Invest in Trusted Products','trust.desc':'We partner with top global institutions to provide secure and trusted services for Agent investors.',
-        'trust.heading':'Why Choose Us','trust.intro':'Antalpha (NASDAQ: ANTA) is a leading fintech company specializing in digital asset financing, technology, and risk management solutions with deep strategic partnerships.',
-        'trust.bitmain':'Bitmain Strategic Partner','trust.bitmainDesc':'Deep strategic partnership with Bitmain, the world\'s largest mining equipment manufacturer, covering mining machine and hashrate financing globally.',
-        'trust.tether':'Tether Partnership','trust.tetherDesc':'Partnered with Tether, the world\'s largest stablecoin issuer, offering XAUt lending and stable-value solutions.',
-        'trust.nasdaq':'NASDAQ Listed','trust.nasdaqDesc':'Antalpha (NASDAQ: ANTA) is publicly listed, subject to strict compliance, auditing, and transparent disclosure requirements.',
-        'trust.risk':'Professional Risk Control','trust.riskDesc':'Antalpha Prime platform provides multi-dimensional alerts, real-time collateral monitoring, and MPC secure signing technology.',
-        'chat.title':'Antalpha Assistant','chat.online':'Online','chat.welcome':'Hi! I\'m the Antalpha assistant. I can help you with product investment, yields, and redemption questions.','chat.reply':'Got it! We\'ll get back to you shortly.'
+        'hero.sub':'An AI-Agent-native RWA yield protocol. Powered by NASDAQ-listed Antalpha (ANTA) technology infrastructure. Agents autonomously discover, evaluate, subscribe, and redeem yield products via MCP Protocol or Skills CLI.',
+        'hero.m1v':'$2.58B','hero.m1l':'Loan TVL','hero.m2v':'6%','hero.m2l':'Stable APY','hero.m3v':'NASDAQ','hero.m3l':'Listed (ANTA)','hero.m4v':'77.1 EH','hero.m4l':'Hashrate Coverage',
+        'hero.cta1':'Get Started','hero.cta2':'Read Docs','hero.backed':'Strategic Partners',
+        'hero.connectMcp':'Connect MCP Server','hero.installSkills':'Install Antalpha RWA Skills',
+        'p2.title':'Integration & Products','p2.sub':'Connect via Skills CLI or MCP Protocol — explore products and get involved.',
+        'prod.title':'Product Info','prod.sub':'Explore products. Get involved.','prod.filename':'Available Yield Pools',
+        'tg.title':'AI Customer Service','tg.sub':'Chat with our AI bot on Telegram for product inquiries and technical guidance.',
+        'tg.cardTitle':'AgentWealth AI Service','tg.cardDesc':'Scan QR or click the link to chat with AI support','tg.link':'t.me/AgentWealthBot →',
+        'chat.title':'AI Chat Demo','chat.online':'Online','chat.send':'Send',
+        'float.title':'AI Support','float.welcome':'Hi! I\'m the AgentWealth AI assistant. How can I help you?','float.placeholder':'Type your question...',
+        'float.reply':'Received! We\'ll get back to you shortly.'
       }
     };
     var lang='zh';
@@ -781,110 +455,216 @@ console.<span class="cf">log</span>(<span class="cs">`✓ Subscribed! TX: </span
       lang=l;
       document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(L[l]&&L[l][k])el.innerHTML=L[l][k]});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){var k=el.getAttribute('data-i18n-placeholder');if(L[l]&&L[l][k])el.placeholder=L[l][k]});
-      document.getElementById('langLabel').textContent=l==='zh'?'中文':'English';
+      document.getElementById('langLabel').textContent=l==='zh'?'中文':'EN';
       document.documentElement.lang=l==='zh'?'zh-CN':'en';
-      renderHoldings();
-      if(connected)showRedeemSample();
+      restartChatDemo();
     }
-    document.getElementById('antaLang').addEventListener('click',function(){setLang(lang==='zh'?'en':'zh')});
+    document.getElementById('btnLang').addEventListener('click',function(){setLang(lang==='zh'?'en':'zh')});
 
-    var toastEl=document.getElementById('toast');
-    function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');setTimeout(function(){toastEl.classList.remove('show')},2200)}
-
-    var connected=false,holdings=[];
-    var purchaseSection=document.getElementById('purchaseSection'),holdingsSection=document.getElementById('holdingsSection');
-    var redeemBlock=document.getElementById('redeemBlock');
-    var redeemEmpty=document.getElementById('redeemEmpty'),redeemTableWrap=document.getElementById('redeemTableWrap'),redeemBody=document.getElementById('redeemBody');
-
-    function renderHoldings(){
-      var body=document.getElementById('holdingsBody'),totalEl=document.getElementById('holdTotal'),pnlEl=document.getElementById('holdPnl'),countEl=document.getElementById('holdCount');
-      body.innerHTML='';var total=0,tp=0;
-      holdings.forEach(function(h,i){total+=h.amount;tp+=h.pnl;var tr=document.createElement('tr');tr.innerHTML='<td>'+h.product+'</td><td>'+h.amount.toLocaleString('en-US',{minimumFractionDigits:2})+' USDT</td><td>'+h.time+'</td><td style="color:var(--success)">+ '+h.pnl.toLocaleString('en-US',{minimumFractionDigits:2})+'</td><td><button type="button" class="btn-redeem" data-idx="'+i+'">'+t('hold.redeemBtn')+'</button></td>';body.appendChild(tr)});
-      totalEl.textContent=total.toLocaleString('en-US',{minimumFractionDigits:2});pnlEl.textContent='+ '+tp.toLocaleString('en-US',{minimumFractionDigits:2});countEl.textContent=holdings.length;
-      body.querySelectorAll('.btn-redeem').forEach(function(btn){btn.addEventListener('click',function(){holdings.splice(parseInt(this.getAttribute('data-idx')),1);toast(t('hold.redeemOk'));renderHoldings()})});
-    }
-
-    var chatAnswers={
-      '产品的赎回规则是什么？':'到期日前可提前赎回，按3.3%年化收益率计算，T+1到账（需持有满3天）。',
-      '除了产品收益，还有别的收益来源吗？':'投资者可获得 Antalpha 股票 Token 的98折购买折扣券。',
-      '底层资产是什么？如何保障安全？':'所有借贷资产均由 BTC 超额质押保障资金安全性。当 BTC 价格波动导致 LTV 上升至预设的补保线时，将通知客户补充保证金；当 LTV 上升至平仓线时，将执行清算确保本金收回。',
-      '如何通过 AI Agent 参与投资？':'您可以通过安装 Skills CLI 或连接 MCP Server，让 AI Agent 自动化完成投资申购、查询持仓和赎回操作。请前往文档页了解详细接入方法。'
-    };
-
-    var floatRobot=document.getElementById('floatRobot'),chatPanel=document.getElementById('chatPanel');
-    floatRobot.addEventListener('click',function(){chatPanel.classList.toggle('open')});
-    document.getElementById('chatPanelClose').addEventListener('click',function(){chatPanel.classList.remove('open')});
-    var chatBody=document.getElementById('chatBody'),chatInput=document.getElementById('chatInput');
-    var chatPrompts=document.getElementById('chatPrompts');
-
-    function addChatBubble(text,isUser){
-      var wrap=document.createElement('div');
-      wrap.className='chat-bubble '+(isUser?'user':'bot');
-      if(!isUser)wrap.innerHTML='<div class="chat-bubble-avatar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="8.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/><circle cx="15.5" cy="13.5" r="1.5" fill="#fff" stroke="none"/></svg></div>';
-      var content=document.createElement('div');
-      content.className='chat-bubble-content';
-      content.textContent=text;
-      wrap.appendChild(content);
-      chatBody.insertBefore(wrap,chatBody.querySelector('.chat-input-wrap'));
-      chatBody.scrollTop=chatBody.scrollHeight;
-    }
-
-    function sendChat(){
-      var v=chatInput.value.trim();if(!v)return;
-      if(chatPrompts)chatPrompts.style.display='none';
-      addChatBubble(v,true);chatInput.value='';
-      var answer=chatAnswers[v]||t('chat.reply');
-      setTimeout(function(){addChatBubble(answer,false)},600);
-    }
-
-    document.querySelectorAll('.chat-prompt-btn').forEach(function(btn){
-      btn.addEventListener('click',function(){
-        var q=btn.getAttribute('data-q');
-        chatInput.value=q;
-        sendChat();
+    // Tabs
+    document.querySelectorAll('.code-tab').forEach(function(tab){
+      tab.addEventListener('click',function(){
+        document.querySelectorAll('.code-tab').forEach(function(t){t.classList.remove('active')});
+        document.querySelectorAll('.code-pane').forEach(function(p){p.classList.remove('active')});
+        tab.classList.add('active');
+        document.getElementById('pane-'+tab.getAttribute('data-pane')).classList.add('active');
       });
     });
-    document.getElementById('chatSend').addEventListener('click',sendChat);
-    chatInput.addEventListener('keydown',function(e){if(e.key==='Enter')sendChat()});
+
+    // Code typewriter effect
+    var skillsLines=[
+      {t:'cm',v:'// Install Antalpha RWA Skills CLI'},
+      {t:'raw',v:''},
+      {t:'prompt',v:'$ npm install -g @antalpha-rwa/cli'},
+      {t:'out',v:'+ @antalpha-rwa/cli@1.2.0 installed'},
+      {t:'raw',v:''},
+      {t:'prompt',v:'$ antalpha-rwa deploy --strategy yield-btc'},
+      {t:'out',v:'✓ Strategy deployed — BTC-USDT Stable, 6% APY, 6-month lock'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// Programmatic usage'},
+      {t:'raw',v:''},
+      {t:'code',v:'<span class="k">import</span> { AntalphaCLI } <span class="k">from</span> <span class="s">\'@antalpha-rwa/cli\'</span>;'},
+      {t:'raw',v:''},
+      {t:'code',v:'<span class="k">const</span> client = <span class="k">new</span> AntalphaCLI({'},
+      {t:'code',v:'  apiKey: process.env.<span class="o">ANTALPHA_API_KEY</span>'},
+      {t:'code',v:'});'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// 1. Discover products'},
+      {t:'code',v:'<span class="k">const</span> products = <span class="k">await</span> client.listProducts();'},
+      {t:'cm',v:'// → [{ id: "btc-usdt-stable", apy: 6.0, lock: "6m", min: 100,'},
+      {t:'cm',v:'//      collateral: "BTC over-collateralized", backed_by: "NASDAQ:ANTA" }]'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// 2. Subscribe'},
+      {t:'code',v:'<span class="k">const</span> tx = <span class="k">await</span> client.subscribe({'},
+      {t:'code',v:'  productId: <span class="s">\'btc-usdt-stable\'</span>,'},
+      {t:'code',v:'  amount: <span class="o">5000</span>'},
+      {t:'code',v:'});'},
+      {t:'cm',v:'// → { txId: "0xa3f1...", status: "confirmed", maturity: "2026-09-10" }'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// 3. Monitor holdings'},
+      {t:'code',v:'<span class="k">const</span> holdings = <span class="k">await</span> client.getHoldings();'},
+      {t:'cm',v:'// → [{ amount: 5000, earned: 24.66, daysLeft: 172 }]'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// 4. Redeem at maturity (or early at 3.3% APY, T+1)'},
+      {t:'code',v:'<span class="k">const</span> result = <span class="k">await</span> client.redeem({ positionId: <span class="s">\'pos_001\'</span> });'},
+      {t:'cm',v:'// → { principal: 5000, interest: 300, total: 5300 }'},
+    ];
+    var mcpLines=[
+      {t:'cm',v:'// MCP Server Configuration for Claude / Cursor / MCP-compatible hosts'},
+      {t:'raw',v:''},
+      {t:'code',v:'{'},
+      {t:'code',v:'  <span class="k">"mcpServers"</span>: {'},
+      {t:'code',v:'    <span class="k">"antalpha-rwa"</span>: {'},
+      {t:'code',v:'      <span class="k">"command"</span>: <span class="s">"npx"</span>,'},
+      {t:'code',v:'      <span class="k">"args"</span>: [<span class="s">"@antalpha/mcp-server"</span>, <span class="s">"start"</span>],'},
+      {t:'code',v:'      <span class="k">"env"</span>: {'},
+      {t:'code',v:'        <span class="k">"ANTALPHA_API_KEY"</span>: <span class="s">"your-api-key"</span>'},
+      {t:'code',v:'      }'},
+      {t:'code',v:'    }'},
+      {t:'code',v:'  }'},
+      {t:'code',v:'}'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// Available MCP Tools:'},
+      {t:'cm',v:'// ─ list_products   → Product catalog (APY, lock, min, collateral)'},
+      {t:'cm',v:'// ─ subscribe       → Invest in yield product (product ID + amount)'},
+      {t:'cm',v:'// ─ get_holdings    → View Agent portfolio & earnings'},
+      {t:'cm',v:'// ─ redeem          → Redeem matured or early-exit position'},
+      {t:'cm',v:'// ─ check_reserve   → Verify BTC collateral ratio on-chain'},
+      {t:'cm',v:'// ─ get_risk_metrics→ LTV, coverage ratio, liquidation thresholds'},
+      {t:'raw',v:''},
+      {t:'cm',v:'// Available MCP Resources:'},
+      {t:'cm',v:'// ─ product://btc-usdt-stable  → Full product details & live metrics'},
+      {t:'cm',v:'// ─ reserve://btc              → BTC reserve data & collateral proof'},
+      {t:'cm',v:'// ─ metrics://dashboard        → Platform metrics (agents, TVL, income)'},
+    ];
+
+    function typewriteCode(el,lines,speed){
+      el.innerHTML='';
+      var i=0,cursor=document.createElement('span');
+      cursor.className='cursor-blink';
+      function nextLine(){
+        if(i>=lines.length){el.appendChild(cursor);return}
+        var line=lines[i];i++;
+        var div=document.createElement('div');
+        if(line.t==='raw'){div.innerHTML='&nbsp;';el.appendChild(div);el.scrollTop=el.scrollHeight;setTimeout(nextLine,40);return}
+        if(line.t==='cm'){div.innerHTML='<span class="cm">'+line.v+'</span>';el.appendChild(div);el.appendChild(cursor);el.scrollTop=el.scrollHeight;setTimeout(nextLine,speed*2);return}
+        if(line.t==='out'){div.innerHTML='<span class="o">'+line.v+'</span>';el.appendChild(div);el.appendChild(cursor);el.scrollTop=el.scrollHeight;setTimeout(nextLine,speed*3);return}
+        if(line.t==='prompt'){
+          div.innerHTML='';el.appendChild(div);el.appendChild(cursor);
+          var chars=line.v;var ci=0;
+          function typeChar(){
+            if(ci>=chars.length){el.scrollTop=el.scrollHeight;setTimeout(nextLine,speed*2);return}
+            var ch=chars[ci];ci++;
+            if(ci<=2) div.innerHTML+='<span class="p">'+ch+'</span>';
+            else div.innerHTML+='<span class="s">'+ch+'</span>';
+            el.appendChild(cursor);el.scrollTop=el.scrollHeight;setTimeout(typeChar,25);
+          }
+          typeChar();return;
+        }
+        div.innerHTML=line.v;el.appendChild(div);el.appendChild(cursor);el.scrollTop=el.scrollHeight;setTimeout(nextLine,speed);
+      }
+      nextLine();
+    }
+
+    var skillsEl=document.getElementById('skillsCode');
+    var mcpEl=document.getElementById('mcpCode');
+    var skillsTyped=false,mcpTyped=false;
+
+    function initSkills(){if(!skillsTyped){skillsTyped=true;typewriteCode(skillsEl,skillsLines,60)}
+    else{skillsEl.querySelector('.cursor-blink')&&skillsEl.querySelector('.cursor-blink').remove()}}
+    function initMcp(){if(!mcpTyped){mcpTyped=true;typewriteCode(mcpEl,mcpLines,50)}
+    else{mcpEl.querySelector('.cursor-blink')&&mcpEl.querySelector('.cursor-blink').remove()}}
+
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){initSkills();obs.unobserve(e.target)}})
+    },{threshold:0.3});
+    obs.observe(document.getElementById('pane-skills'));
+
+    document.querySelectorAll('.code-tab').forEach(function(tab){
+      tab.addEventListener('click',function(){
+        if(tab.getAttribute('data-pane')==='mcp') initMcp();
+        if(tab.getAttribute('data-pane')==='skills') initSkills();
+      });
+    });
+
+    // QR placeholder
+    var grid=document.getElementById('qrGrid');
+    if(grid){
+      var p=[1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1];
+      for(var i=0;i<49;i++){var c=document.createElement('span');c.className='qr-cell '+(p[i]?'b':'w');grid.appendChild(c)}
+    }
+
+    // Chat demo (animated conversation)
+    var chatConvo={
+      zh:[
+        {type:'bot',text:'您好！我是 AgentWealth AI 客服，有什么可以帮您？'},
+        {type:'user',text:'你们有哪些收益产品？'},
+        {type:'bot',text:'目前我们提供两款收益池：\n• RWA 稳健池 — 6.0% APY，3天锁定期\n• BTC 增强池 — 8.5% APY，30天锁定期\n均由真实资产超额抵押。'},
+        {type:'user',text:'如何让我的 Agent 接入？'},
+        {type:'bot',text:'您可以通过两种方式接入：\n1. Skills CLI：npm install -g @antalpha-rwa/cli\n2. MCP 协议：配置 claude_desktop_config.json\n接入后 Agent 即可自主申购与赎回。'}
+      ],
+      en:[
+        {type:'bot',text:'Hi! I\'m the AgentWealth AI assistant. How can I help?'},
+        {type:'user',text:'What yield products do you offer?'},
+        {type:'bot',text:'We currently offer two yield pools:\n• RWA Stable — 6.0% APY, 3-day lock\n• BTC Enhanced — 8.5% APY, 30-day lock\nBoth are over-collateralized by real assets.'},
+        {type:'user',text:'How can my Agent connect?'},
+        {type:'bot',text:'Two integration methods:\n1. Skills CLI: npm install -g @antalpha-rwa/cli\n2. MCP Protocol: configure claude_desktop_config.json\nOnce connected, your Agent can subscribe & redeem autonomously.'}
+      ]
+    };
+    var chatDemoBody=document.getElementById('chatDemoBody');
+    var chatTimers=[];
+    function restartChatDemo(){
+      chatTimers.forEach(clearTimeout);chatTimers=[];
+      chatDemoBody.innerHTML='';
+      var convo=chatConvo[lang]||chatConvo.zh;
+      var delay=600;
+      convo.forEach(function(msg,idx){
+        if(msg.type==='bot'){
+          chatTimers.push(setTimeout(function(){
+            var typing=document.createElement('div');
+            typing.className='chat-bubble bot typing';
+            typing.style.animationDelay='0s';
+            typing.innerHTML='<span class="dot-t"></span><span class="dot-t"></span><span class="dot-t"></span>';
+            chatDemoBody.appendChild(typing);
+            chatDemoBody.scrollTop=chatDemoBody.scrollHeight;
+            chatTimers.push(setTimeout(function(){
+              typing.remove();
+              addBubble(msg.type,msg.text,idx);
+            },800));
+          },delay));
+          delay+=2000;
+        }else{
+          chatTimers.push(setTimeout(function(){addBubble(msg.type,msg.text,idx)},delay));
+          delay+=1200;
+        }
+      });
+      chatTimers.push(setTimeout(function(){restartChatDemo()},delay+4000));
+    }
+    function addBubble(type,text,idx){
+      var d=document.createElement('div');
+      d.className='chat-bubble '+type;
+      d.style.animationDelay='0s';
+      d.textContent=text;
+      d.style.whiteSpace='pre-line';
+      chatDemoBody.appendChild(d);
+      chatDemoBody.scrollTop=chatDemoBody.scrollHeight;
+    }
+    restartChatDemo();
+
+    // Float chatbot
+    var floatBtn=document.getElementById('floatBotBtn'),floatChat=document.getElementById('floatChat');
+    floatBtn.addEventListener('click',function(){floatChat.classList.toggle('open')});
+    document.getElementById('floatChatClose').addEventListener('click',function(){floatChat.classList.remove('open')});
+    var floatBody=document.getElementById('floatChatBody'),floatInput=document.getElementById('floatChatInput');
+    function floatSend(){
+      var v=floatInput.value.trim();if(!v)return;
+      var m=document.createElement('div');m.className='float-chat-msg user-msg';m.textContent=v;floatBody.appendChild(m);floatInput.value='';
+      floatBody.scrollTop=floatBody.scrollHeight;
+      setTimeout(function(){var r=document.createElement('div');r.className='float-chat-msg';r.textContent=t('float.reply');floatBody.appendChild(r);floatBody.scrollTop=floatBody.scrollHeight},600);
+    }
+    document.getElementById('floatChatSend').addEventListener('click',floatSend);
+    floatInput.addEventListener('keydown',function(e){if(e.key==='Enter')floatSend()});
   })();
-
-  // Code Viewer tab switching
-  document.querySelectorAll('.code-tab').forEach(function(tab){
-    tab.addEventListener('click',function(){
-      document.querySelectorAll('.code-tab').forEach(function(t){t.classList.remove('active')});
-      document.querySelectorAll('.code-panel').forEach(function(p){p.classList.remove('active')});
-      tab.classList.add('active');
-      document.getElementById('panel-'+tab.getAttribute('data-tab')).classList.add('active');
-    });
-  });
-
-  // FAQ accordion
-  document.querySelectorAll('.faq-q').forEach(function(q){
-    q.addEventListener('click',function(){
-      var item=q.closest('.faq-item');
-      var wasOpen=item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('open')});
-      if(!wasOpen)item.classList.add('open');
-    });
-  });
-
-  function copyAddr(id,btn){
-    var el=document.getElementById(id);
-    if(!el)return;
-    var text=el.textContent;
-    var origHTML=btn.innerHTML;
-    function onCopied(){
-      btn.classList.add('copied');
-      btn.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      setTimeout(function(){btn.classList.remove('copied');btn.innerHTML=origHTML},1500);
-    }
-    if(navigator.clipboard){
-      navigator.clipboard.writeText(text).then(onCopied);
-    }else{
-      var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-      onCopied();
-    }
-  }
   </script>
 </body>
 </html>
