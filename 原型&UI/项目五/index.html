@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antalpha RWA&AI · 运营后台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --side-w:240px;--side-bg:#0f172a;--side-text:#e2e8f0;--side-dim:#64748b;--side-active:#3b82f6;--side-active-bg:rgba(59,130,246,.12);
+      --bg:#f1f5f9;--card:#fff;--text:#0f172a;--sub:#475569;--muted:#94a3b8;--border:#e2e8f0;
+      --accent:#2563eb;--accent-h:#1d4ed8;--accent-soft:rgba(37,99,235,.08);
+      --green:#059669;--green-soft:rgba(5,150,105,.08);--warn:#d97706;--warn-soft:rgba(217,119,6,.08);
+      --danger:#dc2626;--danger-soft:rgba(220,38,38,.08);--purple:#7c3aed;--purple-soft:rgba(124,58,237,.08);
+      --cyan:#0891b2;--cyan-soft:rgba(8,145,178,.08);
+      --radius:12px;--shadow:0 1px 3px rgba(0,0,0,.06);--mono:'JetBrains Mono',monospace;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;font-size:13px}
+
+    /* Login */
+    #login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a)}
+    .login-box{width:100%;max-width:400px;background:var(--card);border-radius:20px;padding:44px 36px;box-shadow:0 25px 60px rgba(0,0,0,.35)}
+    .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .login-logo .dot{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#3b82f6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px}
+    .login-logo h1{font-size:1.25rem;font-weight:700;letter-spacing:-.02em}
+    .login-box .sub{color:var(--sub);font-size:.8125rem;margin-bottom:28px}
+    .login-box label{display:block;font-size:.75rem;font-weight:500;margin-bottom:4px;color:var(--sub)}
+    .login-box input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:.875rem;margin-bottom:14px}
+    .login-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+    .btn-login{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:.9375rem;font-weight:600;cursor:pointer}
+    .btn-login:hover{background:var(--accent-h)}
+
+    /* Shell */
+    #app{display:none;min-height:100vh}
+    #app.on{display:flex}
+
+    /* Sidebar */
+    .side{width:var(--side-w);flex-shrink:0;background:var(--side-bg);color:var(--side-text);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;overflow-y:auto}
+    .side-hd{padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .side-brand{display:flex;align-items:center;gap:8px}
+    .side-brand .ic{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#2563eb,#3b82f6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px}
+    .side-brand .nm{font-weight:700;font-size:.8125rem;color:#fff}
+    .side-brand .tg{display:block;font-size:.625rem;color:var(--side-dim);font-weight:400;margin-top:1px}
+    .side-nav{flex:1;padding:8px 0}
+    .sg{padding:0 10px;margin-bottom:2px}
+    .sg-label{font-size:.5625rem;font-weight:600;color:var(--side-dim);text-transform:uppercase;letter-spacing:.08em;padding:8px 8px 3px}
+    .side-nav a{display:flex;align-items:center;gap:8px;padding:7px 10px;margin:1px 6px;color:var(--side-dim);text-decoration:none;font-size:.75rem;font-weight:500;border-radius:7px;transition:all .12s}
+    .side-nav a:hover{color:var(--side-text);background:rgba(255,255,255,.05)}
+    .side-nav a.active{color:#fff;background:var(--side-active-bg);font-weight:600}
+    .side-nav a .ico{width:16px;text-align:center;font-size:13px;flex-shrink:0}
+    .side-nav a .cnt{margin-left:auto;font-size:.5625rem;background:rgba(255,255,255,.1);color:var(--side-dim);padding:1px 6px;border-radius:4px;font-weight:600}
+    .side-ft{padding:12px 16px;border-top:1px solid rgba(255,255,255,.06)}
+    .side-ft .ur{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .side-ft .av{width:28px;height:28px;border-radius:50%;background:#334155;display:flex;align-items:center;justify-content:center;font-size:.6875rem;color:#fff;font-weight:600}
+    .side-ft .un{font-size:.75rem;color:var(--side-text)}
+    .side-ft .rl{font-size:.625rem;color:var(--side-dim)}
+    .btn-out{width:100%;padding:6px;background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--side-dim);border-radius:6px;cursor:pointer;font-size:.6875rem}
+    .btn-out:hover{color:#fff;border-color:rgba(255,255,255,.25)}
+
+    /* Main */
+    .main{flex:1;margin-left:var(--side-w);display:flex;flex-direction:column;min-width:0}
+    .topbar{height:48px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:40}
+    .topbar h2{font-size:1rem;font-weight:700}
+    .topbar-r{font-size:.6875rem;color:var(--muted)}
+    .cnt-area{flex:1;padding:20px 24px 40px;overflow-y:auto}
+
+    .pg{display:none}.pg.on{display:block}
+
+    /* Stats */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+    @media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}}
+    .st{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);position:relative}
+    .st .si{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+    .st .si.b{background:var(--accent-soft);color:var(--accent)}
+    .st .si.g{background:var(--green-soft);color:var(--green)}
+    .st .si.p{background:var(--purple-soft);color:var(--purple)}
+    .st .si.w{background:var(--warn-soft);color:var(--warn)}
+    .st .si.c{background:var(--cyan-soft);color:var(--cyan)}
+    .st .sl{font-size:.6875rem;color:var(--sub);margin-bottom:6px;font-weight:500}
+    .st .sv{font-size:1.375rem;font-weight:800;letter-spacing:-.02em}
+    .st .sc{font-size:.625rem;margin-top:4px;font-weight:600}
+    .st .sc.up{color:var(--green)}.st .sc.dn{color:var(--danger)}
+
+    /* Panel */
+    .pn{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+    .pn-h{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .pn-h h3{font-size:.8125rem;font-weight:700}
+    .pn-b{padding:14px 16px}.pn-b.np{padding:0}
+
+    /* Table */
+    .tw{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:.75rem}
+    th{text-align:left;padding:8px 12px;background:var(--bg);color:var(--sub);font-weight:600;font-size:.625rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;position:sticky;top:0}
+    td{padding:8px 12px;border-top:1px solid var(--border);white-space:nowrap}
+    tr:hover td{background:rgba(0,0,0,.012)}
+    code,.mono{font-family:var(--mono);font-size:.6875rem}
+    .addr{font-family:var(--mono);font-size:.6875rem;color:var(--accent);cursor:pointer}
+    .addr:hover{text-decoration:underline}
+
+    /* Badge */
+    .b{display:inline-block;padding:1px 7px;border-radius:5px;font-size:.625rem;font-weight:600;white-space:nowrap}
+    .b-g{background:var(--green-soft);color:var(--green)}
+    .b-w{background:var(--warn-soft);color:var(--warn)}
+    .b-b{background:var(--accent-soft);color:var(--accent)}
+    .b-r{background:var(--danger-soft);color:var(--danger)}
+    .b-p{background:var(--purple-soft);color:var(--purple)}
+    .b-c{background:var(--cyan-soft);color:var(--cyan)}
+    .b-gray{background:#f1f5f9;color:var(--sub)}
+    .b-agent{background:linear-gradient(135deg,var(--purple-soft),var(--accent-soft));color:var(--purple);border:1px solid rgba(124,58,237,.15)}
+    .b-human{background:var(--green-soft);color:var(--green);border:1px solid rgba(5,150,105,.15)}
+
+    /* Buttons */
+    .btn{padding:6px 14px;border-radius:7px;font-size:.75rem;font-weight:600;cursor:pointer;border:none;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+    .btn-p{background:var(--accent);color:#fff}.btn-p:hover{background:var(--accent-h)}
+    .btn-o{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-o:hover{background:var(--bg)}
+    .btn-g{background:var(--green);color:#fff}.btn-g:hover{background:#047857}
+    .btn-d{background:transparent;color:var(--danger);border:1px solid var(--border)}.btn-d:hover{background:var(--danger-soft)}
+    .btn-s{padding:4px 10px;font-size:.6875rem;border-radius:5px}
+
+    /* Filter */
+    .fbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+    .fbar select,.fbar input[type="text"],.fbar input[type="date"]{padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:.75rem;background:#fff;color:var(--text)}
+    .fbar .sp{flex:1}
+
+    /* Form */
+    .fc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+    .fc h3{font-size:.8125rem;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+    .fr{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:12px}
+    .fr.c3{grid-template-columns:repeat(3,1fr)}.fr.c4{grid-template-columns:repeat(4,1fr)}.fr.c1{grid-template-columns:1fr}
+    .fr label{display:block;font-size:.6875rem;font-weight:500;margin-bottom:4px;color:var(--sub)}
+    .fr input,.fr select,.fr textarea{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:.75rem}
+    .fr input:focus,.fr select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+    .fr textarea{min-height:60px;resize:vertical;font-family:inherit}
+    .factions{margin-top:16px;display:flex;gap:8px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:1px;margin-bottom:16px;border-bottom:2px solid var(--border)}
+    .tab{padding:8px 16px;font-size:.75rem;font-weight:600;color:var(--sub);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+    .tab:hover{color:var(--text)}.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+    .tp{display:none}.tp.on{display:block}
+
+    /* Alert */
+    .al{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.75rem}
+    .al:last-child{border-bottom:none}
+
+    /* Source badge */
+    .src{display:inline-flex;align-items:center;gap:3px;font-size:.5625rem;font-weight:600;padding:1px 5px;border-radius:4px}
+    .src-a{background:var(--purple-soft);color:var(--purple)}.src-h{background:var(--green-soft);color:var(--green)}
+
+    /* Modal */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:24px}
+    .modal.show{display:flex}
+    .modal-box{background:var(--card);border-radius:14px;width:100%;max-width:720px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.2)}
+    .modal-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .modal-hd h3{font-size:.9375rem;font-weight:700}
+    .modal-x{background:none;border:none;font-size:1.125rem;cursor:pointer;color:var(--sub);padding:4px 8px;border-radius:6px}.modal-x:hover{background:var(--bg)}
+    .modal-bd{padding:20px}
+    .dg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    .di .dl{font-size:.625rem;color:var(--sub);margin-bottom:1px}.di .dv{font-size:.8125rem;font-weight:600}
+
+    /* Chart placeholder */
+    .chart{height:160px;background:linear-gradient(180deg,var(--accent-soft),transparent);border-radius:8px;display:flex;align-items:flex-end;justify-content:center;padding:16px;position:relative}
+    .chart-bars{display:flex;align-items:flex-end;gap:6px;height:100%}
+    .chart-bar{width:24px;background:var(--accent);border-radius:3px 3px 0 0;opacity:.7}.chart-bar:hover{opacity:1}
+    .chart-lbl{position:absolute;top:12px;left:16px;font-size:.6875rem;color:var(--sub);font-weight:600}
+
+    /* Misc */
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:900px){.row2{grid-template-columns:1fr}}
+    .empty-state{padding:40px;text-align:center;color:var(--muted);font-size:.8125rem}
+    .empty-state .em-icon{font-size:2rem;margin-bottom:8px}
+    .dot-g{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:4px}
+    .dot-w{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--warn);margin-right:4px}
+    .dot-r{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--danger);margin-right:4px}
+    .note-text{font-size:.6875rem;color:var(--sub);max-width:280px;white-space:normal;line-height:1.5}
+    .truncate{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:middle}
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login-page">
+  <div class="login-box">
+    <div class="login-logo"><div class="dot">A</div><h1>RWA&AI 运营后台</h1></div>
+    <p class="sub">Antalpha 智能理财平台 · 内部运营管理</p>
+    <label>用户名</label><input type="text" id="l-user" value="admin" />
+    <label>密码</label><input type="password" id="l-pwd" value="demo" />
+    <button class="btn-login" id="btn-login">登 录</button>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+<aside class="side">
+  <div class="side-hd"><div class="side-brand"><div class="ic">A</div><div><div class="nm">Antalpha</div><div class="tg">RWA&AI 运营后台</div></div></div></div>
+  <nav class="side-nav">
+    <div class="sg"><div class="sg-label">概览</div>
+      <a href="#dashboard" class="nav active" data-p="dashboard"><span class="ico">📊</span>仪表盘</a>
+    </div>
+    <div class="sg"><div class="sg-label">业务管理</div>
+      <a href="#products" class="nav" data-p="products"><span class="ico">📦</span>产品管理<span class="cnt">2</span></a>
+      <a href="#orders" class="nav" data-p="orders"><span class="ico">📋</span>订单管理<span class="cnt">7</span></a>
+      <a href="#settlements" class="nav" data-p="settlements"><span class="ico">💳</span>结算管理<span class="cnt">6</span></a>
+      <a href="#queue" class="nav" data-p="queue"><span class="ico">⏳</span>排队请求<span class="cnt">0</span></a>
+    </div>
+    <div class="sg"><div class="sg-label">资金与计息</div>
+      <a href="#fundpool" class="nav" data-p="fundpool"><span class="ico">🏦</span>资金池快照</a>
+      <a href="#interest" class="nav" data-p="interest"><span class="ico">📈</span>计息明细</a>
+    </div>
+    <div class="sg"><div class="sg-label">通知与消息</div>
+      <a href="#messages" class="nav" data-p="messages"><span class="ico">💬</span>消息日志<span class="cnt">11</span></a>
+    </div>
+    <div class="sg"><div class="sg-label">系统</div>
+      <a href="#agents" class="nav" data-p="agents"><span class="ico">🤖</span>Agent 授权</a>
+      <a href="#settings" class="nav" data-p="settings"><span class="ico">⚙️</span>系统设置</a>
+    </div>
+  </nav>
+  <div class="side-ft">
+    <div class="ur"><div class="av" id="s-av">A</div><div><div class="un" id="s-un">admin</div><div class="rl">运营管理员</div></div></div>
+    <button class="btn-out" id="btn-out">退出登录</button>
+  </div>
+</aside>
+
+<div class="main">
+<header class="topbar">
+  <h2 id="pg-title">仪表盘</h2>
+  <div class="topbar-r"><span class="src src-a">🤖 Agent 写入</span>&nbsp;&nbsp;<span class="src src-h">👤 人工操作</span>&nbsp;&nbsp;= 数据来源标记&emsp;<span id="tb-time"></span></div>
+</header>
+<main class="cnt-area">
+
+<!-- ========== 1. 仪表盘 ========== -->
+<div id="pg-dashboard" class="pg on">
+  <div class="stats">
+    <div class="st"><div class="si b">💎</div><div class="sl">资金池总额 (AUM)</div><div class="sv">$66,000</div><div class="sc up">PROD-001: $50,000 · PROD-002: $16,000</div></div>
+    <div class="st"><div class="si g">📋</div><div class="sl">有效订单数</div><div class="sv">7</div><div class="sc">计息中 4 · 已赎回 1 · 部分赎回 1 · 已拒绝 1</div></div>
+    <div class="st"><div class="si w">💰</div><div class="sl">累计应计利息</div><div class="sv">$64.16</div><div class="sc up">PROD-001: $52.74 · PROD-002: $11.42</div></div>
+    <div class="st"><div class="si p">💳</div><div class="sl">待结算笔数</div><div class="sv">3</div><div class="sc dn">含 1 笔到期兑付 · 2 笔部分赎回</div></div>
+  </div>
+
+  <div class="row2">
+    <div class="pn">
+      <div class="pn-h"><h3>产品状态</h3></div>
+      <div class="pn-b np">
+        <table><thead><tr><th>产品</th><th>类型</th><th>APY</th><th>募集进度</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Antalpha_BTC_Yield_30D</td><td>RWA固定收益型</td><td>5.5%</td><td>$50,000 / $10,000,000</td><td><span class="b b-g">募集中</span></td></tr>
+          <tr><td style="font-weight:600">Antalpha_BTC_Yield_Flexible</td><td>RWA灵活存取型</td><td>4.5%</td><td>$16,000 / $10,000,000</td><td><span class="b b-gray">未上线</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="pn">
+      <div class="pn-h"><h3>最近告警 / 待办</h3></div>
+      <div class="pn-b">
+        <div class="al"><span class="b b-r">待审批</span><span>ORD-20260301-0001 到期兑付 $50,226.03 等待审批</span><span style="margin-left:auto;color:var(--muted);font-size:.625rem">03-09 22:51</span></div>
+        <div class="al"><span class="b b-w">已拒绝</span><span>ORD-20260301-0001 收款地址异常，审批驳回</span><span style="margin-left:auto;color:var(--muted);font-size:.625rem">03-09 23:04</span></div>
+        <div class="al"><span class="b b-g">已确认</span><span>ORD-20260309-0007 Ria 审批通过，已执行兑付</span><span style="margin-left:auto;color:var(--muted);font-size:.625rem">03-09 23:08</span></div>
+        <div class="al"><span class="b b-b">Agent</span><span>Ria Agent 完成每日计息快照 (3 个产品)</span><span style="margin-left:auto;color:var(--muted);font-size:.625rem">03-10 08:00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pn">
+    <div class="pn-h"><h3>资金池趋势（近 7 天快照）</h3></div>
+    <div class="pn-b">
+      <div class="chart">
+        <div class="chart-lbl">Pool Total ($K)</div>
+        <div class="chart-bars">
+          <div class="chart-bar" style="height:75%"></div><div class="chart-bar" style="height:75%"></div>
+          <div class="chart-bar" style="height:80%"></div><div class="chart-bar" style="height:80%"></div>
+          <div class="chart-bar" style="height:78%"></div><div class="chart-bar" style="height:85%"></div>
+          <div class="chart-bar" style="height:90%"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:.625rem;color:var(--muted);margin-top:6px"><span>03-04</span><span>03-05</span><span>03-06</span><span>03-07</span><span>03-08</span><span>03-09</span><span>03-10</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== 2. 产品管理 ========== -->
+<div id="pg-products" class="pg">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="font-size:.8125rem;color:var(--sub)">共 2 个产品</div>
+    <button class="btn btn-p" id="btn-add-prod">+ 新增产品</button>
+  </div>
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>product_id</th><th>产品名称</th><th>类型</th><th>币种</th><th>APY</th><th>提前赎回率</th><th>募集上限</th><th>募集期</th><th>产品期限</th><th>起息规则</th><th>持有折扣</th><th>状态</th><th>操作</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><code>PROD-001</code></td>
+        <td><div style="font-weight:600">Antalpha_BTC_Yield_30D</div></td>
+        <td>RWA固定收益型</td><td>USDT</td>
+        <td><span style="font-weight:700;color:var(--green)">5.5%</span></td>
+        <td>3.3%</td>
+        <td>$10,000,000</td>
+        <td>03-01 ~ 03-21</td>
+        <td>03-01 ~ 04-01</td>
+        <td>T+1</td>
+        <td>30D: 2% · 60D: 5%</td>
+        <td><span class="b b-g">募集中</span></td>
+        <td><button class="btn btn-s btn-p btn-edit-prod">编辑</button> <button class="btn btn-s btn-o">下架</button></td>
+      </tr>
+      <tr>
+        <td><code>PROD-002</code></td>
+        <td><div style="font-weight:600">Antalpha_BTC_Yield_Flexible</div></td>
+        <td>RWA灵活存取型</td><td>USDT</td>
+        <td><span style="font-weight:700;color:var(--green)">4.5%</span></td>
+        <td>4.5%</td>
+        <td>$10,000,000</td>
+        <td>—</td>
+        <td>长期（灵活）</td>
+        <td>T+1</td>
+        <td>30D: 2% · 60D: 5%</td>
+        <td><span class="b b-gray">未上线</span></td>
+        <td><button class="btn btn-s btn-p btn-edit-prod">编辑</button> <button class="btn btn-s btn-g">上架</button></td>
+      </tr>
+    </tbody></table>
+  </div></div></div>
+</div>
+
+<!-- 产品编辑 -->
+<div id="pg-product-edit" class="pg">
+  <div style="margin-bottom:12px"><button class="btn btn-o" id="btn-back-prod">← 返回列表</button></div>
+  <div class="fc"><h3>基础信息</h3>
+    <div class="fr c3">
+      <div><label>产品 ID</label><input value="PROD-001" readonly style="background:var(--bg)" /></div>
+      <div><label>产品名称</label><input value="Antalpha_BTC_Yield_30D" /></div>
+      <div><label>产品类型</label><select><option selected>RWA固定收益型</option><option>RWA灵活存取型</option></select></div>
+    </div>
+    <div class="fr c3">
+      <div><label>结算币种</label><select><option selected>USDT</option><option>USDC</option></select></div>
+      <div><label>年化收益 APY (%)</label><input value="5.5" /></div>
+      <div><label>提前赎回利率 (%)</label><input value="3.3" /></div>
+    </div>
+    <div class="fr c3">
+      <div><label>最短持有天数</label><input value="3" /></div>
+      <div><label>募集上限 (USDT)</label><input value="10000000" /></div>
+      <div><label>起息规则</label><select><option selected>T+1</option><option>T+0</option><option>T+2</option></select></div>
+    </div>
+  </div>
+  <div class="fc"><h3>收款地址（多链）</h3>
+    <div class="fr c1"><div><label>ETH 收款地址</label><input placeholder="0x..." /></div></div>
+    <div class="fr c1"><div><label>TRX 收款地址</label><input placeholder="T..." /></div></div>
+    <div class="fr c1"><div><label>BASE 收款地址</label><input value="0x0abfc5fa5b5bc304646132701f53f256004356ee" /></div></div>
+  </div>
+  <div class="fc"><h3>产品期限</h3>
+    <div class="fr c4">
+      <div><label>产品开始日</label><input type="date" value="2026-03-01" /></div>
+      <div><label>产品结束日</label><input type="date" value="2026-04-01" /></div>
+      <div><label>募集开始日</label><input type="date" value="2026-03-01" /></div>
+      <div><label>募集截止日</label><input type="date" value="2026-03-21" /></div>
+    </div>
+  </div>
+  <div class="fc"><h3>持有折扣（$ANTA 兑换）</h3>
+    <div class="fr">
+      <div><label>持有 30 天折扣 (%)</label><input value="2" /></div>
+      <div><label>持有 60 天折扣 (%)</label><input value="5" /></div>
+    </div>
+  </div>
+  <div class="fc"><h3>产品状态</h3>
+    <div class="fr c3">
+      <div><label>状态</label><select><option selected>募集中</option><option>未上线</option><option>已结束</option><option>已暂停</option></select></div>
+      <div><label>数据来源</label><div style="padding:8px 0"><span class="src src-a">🤖 Agent 可写入</span> <span class="src src-h">👤 人工可覆盖</span></div></div>
+    </div>
+    <div class="fr c1"><div><label>备注</label><textarea>30天固定，适合资金有明确闲置期的客户</textarea></div></div>
+  </div>
+  <div class="factions"><button class="btn btn-p">保存</button><button class="btn btn-o" id="btn-cancel-prod">取消</button></div>
+</div>
+
+
+<!-- ========== 3. 订单管理 ========== -->
+<div id="pg-orders" class="pg">
+  <div class="fbar">
+    <select><option>全部状态</option><option>计息中</option><option>已赎回</option><option>部分赎回</option><option>已拒绝</option></select>
+    <select><option>全部产品</option><option>PROD-001 (30D)</option><option>PROD-002 (灵活)</option></select>
+    <select><option>全部链</option><option>ETH</option><option>BSC</option><option>BASE</option><option>TRX</option></select>
+    <select><option>全部来源</option><option>🤖 Agent</option><option>👤 人工</option></select>
+    <div class="sp"></div>
+    <button class="btn btn-o btn-s">⬇ 导出 CSV</button>
+  </div>
+
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>订单号</th><th>来源</th><th>产品</th><th>客户地址</th><th>链</th><th>金额</th><th>投资时间</th><th>起息日</th><th>到期日</th><th>持有天数</th><th>应计利息</th><th>AML</th><th>状态</th><th>操作</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><code>ORD-20260301-0001</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-001</td>
+        <td><span class="addr">0xTEST...1234</span></td>
+        <td>ETH</td>
+        <td style="font-weight:600">$50,000</td>
+        <td>03-01 10:30</td>
+        <td>03-02</td>
+        <td>04-01</td>
+        <td>30</td>
+        <td>$52.74</td>
+        <td><span class="b b-g">LOW(5)</span></td>
+        <td><span class="b b-r">已拒绝</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+      <tr>
+        <td><code>ORD-20260301-0002</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-002</td>
+        <td><span class="addr">0xTEST_FLEX_5678</span></td>
+        <td>BASE</td>
+        <td style="font-weight:600">$10,000</td>
+        <td>03-01 14:00</td>
+        <td>03-02</td>
+        <td>—</td>
+        <td>4</td>
+        <td>—</td>
+        <td><span class="b b-g">LOW(3)</span></td>
+        <td><span class="b b-b">已赎回</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+      <tr>
+        <td><code>ORD-20260303-0001</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-002</td>
+        <td><span class="addr">0xCLIENT_A</span></td>
+        <td>BASE</td>
+        <td style="font-weight:600">$10,000</td>
+        <td>03-03 10:00</td>
+        <td>03-04</td>
+        <td>—</td>
+        <td>—</td>
+        <td>—</td>
+        <td><span class="b b-g">LOW(3)</span></td>
+        <td><span class="b b-w">部分赎回</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+      <tr style="background:rgba(124,58,237,.03)">
+        <td><code>ORD-20260303-0001-R1</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-002</td>
+        <td><span class="addr">0xCLIENT_A</span></td>
+        <td>BASE</td>
+        <td style="font-weight:600">$8,000</td>
+        <td>03-08 00:27</td>
+        <td>03-09</td>
+        <td>—</td>
+        <td>1</td>
+        <td>$0.99</td>
+        <td><span class="b b-gray">—</span></td>
+        <td><span class="b b-g">计息中</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+      <tr>
+        <td><code>ORD-20260301-0003</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-002</td>
+        <td><span class="addr">0xCLIENT_A</span></td>
+        <td>BASE</td>
+        <td style="font-weight:600">$5,000</td>
+        <td>03-01 09:00</td>
+        <td>03-02</td>
+        <td>—</td>
+        <td>8</td>
+        <td>$4.93</td>
+        <td><span class="b b-g">LOW(2)</span></td>
+        <td><span class="b b-g">计息中</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+      <tr>
+        <td><code>ORD-20260305-0001</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-002</td>
+        <td><span class="addr">0xCLIENT_A</span></td>
+        <td>BASE</td>
+        <td style="font-weight:600">$3,000</td>
+        <td>03-05 11:00</td>
+        <td>03-06</td>
+        <td>—</td>
+        <td>4</td>
+        <td>$1.48</td>
+        <td><span class="b b-g">LOW(1)</span></td>
+        <td><span class="b b-g">计息中</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+      <tr>
+        <td><code>ORD-20260309-0007</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td>PROD-001</td>
+        <td><span class="addr truncate">0xc5d525fd...9576e</span></td>
+        <td>BSC</td>
+        <td style="font-weight:600">$0.001</td>
+        <td>03-09 22:28</td>
+        <td>03-10</td>
+        <td>04-09</td>
+        <td>0</td>
+        <td>$0.00</td>
+        <td><span class="b b-gray">—</span></td>
+        <td><span class="b b-g">计息中</span></td>
+        <td><button class="btn btn-s btn-p btn-view-order">详情</button></td>
+      </tr>
+    </tbody></table>
+  </div></div></div>
+  <div style="font-size:.6875rem;color:var(--muted);margin-top:6px">共 7 条有效订单 · 关联子单以浅紫色背景标注</div>
+</div>
+
+
+<!-- ========== 4. 结算管理 ========== -->
+<div id="pg-settlements" class="pg">
+  <div class="fbar">
+    <select><option>全部类型</option><option>REDEMPTION (活期赎回)</option><option>MATURITY (到期兑付)</option><option>PARTIAL_REDEMPTION (部分赎回)</option></select>
+    <select><option>全部状态</option><option>confirmed</option><option>pending</option></select>
+    <div class="sp"></div>
+    <button class="btn btn-o btn-s">⬇ 导出</button>
+  </div>
+
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>结算单号</th><th>来源</th><th>关联订单</th><th>客户地址</th><th>链</th><th>本金</th><th>利息</th><th>总金额</th><th>类型</th><th>Cobo 状态</th><th>请求日</th><th>审批日</th><th>到账日</th><th>备注</th><th>操作</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><code>STL-...-0002</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td><code>ORD-...-0002</code></td>
+        <td><span class="addr">0xTEST_FLEX_5678</span></td>
+        <td>BASE</td>
+        <td>$10,000</td>
+        <td>$4.93</td>
+        <td style="font-weight:600">$10,004.93</td>
+        <td><span class="b b-b">REDEMPTION</span></td>
+        <td><span class="b b-g">confirmed</span></td>
+        <td>03-07</td>
+        <td>03-07 16:48</td>
+        <td>03-07 16:48</td>
+        <td class="note-text">活期提款 T+0 · 4天 · APY 4.5%</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><code>STL-...-RITY</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td><code>ORD-TEST-MATURITY</code></td>
+        <td><span class="addr">0xTEST_FIXED_9999</span></td>
+        <td>ETH</td>
+        <td>$20,000</td>
+        <td>$87.40</td>
+        <td style="font-weight:600">$20,087.40</td>
+        <td><span class="b b-p">MATURITY</span></td>
+        <td><span class="b b-g">confirmed</span></td>
+        <td>03-07</td>
+        <td>03-07 16:52</td>
+        <td>03-07 16:52</td>
+        <td class="note-text">定期到期兑付 · 29天 · APY 5.5%</td>
+        <td>—</td>
+      </tr>
+      <tr style="background:var(--warn-soft)">
+        <td><code>STL-...-TEST</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td><code>ORD-PARTIAL-TEST</code></td>
+        <td><span class="addr">0xTEST_PARTIAL</span></td>
+        <td>BASE</td>
+        <td>$2,000</td>
+        <td>$0.99</td>
+        <td style="font-weight:600">$2,000.99</td>
+        <td><span class="b b-w">PARTIAL</span></td>
+        <td><span class="b b-w">pending</span></td>
+        <td>03-07</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="note-text">部分赎回 20% · 新单:ORD-PARTIAL-TEST-R1</td>
+        <td><button class="btn btn-s btn-g">✓ 审批</button> <button class="btn btn-s btn-d">✕ 拒绝</button></td>
+      </tr>
+      <tr style="background:var(--warn-soft)">
+        <td><code>STL-...-0001</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td><code>ORD-...-0001(部分)</code></td>
+        <td><span class="addr">0xCLIENT_A</span></td>
+        <td>BASE</td>
+        <td>$2,000</td>
+        <td>$0.74</td>
+        <td style="font-weight:600">$2,000.74</td>
+        <td><span class="b b-w">PARTIAL</span></td>
+        <td><span class="b b-w">pending</span></td>
+        <td>03-08</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="note-text">部分赎回 20% · 3天 · 新单:ORD-...-0001-R1</td>
+        <td><button class="btn btn-s btn-g">✓ 审批</button> <button class="btn btn-s btn-d">✕ 拒绝</button></td>
+      </tr>
+      <tr style="background:var(--warn-soft)">
+        <td><code>STL-...-0001(到期)</code></td>
+        <td><span class="src src-a">🤖</span></td>
+        <td><code>ORD-...-0001</code></td>
+        <td><span class="addr">0xTEST...1234</span></td>
+        <td>ETH</td>
+        <td>$50,000</td>
+        <td>$226.03</td>
+        <td style="font-weight:600">$50,226.03</td>
+        <td><span class="b b-p">MATURITY</span></td>
+        <td><span class="b b-w">pending</span></td>
+        <td>04-01</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="note-text">定期到期兑付 · 30天 · APY 5.5%</td>
+        <td><button class="btn btn-s btn-g">✓ 审批</button> <button class="btn btn-s btn-d">✕ 拒绝</button></td>
+      </tr>
+      <tr>
+        <td><code>STL-...-0007</code></td>
+        <td><span class="src src-h">👤</span></td>
+        <td><code>ORD-...-0007</code></td>
+        <td><span class="addr truncate">0xc5d525...576e</span></td>
+        <td>BSC</td>
+        <td>$0.001</td>
+        <td>$0.000005</td>
+        <td style="font-weight:600">$0.001005</td>
+        <td><span class="b b-p">MATURITY</span></td>
+        <td><span class="b b-g">confirmed</span></td>
+        <td>04-09</td>
+        <td>03-09 23:18</td>
+        <td>03-09 23:18</td>
+        <td class="note-text">Ria 审批通过 · 已执行兑付</td>
+        <td>—</td>
+      </tr>
+    </tbody></table>
+  </div></div></div>
+  <div style="font-size:.6875rem;color:var(--muted);margin-top:6px">黄色高亮 = pending 待人工审批 · Cobo 为资金托管方出金通道</div>
+</div>
+
+
+<!-- ========== 5. 排队请求 ========== -->
+<div id="pg-queue" class="pg">
+  <div class="fbar">
+    <select><option>全部状态</option><option>排队中</option><option>已处理</option></select>
+    <div class="sp"></div>
+    <button class="btn btn-p btn-s">+ 手动添加</button>
+  </div>
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>队列 ID</th><th>来源</th><th>产品</th><th>客户地址</th><th>提款地址</th><th>金额</th><th>链</th><th>TxHash</th><th>排队时间</th><th>状态</th><th>备注</th><th>操作</th>
+    </tr></thead>
+    <tbody>
+      <tr><td colspan="12">
+        <div class="empty-state"><div class="em-icon">📭</div>暂无排队请求<br><span style="font-size:.6875rem;color:var(--muted)">当资金池额度不足或需要人工审核时，请求将自动进入排队</span></div>
+      </td></tr>
+    </tbody></table>
+  </div></div></div>
+</div>
+
+
+<!-- ========== 6. 资金池快照 ========== -->
+<div id="pg-fundpool" class="pg">
+  <div class="fbar">
+    <select><option>全部产品</option><option>PROD-001 (30D)</option><option>PROD-002 (灵活)</option></select>
+    <select><option>最近 7 天</option><option>最近 30 天</option><option>全部</option></select>
+    <div class="sp"></div>
+    <span style="font-size:.6875rem;color:var(--sub)">数据由 Agent 每日 08:00 自动快照 <span class="src src-a">🤖</span></span>
+  </div>
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>快照 ID</th><th>产品</th><th>快照时间</th><th>客户数</th><th>资金池总额</th><th>应计利息总额</th><th>ETH 地址</th><th>TRX 地址</th><th>BASE 地址</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><code>SNAP-03-10-PROD-002</code></td><td>PROD-002</td><td>03-10 08:00</td><td>3</td>
+        <td style="font-weight:600">$16,000</td><td>$7.40</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td><span class="addr truncate" style="max-width:120px">0x0abfc5...356ee</span></td>
+      </tr>
+      <tr>
+        <td><code>SNAP-03-10-PROD-001</code></td><td>PROD-001</td><td>03-10 08:00</td><td>1</td>
+        <td style="font-weight:600">$0.00</td><td>$0.00</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td><span class="addr truncate" style="max-width:120px">0x0abfc5...356ee</span></td>
+      </tr>
+      <tr>
+        <td><code>SNAP-03-09-PROD-002</code></td><td>PROD-002</td><td>03-09 08:00</td><td>3</td>
+        <td style="font-weight:600">$16,000</td><td>$5.42</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td><span class="addr truncate" style="max-width:120px">0x0abfc5...356ee</span></td>
+      </tr>
+      <tr>
+        <td><code>SNAP-03-09-PROD-001</code></td><td>PROD-001</td><td>03-09 08:00</td><td>1</td>
+        <td style="font-weight:600">$50,000</td><td>$52.74</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td class="mono" style="color:var(--muted)">—</td>
+      </tr>
+      <tr>
+        <td><code>SNAP-03-08-PROD-002</code></td><td>PROD-002</td><td>03-08 08:00</td><td>3</td>
+        <td style="font-weight:600">$16,000</td><td>$3.45</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td><span class="addr truncate" style="max-width:120px">0x0abfc5...356ee</span></td>
+      </tr>
+      <tr>
+        <td><code>SNAP-03-08-PROD-001</code></td><td>PROD-001</td><td>03-08 08:00</td><td>1</td>
+        <td style="font-weight:600">$50,000</td><td>$45.21</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td class="mono" style="color:var(--muted)">—</td>
+      </tr>
+      <tr>
+        <td><code>SNAP-03-07-PROD-001</code></td><td>PROD-001</td><td>03-07 08:00</td><td>1</td>
+        <td style="font-weight:600">$50,000</td><td>$37.67</td>
+        <td class="mono" style="color:var(--muted)">—</td><td class="mono" style="color:var(--muted)">—</td>
+        <td class="mono" style="color:var(--muted)">—</td>
+      </tr>
+    </tbody></table>
+  </div></div></div>
+</div>
+
+
+<!-- ========== 7. 计息明细 ========== -->
+<div id="pg-interest" class="pg">
+  <div class="fbar">
+    <select><option>全部产品</option><option>PROD-001</option><option>PROD-002</option></select>
+    <input type="date" value="2026-03-10" />
+    <span style="font-size:.6875rem;color:var(--sub)">~</span>
+    <input type="date" value="2026-03-10" />
+    <div class="sp"></div>
+    <span style="font-size:.6875rem;color:var(--sub)">Agent 每日自动计息 <span class="src src-a">🤖</span></span>
+    <button class="btn btn-o btn-s">⬇ 导出</button>
+  </div>
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>计息日</th><th>客户地址</th><th>订单号</th><th>产品</th><th>本金</th><th>APY</th><th>当日利息</th><th>累计利息</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>03-10</td><td><span class="addr">0xCLIENT_A</span></td><td><code>ORD-...-0001-R1</code></td><td>PROD-002</td><td>$8,000</td><td>4.5%</td><td>$0.9863</td><td>$0.9863</td></tr>
+      <tr><td>03-10</td><td><span class="addr">0xCLIENT_A</span></td><td><code>ORD-...-0003</code></td><td>PROD-002</td><td>$5,000</td><td>4.5%</td><td>$0.6164</td><td>$4.9315</td></tr>
+      <tr><td>03-10</td><td><span class="addr">0xCLIENT_A</span></td><td><code>ORD-...-0001(305)</code></td><td>PROD-002</td><td>$3,000</td><td>4.5%</td><td>$0.3699</td><td>$1.4795</td></tr>
+      <tr><td>03-10</td><td><span class="addr truncate">0xc5d525...576e</span></td><td><code>ORD-...-0007</code></td><td>PROD-001</td><td>$0.001</td><td>5.5%</td><td>$0.0000</td><td>$0.000005</td></tr>
+      <tr style="background:var(--bg)"><td colspan="6" style="font-weight:600;color:var(--sub)">03-09 小计</td><td style="font-weight:600">$9.5068</td><td></td></tr>
+      <tr><td>03-09</td><td><span class="addr">0xTEST...1234</span></td><td><code>ORD-...-0001</code></td><td>PROD-001</td><td>$50,000</td><td>5.5%</td><td>$7.5342</td><td>$52.7397</td></tr>
+      <tr><td>03-09</td><td><span class="addr">0xCLIENT_A</span></td><td><code>ORD-...-0001-R1</code></td><td>PROD-002</td><td>$8,000</td><td>4.5%</td><td>$0.9863</td><td>$0.0000</td></tr>
+      <tr><td>03-09</td><td><span class="addr">0xCLIENT_A</span></td><td><code>ORD-...-0003</code></td><td>PROD-002</td><td>$5,000</td><td>4.5%</td><td>$0.6164</td><td>$4.3151</td></tr>
+      <tr><td>03-09</td><td><span class="addr">0xCLIENT_A</span></td><td><code>ORD-...-0001(305)</code></td><td>PROD-002</td><td>$3,000</td><td>4.5%</td><td>$0.3699</td><td>$1.1096</td></tr>
+    </tbody></table>
+  </div></div></div>
+</div>
+
+
+<!-- ========== 8. 消息日志 ========== -->
+<div id="pg-messages" class="pg">
+  <div class="fbar">
+    <select><option>全部模板</option><option>deposit_confirmed (入金确认)</option><option>invest_intent (投资意向)</option><option>balance_query (余额查询)</option></select>
+    <select><option>全部渠道</option><option>Telegram</option></select>
+    <select><option>全部状态</option><option>sent</option><option>dry_run</option></select>
+    <div class="sp"></div>
+    <span style="font-size:.6875rem;color:var(--sub)">消息由 Agent 自动触发 <span class="src src-a">🤖</span></span>
+  </div>
+  <div class="pn"><div class="pn-b np"><div class="tw">
+    <table><thead><tr>
+      <th>日志 ID</th><th>时间</th><th>客户 ID</th><th>订单</th><th>模板</th><th>语言</th><th>渠道</th><th>消息预览</th><th>状态</th><th>异常标记</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><code>LOG-...-0001</code></td><td>03-08 23:11</td>
+        <td><span class="addr">0xDemoCustomer</span></td><td>—</td>
+        <td><span class="b b-b">deposit_confirmed</span></td><td>zh</td><td>Telegram</td>
+        <td class="note-text">您好，您的入金已成功到账 ✅ 金额：10,000 USDT…</td>
+        <td><span class="b b-gray">dry_run</span></td>
+        <td><span class="dot-g"></span>正常</td>
+      </tr>
+      <tr>
+        <td><code>LOG-...-0002</code></td><td>03-09 21:55</td>
+        <td>—</td><td>—</td>
+        <td><span class="b b-c">invest_intent</span></td><td>zh</td><td>Telegram</td>
+        <td class="note-text">{'amount': 10.0}</td>
+        <td><span class="b b-g">sent</span></td>
+        <td><span class="dot-g"></span>正常</td>
+      </tr>
+      <tr>
+        <td><code>LOG-...-0003</code></td><td>03-09 21:59</td>
+        <td>—</td><td>—</td>
+        <td><span class="b b-c">invest_intent</span></td><td>zh</td><td>Telegram</td>
+        <td class="note-text">{'amount': 0.001}</td>
+        <td><span class="b b-g">sent</span></td>
+        <td><span class="dot-g"></span>正常</td>
+      </tr>
+      <tr>
+        <td><code>LOG-...-0005</code></td><td>03-09 22:43</td>
+        <td><span class="addr truncate">0xc5d525...576e</span></td><td>—</td>
+        <td><span class="b b-p">balance_query</span></td><td>zh</td><td>Telegram</td>
+        <td class="note-text">{'customer_address': '0xc5d525...', 'orders': [...]}</td>
+        <td><span class="b b-g">sent</span></td>
+        <td><span class="dot-g"></span>正常</td>
+      </tr>
+      <tr>
+        <td><code>LOG-...-0006</code></td><td>03-09 22:45</td>
+        <td><span class="addr truncate">0xc5d525...576e</span></td><td>—</td>
+        <td><span class="b b-p">balance_query</span></td><td>zh</td><td>Telegram</td>
+        <td class="note-text">{'customer_address': '0xc5d525...', 'orders': [...]}</td>
+        <td><span class="b b-g">sent</span></td>
+        <td><span class="dot-g"></span>正常</td>
+      </tr>
+      <tr>
+        <td><code>LOG-...-0001</code></td><td>03-10 10:43</td>
+        <td><span class="addr truncate">0xc5d525...576e</span></td><td>—</td>
+        <td><span class="b b-p">balance_query</span></td><td>zh</td><td>Telegram</td>
+        <td class="note-text">{'customer_address': '0xc5d525...', 'orders': [...]}</td>
+        <td><span class="b b-g">sent</span></td>
+        <td><span class="dot-g"></span>正常</td>
+      </tr>
+    </tbody></table>
+  </div></div></div>
+  <div style="font-size:.6875rem;color:var(--muted);margin-top:6px">共 11 条消息记录 · dry_run = 测试发送（未实际推送）</div>
+</div>
+
+
+<!-- ========== 9. Agent 授权 ========== -->
+<div id="pg-agents" class="pg">
+  <div class="row2" style="margin-bottom:20px">
+    <div class="pn">
+      <div class="pn-h"><h3>已授权 Agent</h3><button class="btn btn-p btn-s">+ 新增 Agent</button></div>
+      <div class="pn-b np"><div class="tw">
+        <table><thead><tr><th>Agent 名称</th><th>Agent ID</th><th>授权范围</th><th>写入权限</th><th>最近活跃</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600">Ria (运营 Agent)</td>
+            <td><code>agent-ria-001</code></td>
+            <td>
+              <span class="b b-b">orders</span>
+              <span class="b b-b">settlements</span>
+              <span class="b b-b">fund_pool</span>
+              <span class="b b-b">interest</span>
+              <span class="b b-b">messages</span>
+            </td>
+            <td>
+              <span class="b b-g">创建</span>
+              <span class="b b-g">更新</span>
+              <span class="b b-w">需审批: 结算执行</span>
+            </td>
+            <td>03-10 08:00</td>
+            <td><span class="b b-g">活跃</span></td>
+            <td><button class="btn btn-s btn-o">编辑</button> <button class="btn btn-s btn-d">禁用</button></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Telegram Bot</td>
+            <td><code>agent-tg-bot-01</code></td>
+            <td>
+              <span class="b b-b">messages</span>
+              <span class="b b-b">queue</span>
+            </td>
+            <td>
+              <span class="b b-g">创建</span>
+            </td>
+            <td>03-10 10:45</td>
+            <td><span class="b b-g">活跃</span></td>
+            <td><button class="btn btn-s btn-o">编辑</button> <button class="btn btn-s btn-d">禁用</button></td>
+          </tr>
+        </tbody></table>
+      </div></div>
+    </div>
+
+    <div class="pn">
+      <div class="pn-h"><h3>Agent 写入规则</h3></div>
+      <div class="pn-b">
+        <div style="font-size:.75rem;line-height:2">
+          <div><span class="dot-g"></span><strong>自动写入（无需审批）：</strong>订单创建、计息快照、资金池快照、消息发送</div>
+          <div><span class="dot-w"></span><strong>需人工审批：</strong>结算执行（Cobo 出金）、订单状态变更为"已拒绝"</div>
+          <div><span class="dot-r"></span><strong>仅人工操作：</strong>产品参数修改、Agent 授权管理、系统设置</div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:8px;font-size:.6875rem;color:var(--sub);line-height:1.7">
+          <strong>工作流程：</strong>Agent 通过授权 API 写入数据 → 数据实时反映在后台 → 涉及出金的操作自动进入"待审批"队列 → 运营/财务人员在「结算管理」页面审批通过后执行 → 审批记录写入操作日志
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pn">
+    <div class="pn-h"><h3>Agent 最近操作日志</h3></div>
+    <div class="pn-b np"><div class="tw">
+      <table><thead><tr><th>时间</th><th>Agent</th><th>操作</th><th>目标</th><th>详情</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr><td>03-10 10:45</td><td><code>agent-tg-bot-01</code></td><td>balance_query</td><td>message_log</td><td>客户 0xc5d525...576e 查询余额</td><td><span class="b b-g">成功</span></td></tr>
+        <tr><td>03-10 08:00</td><td><code>agent-ria-001</code></td><td>daily_snapshot</td><td>fund_pool</td><td>生成 SNAP-03-10-PROD-001/002</td><td><span class="b b-g">成功</span></td></tr>
+        <tr><td>03-10 08:00</td><td><code>agent-ria-001</code></td><td>daily_interest</td><td>interest_history</td><td>计算 4 笔订单当日利息</td><td><span class="b b-g">成功</span></td></tr>
+        <tr><td>03-09 23:21</td><td><code>agent-ria-001</code></td><td>create_snapshot</td><td>fund_pool</td><td>生成快照 SNAP-04-08-PROD-001/002</td><td><span class="b b-g">成功</span></td></tr>
+        <tr><td>03-09 23:08</td><td><code>agent-ria-001</code></td><td>approve_settlement</td><td>settlements</td><td>STL-...-0007 审批通过 → 执行兑付</td><td><span class="b b-g">成功</span></td></tr>
+        <tr><td>03-09 23:04</td><td><code>agent-ria-001</code></td><td>reject_order</td><td>orders</td><td>ORD-20260301-0001 驳回：收款地址异常</td><td><span class="b b-w">需人工确认</span></td></tr>
+        <tr><td>03-09 22:28</td><td><code>agent-ria-001</code></td><td>create_order</td><td>orders</td><td>ORD-20260309-0007 · $0.001 · BSC</td><td><span class="b b-g">成功</span></td></tr>
+      </tbody></table>
+    </div></div>
+  </div>
+</div>
+
+
+<!-- ========== 10. 系统设置 ========== -->
+<div id="pg-settings" class="pg">
+  <div class="row2">
+    <div class="fc">
+      <h3>当前登录</h3>
+      <div style="max-width:400px">
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.8125rem"><span style="font-weight:500">用户名</span><span style="color:var(--sub)" id="st-user">admin</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.8125rem"><span style="font-weight:500">角色</span><span style="color:var(--sub)">运营管理员</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.8125rem"><span style="font-weight:500">上次登录</span><span style="color:var(--sub)">2026-03-10 09:12</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:.8125rem"><span style="font-weight:500">登录 IP</span><span style="color:var(--sub)">192.168.1.105</span></div>
+      </div>
+    </div>
+    <div class="fc">
+      <h3>数据写入模式</h3>
+      <div style="font-size:.75rem;line-height:2.2">
+        <div style="display:flex;align-items:center;gap:8px"><span class="src src-a">🤖 Agent 写入</span>订单创建、计息、快照、消息 — Agent 自动处理</div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="src src-h">👤 人工操作</span>产品配置、结算审批、Agent 管理 — 仅人工</div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="b b-w" style="font-size:.625rem">⚠️ 审批流</span>Agent 提交结算 → 人工审批 → Cobo 出金</div>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:8px;font-size:.6875rem;color:var(--sub);line-height:1.7">
+        所有 Agent 写入的数据均可在各业务页面通过 <span class="src src-a">🤖</span> 标识识别，运营人员可随时人工覆盖或修正。
+      </div>
+    </div>
+  </div>
+
+  <div class="pn">
+    <div class="pn-h"><h3>人工操作日志（最近 20 条）</h3></div>
+    <div class="pn-b np"><div class="tw">
+      <table><thead><tr><th>时间</th><th>操作人</th><th>类型</th><th>详情</th><th>IP</th></tr></thead>
+      <tbody>
+        <tr><td>03-10 09:12</td><td>admin</td><td>登录</td><td>登录成功</td><td style="color:var(--muted)">192.168.1.105</td></tr>
+        <tr><td>03-09 23:17</td><td>Ria (via admin)</td><td>审批结算</td><td>STL-...-0007 通过 · 执行兑付 $0.001005 → 0xc5d525...576e (BSC)</td><td style="color:var(--muted)">Agent API</td></tr>
+        <tr><td>03-09 23:04</td><td>Ria (via admin)</td><td>驳回订单</td><td>ORD-20260301-0001 收款地址异常，待核实后重新提交</td><td style="color:var(--muted)">Agent API</td></tr>
+        <tr><td>03-09 22:28</td><td>Ria Agent</td><td>创建订单</td><td>ORD-20260309-0007 · $0.001 · BSC · 0xc5d525...576e</td><td style="color:var(--muted)">Agent API</td></tr>
+        <tr><td>03-08 16:48</td><td>admin</td><td>审批结算</td><td>STL-...-0002 通过 · 活期提款 $10,004.93 → 0xTEST_FLEX_5678 (BASE)</td><td style="color:var(--muted)">192.168.1.105</td></tr>
+        <tr><td>03-07 16:52</td><td>admin</td><td>审批结算</td><td>STL-...-RITY 通过 · 到期兑付 $20,087.40 → 0xTEST_FIXED_9999 (ETH)</td><td style="color:var(--muted)">192.168.1.105</td></tr>
+      </tbody></table>
+    </div></div>
+  </div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- ===== 订单详情 Modal ===== -->
+<div class="modal" id="m-order">
+  <div class="modal-box">
+    <div class="modal-hd"><h3>订单详情</h3><button class="modal-x" id="mx-order">✕</button></div>
+    <div class="modal-bd">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+        <code style="font-size:.875rem;font-weight:600">ORD-20260301-0001</code>
+        <span class="b b-r">已拒绝</span>
+        <span class="src src-a">🤖 Agent 创建</span>
+      </div>
+      <div class="dg">
+        <div class="di"><div class="dl">产品</div><div class="dv">PROD-001 · Antalpha_BTC_Yield_30D</div></div>
+        <div class="di"><div class="dl">客户地址</div><div class="dv"><code>0xTEST...1234</code></div></div>
+        <div class="di"><div class="dl">提款地址</div><div class="dv"><code>0xTEST...1234</code></div></div>
+        <div class="di"><div class="dl">收款地址</div><div class="dv" style="color:var(--danger)">（待填）</div></div>
+        <div class="di"><div class="dl">链</div><div class="dv">ETH</div></div>
+        <div class="di"><div class="dl">投资金额</div><div class="dv">50,000 USDT</div></div>
+        <div class="di"><div class="dl">投资时间</div><div class="dv">2026-03-01 10:30</div></div>
+        <div class="di"><div class="dl">TxHash</div><div class="dv"><code>0xTEST_TX_001</code></div></div>
+        <div class="di"><div class="dl">起息日</div><div class="dv">2026-03-02</div></div>
+        <div class="di"><div class="dl">到期日</div><div class="dv">2026-04-01</div></div>
+        <div class="di"><div class="dl">持有天数</div><div class="dv">30 天</div></div>
+        <div class="di"><div class="dl">应计利息</div><div class="dv">$52.74</div></div>
+        <div class="di"><div class="dl">已结算利息</div><div class="dv">$0.00</div></div>
+        <div class="di"><div class="dl">最终利息</div><div class="dv">$226.03</div></div>
+        <div class="di"><div class="dl">赎回总额</div><div class="dv">$50,226.03</div></div>
+        <div class="di"><div class="dl">AML 评分</div><div class="dv"><span class="b b-g">LOW (5)</span></div></div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:16px">
+        <div style="font-size:.6875rem;font-weight:600;color:var(--sub);margin-bottom:6px">审批记录 / 备注</div>
+        <div style="font-size:.75rem;line-height:1.8">
+          <div>📝 模拟测试订单</div>
+          <div style="color:var(--danger)">❌ [审批驳回 2026-03-09 23:04] 收款地址异常，待核实后重新提交</div>
+        </div>
+      </div>
+      <div class="factions">
+        <button class="btn btn-g btn-s">✓ 重新审批</button>
+        <button class="btn btn-o btn-s">✏️ 手动修改</button>
+        <button class="btn btn-d btn-s">🗑 作废</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var T={dashboard:'仪表盘',products:'产品管理','product-edit':'编辑产品',orders:'订单管理',settlements:'结算管理',queue:'排队请求',fundpool:'资金池快照',interest:'计息明细',messages:'消息日志',agents:'Agent 授权',settings:'系统设置'};
+  var P=['dashboard','products','orders','settlements','queue','fundpool','interest','messages','agents','settings'];
+
+  function go(id){
+    document.querySelectorAll('.pg').forEach(function(e){e.classList.remove('on')});
+    document.querySelectorAll('.side-nav a').forEach(function(a){a.classList.remove('active')});
+    var el=document.getElementById('pg-'+id);if(el)el.classList.add('on');
+    var lk=document.querySelector('.side-nav a[data-p="'+id+'"]');if(lk)lk.classList.add('active');
+    document.getElementById('pg-title').textContent=T[id]||id;
+  }
+  function hash(){var h=(location.hash||'#dashboard').slice(1);if(h==='product-edit'){go('product-edit');return}if(P.indexOf(h)!==-1)go(h);else go('dashboard')}
+
+  document.getElementById('btn-login').addEventListener('click',function(){
+    var u=document.getElementById('l-user').value.trim();if(!u)return;
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('app').classList.add('on');
+    document.getElementById('s-un').textContent=u;document.getElementById('st-user').textContent=u;
+    document.getElementById('s-av').textContent=u.charAt(0).toUpperCase();hash();
+  });
+  document.getElementById('l-pwd').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btn-login').click()});
+
+  document.getElementById('btn-out').addEventListener('click',function(){
+    document.getElementById('app').classList.remove('on');document.getElementById('login-page').style.display='flex';location.hash='';
+  });
+
+  document.querySelectorAll('.side-nav a').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();var p=this.getAttribute('data-p');location.hash=p;go(p)});
+  });
+
+  document.getElementById('btn-add-prod').addEventListener('click',function(){location.hash='product-edit';go('product-edit')});
+  document.getElementById('btn-back-prod').addEventListener('click',function(){location.hash='products';go('products')});
+  document.getElementById('btn-cancel-prod').addEventListener('click',function(){location.hash='products';go('products')});
+  document.querySelectorAll('.btn-edit-prod').forEach(function(b){b.addEventListener('click',function(){location.hash='product-edit';go('product-edit')})});
+
+  // Order modal
+  document.querySelectorAll('.btn-view-order').forEach(function(b){b.addEventListener('click',function(){document.getElementById('m-order').classList.add('show')})});
+  document.getElementById('mx-order').addEventListener('click',function(){document.getElementById('m-order').classList.remove('show')});
+  document.getElementById('m-order').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show')});
+
+  function tick(){var n=new Date();document.getElementById('tb-time').textContent=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
+  tick();setInterval(tick,60000);
+  window.addEventListener('hashchange',hash);
+})();
+</script>
+</body>
+</html>
